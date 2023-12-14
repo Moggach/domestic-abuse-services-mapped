@@ -14,7 +14,7 @@ export default function App() {
   const services = useMemo(() => [
     { name: 'Wandsworth One Stop Shop', address: 'St. Mark’s, Battersea Rise, SW11 1EJ', lnglat: [-0.1759, 51.4647] },
     { name: 'Southall Black Sisters', address: '21 Avenue Road, Southall, Middlesex, UB1 3B', lnglat: [-0.37573400442787863, 51.50899538815917] },
-  ], [lng, lat, zoom]);
+  ]);
   
 
   useEffect(() => {
