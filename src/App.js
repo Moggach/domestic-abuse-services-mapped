@@ -18,13 +18,22 @@ export default function App() {
       center: [lng, lat],
       zoom: zoom
     });
-
+   
     map.current.on('move', () => {
       setLng(map.current.getCenter().lng.toFixed(4));
       setLat(map.current.getCenter().lat.toFixed(4));
       setZoom(map.current.getZoom().toFixed(2));
     });
-  });
+   
+    const popup = new mapboxgl.Popup({ offset: 25 })
+      .setText('This is a marker');
+   
+    new mapboxgl.Marker()
+      .setLngLat([-0.168120, 51.460710])
+      .setPopup(popup)
+      .addTo(map.current);
+   });
+
 
   return (
     <div>
