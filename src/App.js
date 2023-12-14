@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import mapboxgl from 'mapbox-gl'; // Remove the '!'
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29tbW9ua25vd2xlZGdlIiwiYSI6ImNqc3Z3NGZxcDA4NGo0OXA2dzd5eDJvc2YifQ.f68VZ1vlc6s3jg3JgShd0A';
@@ -11,9 +11,11 @@ export default function App() {
     
   const [zoom, setZoom] = useState(9);
 
-  const services = [
+  const services = useMemo(() => [
     { name: 'Wandsworth One Stop Shop', address: 'St. Mark’s, Battersea Rise, SW11 1EJ', lnglat: [-0.1759, 51.4647] },
-    { name: 'Southall Black Sisters', address: '21 Avenue Road, Southall, Middlesex, UB1 3B', lnglat: [ -0.37573400442787863, 51.50899538815917] },  ];
+    { name: 'Southall Black Sisters', address: '21 Avenue Road, Southall, Middlesex, UB1 3B', lnglat: [-0.37573400442787863, 51.50899538815917] },
+  ], [lng, lat, zoom]);
+  
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -38,7 +40,7 @@ export default function App() {
         .setPopup(popup)
         .addTo(map.current);
     });
-  }, [lng, lat, zoom, services]); // Add dependencies to the dependency array
+  }, [lng, lat, zoom, services]); 
 
   return (
     <div>
