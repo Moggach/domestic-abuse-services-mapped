@@ -21,7 +21,7 @@ export default function App() {
     if (map.current) return; // initialize map only once
 
     // Parse CSV file
-    Papa.parse('https://media.githubusercontent.com/media/datablist/sample-csv-files/main/files/organizations/organizations-100.csv', {
+    Papa.parse('https://docs.google.com/spreadsheets/d/1Ks74q3_DsWZ_7OIqc3pJ-JzrVBfOKqhb2vB_gosoCSM/export?format=csv&gid=0', {
       download: true,
       header: true,
       complete: (result) => {
@@ -69,7 +69,7 @@ export default function App() {
         <ul>
           {csvData.map((item, index) => (
             <li key={index}>
-              <strong>{item.Name}</strong>: {item.Country}
+              <strong>{item.Name}</strong>: {item.Address}
             </li>
           ))}
         </ul>
