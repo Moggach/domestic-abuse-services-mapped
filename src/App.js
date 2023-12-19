@@ -65,6 +65,7 @@ export default function App() {
           ))}
         </ul>
       </div>
+    Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a>
     </div>
   );
 }
