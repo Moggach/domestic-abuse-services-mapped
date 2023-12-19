@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import Papa from 'papaparse';
 
@@ -9,13 +9,8 @@ export default function App() {
   const map = useRef(null);
   const [lng, setLng] = useState(-0.118092);
   const [lat, setLat] = useState(51.509865);
-  const [zoom, setZoom] = useState(9);
+  const [zoom, setZoom] = useState(5);
   const [csvData, setCsvData] = useState([]);
-
-  const services = useMemo(() => [
-    { name: 'Wandsworth One Stop Shop', address: 'St. Mark’s, Battersea Rise, SW11 1EJ', lnglat: [-0.1759, 51.4647] },
-    { name: 'Southall Black Sisters', address: '21 Avenue Road, Southall, Middlesex, UB1 3B', lnglat: [-0.37573400442787863, 51.50899538815917] },
-  ], []);
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -25,47 +20,43 @@ export default function App() {
       download: true,
       header: true,
       complete: (result) => {
-          console.log('Parsed CSV Data:', result.data);
-
         setCsvData(result.data);
-      },
-      error: (error) => {
-        console.error('CSV parsing error:', error.message);
-      },
+
+        map.current = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [lng, lat],
+          zoom: zoom,
+        });
+
+        map.current.on('move', () => {
+          setLng(map.current.getCenter().lng.toFixed(4));
+          setLat(map.current.getCenter().lat.toFixed(4));
+          setZoom(map.current.getZoom().toFixed(2));
+        });
+        result.data.map(entry => {
+          let lat = Number(entry.Lat)
+          let lng = Number(entry.Lng)
+          let name = entry.Name
+          let address = entry.Address
+
+          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${name}</h4>
+            <div class="location-metadata">${address}</div>
+          `);
+
+          new mapboxgl.Marker()
+            .setLngLat([lng, lat])
+            .setPopup(popup)
+            .addTo(map.current);
+        });
+      }
     });
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [lng, lat],
-      zoom: zoom,
-    });
-
-    map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(2));
-    });
-
-    services.forEach(({ name, address, lnglat }) => {
-      const popup = new mapboxgl.Popup({ offset: 25 }).setText(name);
-
-      new mapboxgl.Marker()
-        .setLngLat(lnglat)
-        .setPopup(popup)
-        .addTo(map.current);
-    });
-
-  }, [lng, lat, zoom, services, csvData]);
+  }, [lng, lat, zoom, csvData]);
 
   return (
     <div>
-      <div className="sidebar">
-        Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-      </div>
       <div ref={mapContainer} className="map-container" />
       <div className="csv-data">
-        <h2>CSV Data</h2>
         <ul>
           {csvData.map((item, index) => (
             <li key={index}>
