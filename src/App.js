@@ -34,20 +34,29 @@ export default function App() {
           setLat(map.current.getCenter().lat.toFixed(4));
           setZoom(map.current.getZoom().toFixed(2));
         });
+
         result.data.forEach(entry => {
-          let lat = Number(entry.Lat)
-          let lng = Number(entry.Lng)
-          let name = entry.Name
-          let address = entry.Address
+          let name = entry.Name;
+          let address = entry.Address;
+          let postcode = entry.Postcode;
+          let coordinates;
 
-          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${name}</h4>
-            <div class="location-metadata">${address}</div>
-          `);
+          fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.features && data.features.length > 0) {
+                coordinates = data.features[0].geometry.coordinates;
 
-          new mapboxgl.Marker()
-            .setLngLat([lng, lat])
-            .setPopup(popup)
-            .addTo(map.current);
+                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${name}</h4>
+                  <div class="location-metadata">${address}</div>
+                `);
+
+                new mapboxgl.Marker()
+                  .setLngLat(coordinates)
+                  .setPopup(popup)
+                  .addTo(map.current);
+              }
+            });
         });
       }
     });
@@ -65,7 +74,7 @@ export default function App() {
           ))}
         </ul>
       </div>
-    Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a>
+      Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a>
     </div>
   );
 }
