@@ -16,7 +16,7 @@ export default function App() {
     if (map.current) return; // initialize map only once
 
     // Parse CSV file
-    Papa.parse('https://docs.google.com/spreadsheets/d/1Ks74q3_DsWZ_7OIqc3pJ-JzrVBfOKqhb2vB_gosoCSM/export?format=csv&gid=0', {
+    Papa.parse('https://docs.google.com/spreadsheets/d/1Ks74q3_DsWZ_7OIqc3pJ-JzrVBfOKqhb2vB_gosoCSM/export?format=csv&gid=1299242923', {
       download: true,
       header: true,
       complete: (result) => {
@@ -34,11 +34,11 @@ export default function App() {
           setLat(map.current.getCenter().lat.toFixed(4));
           setZoom(map.current.getZoom().toFixed(2));
         });
-
+      console.log(result.data)
         result.data.forEach(entry => {
-          let name = entry.Name;
-          let address = entry.Address;
-          let postcode = entry.Postcode;
+          let name = entry["Service name"];
+          let address = entry["Service address"]; 
+          let postcode = entry["Service postcode"];
           let coordinates;
 
           fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`)
@@ -69,12 +69,13 @@ export default function App() {
         <ul>
           {csvData.map((item, index) => (
             <li key={index}>
-              <strong>{item.Name}</strong>: {item.Address}
+              <strong>{item["Service name"]}</strong>: {item["Service address"]}
             </li>
           ))}
         </ul>
       </div>
-      Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a>
+     <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
+     <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
     </div>
   );
 }
