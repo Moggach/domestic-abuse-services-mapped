@@ -34,7 +34,7 @@ export default function App() {
           setLat(map.current.getCenter().lat.toFixed(4));
           setZoom(map.current.getZoom().toFixed(2));
         });
-        result.data.map(entry => {
+        result.data.forEach(entry => {
           let lat = Number(entry.Lat)
           let lng = Number(entry.Lng)
           let name = entry.Name
