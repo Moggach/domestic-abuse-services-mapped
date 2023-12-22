@@ -34,48 +34,54 @@ export default function App() {
           setLat(map.current.getCenter().lat.toFixed(4));
           setZoom(map.current.getZoom().toFixed(2));
         });
-      console.log(result.data)
+
         result.data.forEach(entry => {
+          let approved = entry["Approved"];
           let name = entry["Service name"];
-          let address = entry["Service address"]; 
+          let address = entry["Service address"];
           let postcode = entry["Service postcode"];
           let coordinates;
 
-          fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`)
-            .then(response => response.json())
-            .then(data => {
-              if (data.features && data.features.length > 0) {
-                coordinates = data.features[0].geometry.coordinates;
+          if (approved === 'Approved') { // Only proceed if the item is approved
+            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`)
+              .then(response => response.json())
+              .then(data => {
+                if (data.features && data.features.length > 0) {
+                  coordinates = data.features[0].geometry.coordinates;
 
-                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${name}</h4>
-                  <div class="location-metadata">${address}</div>
-                `);
+                  const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${name}</h4>
+                    <div class="location-metadata">${address}</div>
+                  `);
 
-                new mapboxgl.Marker()
-                  .setLngLat(coordinates)
-                  .setPopup(popup)
-                  .addTo(map.current);
-              }
-            });
+                  new mapboxgl.Marker()
+                    .setLngLat(coordinates)
+                    .setPopup(popup)
+                    .addTo(map.current);
+                }
+              });
+          }
         });
       }
     });
   }, [lng, lat, zoom, csvData]);
 
+  // Move the return statement inside the functional component
   return (
     <div>
       <div ref={mapContainer} className="map-container" />
       <div className="csv-data">
         <ul>
-          {csvData.map((item, index) => (
-            <li key={index}>
-              <strong>{item["Service name"]}</strong>: {item["Service address"]}
-            </li>
-          ))}
+          {csvData.filter(item => item["Approved"] === 'Approved')
+            .map((item, index) => (
+              <li key={index}>
+                <strong>{item["Service name"]}</strong>: {item["Service address"]}
+                {item["Approved"]}
+              </li>
+            ))}
         </ul>
       </div>
-     <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
-     <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
+      <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
+      <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
     </div>
   );
 }
