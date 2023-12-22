@@ -75,7 +75,6 @@ export default function App() {
             .map((item, index) => (
               <li key={index}>
                 <strong>{item["Service name"]}</strong>: {item["Service address"]}
-                {item["Approved"]}
               </li>
             ))}
         </ul>
