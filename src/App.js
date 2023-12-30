@@ -13,6 +13,7 @@ export default function App() {
   const [csvData, setCsvData] = useState([]);
   const [selectedService, setSelectedService] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const [markers, setMarkers] = useState([]); // Track markers on the map
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -38,31 +39,9 @@ export default function App() {
           setZoom(map.current.getZoom().toFixed(2));
         });
 
+        // Initialize markers
         result.data.forEach(entry => {
-          let approved = entry["Approved"];
-          let name = entry["Service name"];
-          let address = entry["Service address"];
-          let postcode = entry["Service postcode"];
-          let coordinates;
-
-          if (approved === 'Approved') { // Only proceed if the item is approved
-            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`)
-              .then(response => response.json())
-              .then(data => {
-                if (data.features && data.features.length > 0) {
-                  coordinates = data.features[0].geometry.coordinates;
-
-                  const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${name}</h4>
-                    <div class="location-metadata">${address}</div>
-                  `);
-
-                  new mapboxgl.Marker()
-                    .setLngLat(coordinates)
-                    .setPopup(popup)
-                    .addTo(map.current);
-                }
-              });
-          }
+          addMarker(entry);
         });
       }
     });
@@ -74,7 +53,47 @@ export default function App() {
     setSelectedService(selectedServiceName);
 
     // Filter data based on the selected service name
-    setFilteredData(csvData.filter(item => item["Approved"] === 'Approved' && item["Service name"].toLowerCase().includes(selectedServiceName.toLowerCase())));
+    const filteredServiceData = csvData.filter(item => item["Approved"] === 'Approved' && item["Service name"].toLowerCase().includes(selectedServiceName.toLowerCase()));
+    setFilteredData(filteredServiceData);
+
+    // Clear existing markers
+    markers.forEach(marker => marker.remove());
+
+    // Add markers for the filtered data
+    filteredServiceData.forEach(entry => {
+      addMarker(entry);
+    });
+  };
+
+  // Add a marker to the map
+  const addMarker = (entry) => {
+    let approved = entry["Approved"];
+    let name = entry["Service name"];
+    let address = entry["Service address"];
+    let postcode = entry["Service postcode"];
+    let coordinates;
+
+    if (approved === 'Approved') { // Only proceed if the item is approved
+      fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.features && data.features.length > 0) {
+            coordinates = data.features[0].geometry.coordinates;
+
+            const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${name}</h4>
+              <div class="location-metadata">${address}</div>
+            `);
+
+            // Store the marker reference in the markers state
+            const marker = new mapboxgl.Marker()
+              .setLngLat(coordinates)
+              .setPopup(popup)
+              .addTo(map.current);
+
+            setMarkers(markers => [...markers, marker]);
+          }
+        });
+    }
   };
 
   // Move the return statement inside the functional component
