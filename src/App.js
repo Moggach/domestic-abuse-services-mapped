@@ -11,6 +11,8 @@ export default function App() {
   const [lat, setLat] = useState(51.509865);
   const [zoom, setZoom] = useState(5);
   const [csvData, setCsvData] = useState([]);
+  const [selectedService, setSelectedService] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -21,6 +23,7 @@ export default function App() {
       header: true,
       complete: (result) => {
         setCsvData(result.data);
+        setFilteredData(result.data); // Initially set filtered data to all data
 
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
@@ -65,18 +68,41 @@ export default function App() {
     });
   }, [lng, lat, zoom, csvData]);
 
+  // Handle selection change in the dropdown
+  const handleServiceChange = (event) => {
+    const selectedServiceName = event.target.value;
+    setSelectedService(selectedServiceName);
+
+    // Filter data based on the selected service name
+    setFilteredData(csvData.filter(item => item["Approved"] === 'Approved' && item["Service name"].toLowerCase().includes(selectedServiceName.toLowerCase())));
+  };
+
   // Move the return statement inside the functional component
   return (
     <div>
+      <div>
+        <label htmlFor="serviceSelect">Select Service Name:</label>
+        <select
+          id="serviceSelect"
+          value={selectedService}
+          onChange={handleServiceChange}
+        >
+          <option value="">All Services</option>
+          {csvData.map((item, index) => (
+            <option key={index} value={item["Service name"]}>
+              {item["Service name"]}
+            </option>
+          ))}
+        </select>
+      </div>
       <div ref={mapContainer} className="map-container" />
       <div className="csv-data">
         <ul>
-          {csvData.filter(item => item["Approved"] === 'Approved')
-            .map((item, index) => (
-              <li key={index}>
-                <strong>{item["Service name"]}</strong>: {item["Service address"]}
-              </li>
-            ))}
+          {filteredData.map((item, index) => (
+            <li key={index}>
+              <strong>{item["Service name"]}</strong>: {item["Service address"]}
+            </li>
+          ))}
         </ul>
       </div>
       <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
