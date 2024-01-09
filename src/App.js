@@ -23,8 +23,10 @@ export default function App() {
       download: true,
       header: true,
       complete: (result) => {
-        setCsvData(result.data);
-        setFilteredData(result.data); // Initially set filtered data to all data
+        const approvedData = result.data.filter(item => item.Approved === 'Approved')
+        setCsvData(approvedData);
+      
+        setFilteredData(approvedData);
 
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
@@ -40,7 +42,7 @@ export default function App() {
         });
 
         (async () => {
-          let features = await Promise.all(result.data.map(async (entry, index) => {
+          let features = await Promise.all(approvedData.map(async (entry, index) => {
             const postcode = entry['Service postcode'];
             const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`);
             const data = await response.json();
@@ -113,6 +115,7 @@ export default function App() {
                 const coordinates = e.features[0].geometry.coordinates.slice();
                 const name = e.features[0].properties.name;
                 const address = e.features[0].properties.address;
+        
 
                 // Ensure that if the map is zoomed out such that multiple
                 // copies of the feature are visible, the popup appears
@@ -126,6 +129,7 @@ export default function App() {
                   .setHTML(`${name} ${address}`)
                   .addTo(map.current);
               });
+
             };
 
           })
@@ -145,22 +149,30 @@ export default function App() {
     setFilteredData(filteredServiceData);
 
   };
-
   useEffect(() => {
     if (map.current) {
-    const layerId = 'unclustered-point'; 
-    const filter = ['==', 'name', selectedService];
-    if (map.current.getLayer(layerId)) {
-      map.current.setFilter(layerId, filter);
-      if (filter[2] === '') {
-        map.current.setLayoutProperty('cluster-count', 'visibility', 'visible');
+      const layerId = 'unclustered-point'; 
+      let filter;
+      if (selectedService !== '') {
+        filter = ['==', 'name', selectedService];
+        if (map.current.getLayer(layerId)) {
+          map.current.setFilter(layerId, filter);
+          map.current.setLayoutProperty('cluster-count', 'visibility', 'none');
+    
+        }
       } else {
-        map.current.setLayoutProperty('cluster-count', 'visibility', 'none');
+      
+        if (map.current.getLayer(layerId)) {
+          map.current.setFilter(layerId, null);
+          map.current.setLayoutProperty('cluster-count', 'visibility', 'visible'); 
+         
+       
+        }
       }
-    }
     }
    }, [selectedService]);
 
+ 
 
   return (
     <div>
