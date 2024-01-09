@@ -146,9 +146,26 @@ export default function App() {
 
   };
 
+  useEffect(() => {
+    if (map.current) {
+    const layerId = 'unclustered-point'; 
+    const filter = ['==', 'name', selectedService];
+    if (map.current.getLayer(layerId)) {
+      map.current.setFilter(layerId, filter);
+      if (filter[2] === '') {
+        map.current.setLayoutProperty('cluster-count', 'visibility', 'visible');
+      } else {
+        map.current.setLayoutProperty('cluster-count', 'visibility', 'none');
+      }
+    }
+    }
+   }, [selectedService]);
+
 
   return (
     <div>
+    
+      <div ref={mapContainer} className="map-container" />
       <div>
         <label htmlFor="serviceSelect">Select Service Name:</label>
         <select
@@ -164,7 +181,6 @@ export default function App() {
           ))}
         </select>
       </div>
-      <div ref={mapContainer} className="map-container" />
       <div className="csv-data">
         <ul>
           {filteredData.map((item, index) => (
