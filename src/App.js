@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import Papa from 'papaparse';
 
-
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29tbW9ua25vd2xlZGdlIiwiYSI6ImNqc3Z3NGZxcDA4NGo0OXA2dzd5eDJvc2YifQ.f68VZ1vlc6s3jg3JgShd0A';
 
 export default function App() {
@@ -15,17 +14,58 @@ export default function App() {
   const [selectedService, setSelectedService] = useState('');
   const [filteredData, setFilteredData] = useState([]);
 
-  useEffect(() => {
-    if (map.current) return; // initialize map only once
+  const updateMapData = async (data) => {
+    let features = await Promise.all(data.map(async (entry, index) => {
+      const postcode = entry['Service postcode'];
+      const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`);
+      const responseData = await response.json();
 
-    // Parse CSV file
+      const coordinates = responseData.features[0].geometry.coordinates;
+
+      return {
+        type: 'Feature',
+        properties: {
+          cluster_id: index,
+          Approved: entry['Approved'],
+          'name': entry['Service name'],
+          'address': entry['Service address'],
+          'postcode': postcode,
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: coordinates,
+        },
+      };
+    }));
+
+    let geojson = {
+      type: 'FeatureCollection',
+      features: features,
+    };
+
+    if (map.current.getSource('points')) {
+      map.current.getSource('points').setData(geojson);
+    } else {
+      map.current.addSource('points', {
+        type: 'geojson',
+        data: geojson,
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 20,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (map.current) return;
+
     Papa.parse('https://docs.google.com/spreadsheets/d/1Ks74q3_DsWZ_7OIqc3pJ-JzrVBfOKqhb2vB_gosoCSM/export?format=csv&gid=1299242923', {
       download: true,
       header: true,
       complete: (result) => {
-        const approvedData = result.data.filter(item => item.Approved === 'Approved')
+        const approvedData = result.data.filter(item => item.Approved === 'Approved');
         setCsvData(approvedData);
-      
+
         setFilteredData(approvedData);
 
         map.current = new mapboxgl.Map({
@@ -71,14 +111,13 @@ export default function App() {
           };
 
           map.current.on('load', function () {
-
             if (!map.current.getSource('points')) {
               map.current.addSource('points', {
                 type: 'geojson',
                 data: geojson,
                 cluster: true,
-                clusterMaxZoom: 14, // Max zoom to cluster points on
-                clusterRadius: 20 // Radius of each cluster when clustering points in pixels
+                clusterMaxZoom: 14,
+                clusterRadius: 20,
               });
             }
 
@@ -93,9 +132,8 @@ export default function App() {
                   'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                   'text-size': 20
                 }
-              })
+              });
             }
-
 
             if (!map.current.getLayer('unclustered-point')) {
               map.current.addLayer({
@@ -115,11 +153,7 @@ export default function App() {
                 const coordinates = e.features[0].geometry.coordinates.slice();
                 const name = e.features[0].properties.name;
                 const address = e.features[0].properties.address;
-        
 
-                // Ensure that if the map is zoomed out such that multiple
-                // copies of the feature are visible, the popup appears
-                // over the copy being pointed to.
                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
@@ -129,54 +163,25 @@ export default function App() {
                   .setHTML(`${name} ${address}`)
                   .addTo(map.current);
               });
-
             };
-
-          })
+          });
         })();
-
       }
     });
   }, [lng, lat, zoom, csvData]);
 
-  // Handle selection change in the dropdown
   const handleServiceChange = (event) => {
     const selectedServiceName = event.target.value;
     setSelectedService(selectedServiceName);
 
-    // Filter data based on the selected service name
     const filteredServiceData = csvData.filter(item => item["Approved"] === 'Approved' && item["Service name"].toLowerCase().includes(selectedServiceName.toLowerCase()));
     setFilteredData(filteredServiceData);
 
+    updateMapData(filteredServiceData);
   };
-  useEffect(() => {
-    if (map.current) {
-      const layerId = 'unclustered-point'; 
-      let filter;
-      if (selectedService !== '') {
-        filter = ['==', 'name', selectedService];
-        if (map.current.getLayer(layerId)) {
-          map.current.setFilter(layerId, filter);
-          map.current.setLayoutProperty('cluster-count', 'visibility', 'none');
-    
-        }
-      } else {
-      
-        if (map.current.getLayer(layerId)) {
-          map.current.setFilter(layerId, null);
-          map.current.setLayoutProperty('cluster-count', 'visibility', 'visible'); 
-         
-       
-        }
-      }
-    }
-   }, [selectedService]);
-
- 
 
   return (
     <div>
-    
       <div ref={mapContainer} className="map-container" />
       <div>
         <label htmlFor="serviceSelect">Select Service Name:</label>
