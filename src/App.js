@@ -70,7 +70,7 @@ export default function App() {
 
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
-          style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
+          style: 'mapbox://styles/mapbox/streets-v12',
           center: [lng, lat],
           zoom: zoom,
         });
