@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import Papa from 'papaparse';
+import Banner from './ components/Banner';
+
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -13,6 +15,7 @@ export default function App() {
   const [csvData, setCsvData] = useState([]);
   const [selectedService, setSelectedService] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+
 
   const updateMapData = async (data) => {
     let features = await Promise.all(data.map(async (entry, index) => {
@@ -181,34 +184,37 @@ export default function App() {
   };
 
   return (
-    <div>
-      <div ref={mapContainer} className="map-container" />
+    <>
+      <Banner />
       <div>
-        <label htmlFor="serviceSelect">Select Service Name:</label>
-        <select
-          id="serviceSelect"
-          value={selectedService}
-          onChange={handleServiceChange}
-        >
-          <option value="">All Services</option>
-          {csvData.map((item, index) => (
-            <option key={index} value={item["Service name"]}>
-              {item["Service name"]}
-            </option>
-          ))}
-        </select>
+        <div ref={mapContainer} className="map-container" />
+        <div>
+          <label htmlFor="serviceSelect">Select Service Name:</label>
+          <select
+            id="serviceSelect"
+            value={selectedService}
+            onChange={handleServiceChange}
+          >
+            <option value="">All Services</option>
+            {csvData.map((item, index) => (
+              <option key={index} value={item["Service name"]}>
+                {item["Service name"]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="csv-data">
+          <ul>
+            {filteredData.map((item, index) => (
+              <li key={index}>
+                <strong>{item["Service name"]}</strong>: {item["Service address"]}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
+        <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
       </div>
-      <div className="csv-data">
-        <ul>
-          {filteredData.map((item, index) => (
-            <li key={index}>
-              <strong>{item["Service name"]}</strong>: {item["Service address"]}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
-      <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
-    </div>
+    </>
   );
 }
