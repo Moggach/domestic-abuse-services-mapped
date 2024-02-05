@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import Papa from 'papaparse';
 import Banner from './ components/Banner';
+import { getDistance } from 'geolib';
 
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -15,10 +16,13 @@ export default function App() {
   const [csvData, setCsvData] = useState([]);
   const [selectedService, setSelectedService] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
 
   const updateMapData = async (data) => {
+    console.log(data)
     let features = await Promise.all(data.map(async (entry, index) => {
+
       const postcode = entry['Service postcode'];
       const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`);
       const responseData = await response.json();
@@ -182,12 +186,84 @@ export default function App() {
 
     updateMapData(filteredServiceData);
   };
+  const handleSearch = async () => {
+    if (!searchQuery) return;
+
+    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${searchQuery}.json?country=GB&access_token=${mapboxgl.accessToken}`;
+    const response = await fetch(geocodingUrl);
+    const data = await response.json();
+
+    if (data.features.length > 0) {
+      const { coordinates } = data.features[0].geometry;
+      filterDataByDistance(coordinates);
+    }
+  };
+
+  const filterDataByDistance = (searchCoordinates) => {
+    const radius = 32186.9; // 20 miles in meters
+
+    // Ensure the map and the 'points' source are loaded
+    if (map.current && map.current.isSourceLoaded('points')) {
+      const sourceData = map.current.getSource('points')._data; // Access the GeoJSON data directly
+
+      // Filter features based on distance
+      const filteredFeatures = sourceData.features.filter(feature => {
+        // Extract coordinates from each feature
+        const [longitude, latitude] = feature.geometry.coordinates;
+        const distance = getDistance(
+          { latitude: searchCoordinates[1], longitude: searchCoordinates[0] },
+          { latitude, longitude }
+        );
+        return distance <= radius;
+      });
+
+      let transformedObjects = filteredFeatures.map(feature => {
+        let { Approved, name, address, postcode } = feature.properties;
+
+        return {
+          Approved: Approved,
+          'Service name': name,
+          'Service address': address,
+          'Service postcode': postcode
+        };
+      });
+
+
+      setFilteredData(transformedObjects);
+      updateMapData(transformedObjects)
+    }
+  };
+  const clearSearch = () => {
+    setSearchQuery('');
+    const approvedData = csvData.filter(item => item.Approved === 'Approved');
+    setFilteredData(approvedData);
+  
+    if (map.current) {
+      map.current.flyTo({
+        center: [lng, lat],
+        zoom: zoom,
+      });
+    }
+
+    updateMapData(approvedData);
+  };
 
   return (
     <>
       <Banner />
       <div>
         <div ref={mapContainer} className="map-container" />
+        <div>
+          <label htmlFor="searchInput">Enter your postcode to find a service near you:</label>
+          <input
+            id="searchInput"
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button onClick={handleSearch}>Search</button>
+          <button onClick={clearSearch}>Clear Search</button> 
+        </div>
         <div>
           <label htmlFor="serviceSelect">Select Service Name:</label>
           <select
@@ -206,7 +282,9 @@ export default function App() {
         <div className="csv-data">
           <ul>
             {filteredData.map((item, index) => (
+
               <li key={index}>
+
                 <strong>{item["Service name"]}</strong>: {item["Service address"]}
               </li>
             ))}
