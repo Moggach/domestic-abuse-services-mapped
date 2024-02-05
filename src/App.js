@@ -254,7 +254,7 @@ export default function App() {
       <div>
         <div ref={mapContainer} className="map-container" />
         <div>
-          <label htmlFor="searchInput">Enter your postcode to find a service near you:</label>
+          <label htmlFor="searchInput">Search by location: </label>
           <input
             id="searchInput"
             type="text"
@@ -289,6 +289,8 @@ export default function App() {
               </li>
             ))}
           </ul>
+          {filteredData.length === 0 && <p>Sorry! No results found. Try another search?</p>}
+
         </div>
         <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
         <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
