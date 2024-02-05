@@ -218,14 +218,13 @@ export default function App() {
       });
 
       let transformedArray = filteredFeatures.map(feature => {
-        let { Approved, name, address, postcode } = feature.properties;
-
+        let { Approved, name, address, postcode, 'service type': serviceType } = feature.properties;
         return {
           Approved: Approved,
           'Service name': name,
           'Service address': address,
           'Service postcode': postcode,
-          // 'Service type': type
+          'Service type': serviceType 
         };
       });
 
