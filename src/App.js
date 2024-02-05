@@ -202,13 +202,10 @@ export default function App() {
   const filterDataByDistance = (searchCoordinates) => {
     const radius = 32186.9; // 20 miles in meters
 
-    // Ensure the map and the 'points' source are loaded
     if (map.current && map.current.isSourceLoaded('points')) {
-      const sourceData = map.current.getSource('points')._data; // Access the GeoJSON data directly
+      const sourceData = map.current.getSource('points')._data; 
 
-      // Filter features based on distance
       const filteredFeatures = sourceData.features.filter(feature => {
-        // Extract coordinates from each feature
         const [longitude, latitude] = feature.geometry.coordinates;
         const distance = getDistance(
           { latitude: searchCoordinates[1], longitude: searchCoordinates[0] },
@@ -217,7 +214,7 @@ export default function App() {
         return distance <= radius;
       });
 
-      let transformedObjects = filteredFeatures.map(feature => {
+      let transformedArray = filteredFeatures.map(feature => {
         let { Approved, name, address, postcode } = feature.properties;
 
         return {
@@ -229,8 +226,8 @@ export default function App() {
       });
 
 
-      setFilteredData(transformedObjects);
-      updateMapData(transformedObjects)
+      setFilteredData(transformedArray);
+      updateMapData(transformedArray)
     }
   };
   const clearSearch = () => {
