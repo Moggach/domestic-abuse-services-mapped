@@ -14,13 +14,13 @@ export default function App() {
   const [lat, setLat] = useState(51.509865);
   const [zoom, setZoom] = useState(5);
   const [csvData, setCsvData] = useState([]);
-  const [selectedService, setSelectedService] = useState('');
+  const [selectedServiceType, setSelectedServiceType] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
 
   const updateMapData = async (data) => {
-    console.log(data)
+
     let features = await Promise.all(data.map(async (entry, index) => {
 
       const postcode = entry['Service postcode'];
@@ -37,6 +37,7 @@ export default function App() {
           'name': entry['Service name'],
           'address': entry['Service address'],
           'postcode': postcode,
+          'service type': entry['Service type'],
         },
         geometry: {
           type: 'Point',
@@ -75,6 +76,7 @@ export default function App() {
 
         setFilteredData(approvedData);
 
+
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
           style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
@@ -103,6 +105,7 @@ export default function App() {
                 Approved: entry['Approved'],
                 'name': entry['Service name'],
                 'address': entry['Service address'],
+                'service type': entry['Service type'],
                 'postcode': postcode,
               },
               geometry: {
@@ -177,11 +180,11 @@ export default function App() {
     });
   }, [lng, lat, zoom, csvData]);
 
-  const handleServiceChange = (event) => {
-    const selectedServiceName = event.target.value;
-    setSelectedService(selectedServiceName);
+  const handleServiceTypeChange = (event) => {
+    const selectedServiceTypeName = event.target.value;
+    setSelectedServiceType(selectedServiceTypeName);
 
-    const filteredServiceData = csvData.filter(item => item["Approved"] === 'Approved' && item["Service name"].toLowerCase().includes(selectedServiceName.toLowerCase()));
+    const filteredServiceData = csvData.filter(item => item["Approved"] === 'Approved' && item["Service type"].toLowerCase().includes(selectedServiceTypeName.toLowerCase()));
     setFilteredData(filteredServiceData);
 
     updateMapData(filteredServiceData);
@@ -203,7 +206,7 @@ export default function App() {
     const radius = 32186.9; // 20 miles in meters
 
     if (map.current && map.current.isSourceLoaded('points')) {
-      const sourceData = map.current.getSource('points')._data; 
+      const sourceData = map.current.getSource('points')._data;
 
       const filteredFeatures = sourceData.features.filter(feature => {
         const [longitude, latitude] = feature.geometry.coordinates;
@@ -221,7 +224,8 @@ export default function App() {
           Approved: Approved,
           'Service name': name,
           'Service address': address,
-          'Service postcode': postcode
+          'Service postcode': postcode,
+          // 'Service type': type
         };
       });
 
@@ -234,7 +238,7 @@ export default function App() {
     setSearchQuery('');
     const approvedData = csvData.filter(item => item.Approved === 'Approved');
     setFilteredData(approvedData);
-  
+
     if (map.current) {
       map.current.flyTo({
         center: [lng, lat],
@@ -259,21 +263,24 @@ export default function App() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button onClick={handleSearch}>Search</button>
-          <button onClick={clearSearch}>Clear Search</button> 
+          <button onClick={clearSearch}>Clear Search</button>
         </div>
         <div>
-          <label htmlFor="serviceSelect">Select Service Name:</label>
+          <label htmlFor="serviceFilter">Filter service type</label>
           <select
-            id="serviceSelect"
-            value={selectedService}
-            onChange={handleServiceChange}
+            id="serviceFilter"
+            value={selectedServiceType}
+            onChange={handleServiceTypeChange}
           >
-            <option value="">All Services</option>
-            {csvData.map((item, index) => (
-              <option key={index} value={item["Service name"]}>
-                {item["Service name"]}
-              </option>
-            ))}
+            <option value="">All service types</option>
+            {
+              [...new Set(csvData.map(item => item["Service type"]))]
+                .map((serviceType, index) => (
+                  <option key={index} value={serviceType}>
+                    {serviceType}
+                  </option>
+                ))
+            }
           </select>
         </div>
         <div className="csv-data">
