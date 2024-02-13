@@ -17,6 +17,7 @@ export default function App() {
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedServiceSpecialisms, setSelectedServiceSpecialisms] = useState([]);
 
 
   const updateMapData = async (data) => {
@@ -224,7 +225,7 @@ export default function App() {
           'Service name': name,
           'Service address': address,
           'Service postcode': postcode,
-          'Service type': serviceType 
+          'Service type': serviceType
         };
       });
 
@@ -247,7 +248,23 @@ export default function App() {
 
     updateMapData(approvedData);
   };
+  const handleCheckboxChange = (selectedServiceSpecialism) => {
+    const updatedSelectedServiceSpecialisms = selectedServiceSpecialisms.includes(selectedServiceSpecialism)
+      ? selectedServiceSpecialisms.filter(specialism => specialism !== selectedServiceSpecialism)
+      : [...selectedServiceSpecialisms, selectedServiceSpecialism];
+    setSelectedServiceSpecialisms(updatedSelectedServiceSpecialisms);
 
+    // Filter the data based on the updated selected service specialisms
+    const filteredServiceData = csvData.filter(item =>
+      item["Approved"] === 'Approved' &&
+      updatedSelectedServiceSpecialisms.some(specialism =>
+        item["Specialist services for"].includes(specialism)
+      )
+    );
+    setFilteredData(filteredServiceData);
+    updateMapData(filteredServiceData);
+
+  }
   return (
     <>
       <Banner />
@@ -281,6 +298,24 @@ export default function App() {
                 ))
             }
           </select>
+        </div>
+        <div>
+          {
+            [...new Set(csvData.map(item => item["Specialist services for"]).filter(specialism => specialism.trim() !== ""))]
+              .map((specialism, index) => (
+                <div key={index}>
+                  <input
+                    type="checkbox"
+                    id={`checkbox-${specialism}`}
+                    name="serviceType"
+                    value={specialism}
+                    onChange={() => handleCheckboxChange(specialism)}
+                    checked={selectedServiceSpecialisms.includes(specialism)}
+                  />
+                  <label htmlFor={`checkbox-${specialism}`}>{specialism}</label>
+                </div>
+              ))
+          }
         </div>
         <div className="csv-data">
           <ul>
