@@ -252,19 +252,25 @@ export default function App() {
     const updatedSelectedServiceSpecialisms = selectedServiceSpecialisms.includes(selectedServiceSpecialism)
       ? selectedServiceSpecialisms.filter(specialism => specialism !== selectedServiceSpecialism)
       : [...selectedServiceSpecialisms, selectedServiceSpecialism];
+
     setSelectedServiceSpecialisms(updatedSelectedServiceSpecialisms);
 
-    // Filter the data based on the updated selected service specialisms
-    const filteredServiceData = csvData.filter(item =>
-      item["Approved"] === 'Approved' &&
-      updatedSelectedServiceSpecialisms.some(specialism =>
-        item["Specialist services for"].includes(specialism)
-      )
-    );
-    setFilteredData(filteredServiceData);
-    updateMapData(filteredServiceData);
-
-  }
+    if (updatedSelectedServiceSpecialisms.length === 0) {
+        
+        const approvedData = csvData.filter(item => item.Approved === 'Approved');
+        setFilteredData(approvedData);
+        updateMapData(approvedData);
+    } else {
+        const filteredServiceData = csvData.filter(item =>
+            item["Approved"] === 'Approved' &&
+            updatedSelectedServiceSpecialisms.some(specialism =>
+                item["Specialist services for"] && item["Specialist services for"].includes(specialism)
+            )
+        );
+        setFilteredData(filteredServiceData);
+        updateMapData(filteredServiceData);
+    }
+};
   return (
     <>
       <Banner />
