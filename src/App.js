@@ -1,344 +1,126 @@
-import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import Papa from 'papaparse';
-import Banner from './ components/Banner';
-import { getDistance } from 'geolib';
+import React, { useState, useEffect } from 'react';
+import MapBox from './ components/MapBox';
+import SearchInput from './ components/SearchInput';
+import Banner from './ components/Banner'
+import ServiceTypeFilter from './ components/ServiceTypeFilter';
+import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
+import { useCsvData } from './ components/useCsvData'
 
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+async function fetchCoordinates(postcode, accessToken) {
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(postcode)}.json?country=GB&access_token=${accessToken}`;
+  const response = await fetch(url);
+  const data = await response.json();
+  if (data.features && data.features.length > 0) {
+    const [longitude, latitude] = data.features[0].geometry.coordinates;
+    return { longitude, latitude };
+  } else {
+    return null;
+  }
+}
+
 
 export default function App() {
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const [lng, setLng] = useState(-0.118092);
-  const [lat, setLat] = useState(51.509865);
-  const [zoom, setZoom] = useState(5);
-  const [csvData, setCsvData] = useState([]);
-  const [selectedServiceType, setSelectedServiceType] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedServiceSpecialisms, setSelectedServiceSpecialisms] = useState([]);
+  const [selectedServiceType, setSelectedServiceType] = useState('');
+  const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
+  const [lng, setLng] = useState(-0.1276); // Example initial value for London
+  const [lat, setLat] = useState(51.5072); // Example initial value for London
+  const [zoom, setZoom] = useState(9); // Example initial zoom level
 
+  const [csvData, filteredData, setFilteredData] = useCsvData();
 
-  const updateMapData = async (data) => {
-
-    let features = await Promise.all(data.map(async (entry, index) => {
-
-      const postcode = entry['Service postcode'];
-      const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`);
-      const responseData = await response.json();
-
-      const coordinates = responseData.features[0].geometry.coordinates;
-
-      return {
-        type: 'Feature',
-        properties: {
-          cluster_id: index,
-          Approved: entry['Approved'],
-          'name': entry['Service name'],
-          'address': entry['Service address'],
-          'postcode': postcode,
-          'service type': entry['Service type'],
-        },
-        geometry: {
-          type: 'Point',
-          coordinates: coordinates,
-        },
-      };
-    }));
-
-    let geojson = {
-      type: 'FeatureCollection',
-      features: features,
-    };
-
-    if (map.current.getSource('points')) {
-      map.current.getSource('points').setData(geojson);
-    } else {
-      map.current.addSource('points', {
-        type: 'geojson',
-        data: geojson,
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 20,
-      });
-    }
-  };
+  const [geoJsonData, setGeoJsonData] = useState({
+    type: "FeatureCollection",
+    features: []
+  });
 
   useEffect(() => {
-    if (map.current) return;
-
-    Papa.parse('https://docs.google.com/spreadsheets/d/1Ks74q3_DsWZ_7OIqc3pJ-JzrVBfOKqhb2vB_gosoCSM/export?format=csv&gid=1299242923', {
-      download: true,
-      header: true,
-      complete: (result) => {
-        const approvedData = result.data.filter(item => item.Approved === 'Approved');
-        setCsvData(approvedData);
-
-        setFilteredData(approvedData);
-
-
-        map.current = new mapboxgl.Map({
-          container: mapContainer.current,
-          style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
-          center: [lng, lat],
-          zoom: zoom,
-        });
-
-        map.current.on('move', () => {
-          setLng(map.current.getCenter().lng.toFixed(4));
-          setLat(map.current.getCenter().lat.toFixed(4));
-          setZoom(map.current.getZoom().toFixed(2));
-        });
-
-        (async () => {
-          let features = await Promise.all(approvedData.map(async (entry, index) => {
-            const postcode = entry['Service postcode'];
-            const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${postcode}.json?country=GB&access_token=${mapboxgl.accessToken}`);
-            const data = await response.json();
-
-            const coordinates = data.features[0].geometry.coordinates;
-
-            return {
-              type: 'Feature',
-              properties: {
-                cluster_id: index,
-                Approved: entry['Approved'],
-                'name': entry['Service name'],
-                'address': entry['Service address'],
-                'service type': entry['Service type'],
-                'postcode': postcode,
-              },
-              geometry: {
-                type: 'Point',
-                coordinates: coordinates,
-              },
-            };
-          }));
-
-          let geojson = {
-            type: 'FeatureCollection',
-            features: features,
+    const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+    const fetchAndSetCoordinates = async () => {
+      const featuresWithCoordinates = await Promise.all(filteredData.map(async (item) => {
+        const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
+        if (coordinates) {
+          return {
+            type: "Feature",
+            properties: {
+              name: item["Service name"],
+              address: item["Service address"],
+              postcode: item["Service postcode"],
+              serviceType: item["Service type"],
+              specialisms: item["Specialist services for"],
+            },
+            geometry: {
+              type: "Point",
+              coordinates: [coordinates.longitude, coordinates.latitude],
+            }
           };
+        } else {
+          console.error('No coordinates for', item["Service postcode"]);
+          return null;
+        }
+      }));
 
-          map.current.on('load', function () {
-            if (!map.current.getSource('points')) {
-              map.current.addSource('points', {
-                type: 'geojson',
-                data: geojson,
-                cluster: true,
-                clusterMaxZoom: 14,
-                clusterRadius: 20,
-              });
-            }
-
-            if (!map.current.getLayer('cluster-count')) {
-              map.current.addLayer({
-                id: 'cluster-count',
-                type: 'symbol',
-                source: 'points',
-                filter: ['has', 'point_count'],
-                layout: {
-                  'text-field': ['get', 'point_count_abbreviated'],
-                  'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                  'text-size': 20
-                }
-              });
-            }
-
-            if (!map.current.getLayer('unclustered-point')) {
-              map.current.addLayer({
-                id: 'unclustered-point',
-                type: 'circle',
-                source: 'points',
-                filter: ['!', ['has', 'point_count']],
-                paint: {
-                  'circle-color': '#11b4da',
-                  'circle-radius': 8,
-                  'circle-stroke-width': 1,
-                  'circle-stroke-color': '#fff'
-                }
-              });
-
-              map.current.on('click', 'unclustered-point', (e) => {
-                const coordinates = e.features[0].geometry.coordinates.slice();
-                const name = e.features[0].properties.name;
-                const address = e.features[0].properties.address;
-
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                }
-
-                new mapboxgl.Popup()
-                  .setLngLat(coordinates)
-                  .setHTML(`${name} ${address}`)
-                  .addTo(map.current);
-              });
-            };
-          });
-        })();
-      }
-    });
-  }, [lng, lat, zoom, csvData]);
-
-  const handleServiceTypeChange = (event) => {
-    const selectedServiceTypeName = event.target.value;
-    setSelectedServiceType(selectedServiceTypeName);
-
-    const filteredServiceData = csvData.filter(item => item["Approved"] === 'Approved' && item["Service type"].toLowerCase().includes(selectedServiceTypeName.toLowerCase()));
-    setFilteredData(filteredServiceData);
-
-    updateMapData(filteredServiceData);
-  };
-  const handleSearch = async () => {
-    if (!searchQuery) return;
-
-    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${searchQuery}.json?country=GB&access_token=${mapboxgl.accessToken}`;
-    const response = await fetch(geocodingUrl);
-    const data = await response.json();
-
-    if (data.features.length > 0) {
-      const { coordinates } = data.features[0].geometry;
-      filterDataByDistance(coordinates);
-    }
-  };
-
-  const filterDataByDistance = (searchCoordinates) => {
-    const radius = 32186.9; // 20 miles in meters
-
-    if (map.current && map.current.isSourceLoaded('points')) {
-      const sourceData = map.current.getSource('points')._data;
-
-      const filteredFeatures = sourceData.features.filter(feature => {
-        const [longitude, latitude] = feature.geometry.coordinates;
-        const distance = getDistance(
-          { latitude: searchCoordinates[1], longitude: searchCoordinates[0] },
-          { latitude, longitude }
-        );
-        return distance <= radius;
+      setGeoJsonData({
+        type: "FeatureCollection",
+        features: featuresWithCoordinates.filter(feature => feature !== null)
       });
+    };
 
-      let transformedArray = filteredFeatures.map(feature => {
-        let { Approved, name, address, postcode, 'service type': serviceType } = feature.properties;
-        return {
-          Approved: Approved,
-          'Service name': name,
-          'Service address': address,
-          'Service postcode': postcode,
-          'Service type': serviceType
-        };
-      });
-
-
-      setFilteredData(transformedArray);
-      updateMapData(transformedArray)
+    if (filteredData.length > 0) {
+      fetchAndSetCoordinates();
     }
-  };
-  const clearSearch = () => {
-    setSearchQuery('');
-    const approvedData = csvData.filter(item => item.Approved === 'Approved');
-    setFilteredData(approvedData);
+  }, [filteredData]); 
 
-    if (map.current) {
-      map.current.flyTo({
-        center: [lng, lat],
-        zoom: zoom,
+  useEffect(() => {
+    let filtered = csvData;
+
+    if (selectedServiceType) {
+      filtered = filtered.filter(item => item.serviceType === selectedServiceType);
+    }
+
+    if (selectedSpecialisms.length > 0) {
+      filtered = filtered.filter(item => selectedSpecialisms.some(specialism => item.specialisms.includes(specialism)));
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter(item => {
+        return item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.name.toLowerCase().includes(searchQuery.toLowerCase());
       });
     }
 
-    updateMapData(approvedData);
-  };
-  const handleCheckboxChange = (selectedServiceSpecialism) => {
-    const updatedSelectedServiceSpecialisms = selectedServiceSpecialisms.includes(selectedServiceSpecialism)
-      ? selectedServiceSpecialisms.filter(specialism => specialism !== selectedServiceSpecialism)
-      : [...selectedServiceSpecialisms, selectedServiceSpecialism];
+    setFilteredData(filtered);
+  }, [csvData, searchQuery, selectedServiceType, selectedSpecialisms]);
 
-    setSelectedServiceSpecialisms(updatedSelectedServiceSpecialisms);
 
-    if (updatedSelectedServiceSpecialisms.length === 0) {
-        
-        const approvedData = csvData.filter(item => item.Approved === 'Approved');
-        setFilteredData(approvedData);
-        updateMapData(approvedData);
-    } else {
-        const filteredServiceData = csvData.filter(item =>
-            item["Approved"] === 'Approved' &&
-            updatedSelectedServiceSpecialisms.some(specialism =>
-                item["Specialist services for"] && item["Specialist services for"].includes(specialism)
-            )
-        );
-        setFilteredData(filteredServiceData);
-        updateMapData(filteredServiceData);
-    }
-};
+
   return (
-    <>
-      <Banner />
-      <div>
-        <div ref={mapContainer} className="map-container" />
-        <div>
-          <label htmlFor="searchInput">Search by location: </label>
-          <input
-            id="searchInput"
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button onClick={handleSearch}>Search</button>
-          <button onClick={clearSearch}>Clear Search</button>
-        </div>
-        <div>
-          <label htmlFor="serviceFilter">Filter service type</label>
-          <select
-            id="serviceFilter"
-            value={selectedServiceType}
-            onChange={handleServiceTypeChange}
-          >
-            <option value="">All service types</option>
-            {
-              [...new Set(csvData.map(item => item["Service type"]))]
-                .map((serviceType, index) => (
-                  <option key={index} value={serviceType}>
-                    {serviceType}
-                  </option>
-                ))
-            }
-          </select>
-        </div>
-        <div>
-          {
-            [...new Set(csvData.map(item => item["Specialist services for"]).filter(specialism => specialism.trim() !== ""))]
-              .map((specialism, index) => (
-                <div key={index}>
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${specialism}`}
-                    name="serviceType"
-                    value={specialism}
-                    onChange={() => handleCheckboxChange(specialism)}
-                    checked={selectedServiceSpecialisms.includes(specialism)}
-                  />
-                  <label htmlFor={`checkbox-${specialism}`}>{specialism}</label>
-                </div>
-              ))
-          }
-        </div>
-        <div className="csv-data">
-          <ul>
-            {filteredData.map((item, index) => (
+    <div>
+      <Banner/>
+      {/* <SearchInput searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <ServiceTypeFilter
+        selectedServiceType={selectedServiceType}
+        setSelectedServiceType={setSelectedServiceType}
+      // serviceTypes={serviceTypes} // derived from csvData as shown above
+      />
 
-              <li key={index}>
+      <SpecialismCheckboxes
+        // specialisms={specialisms} // derived from csvData as shown above
+        selectedSpecialisms={selectedSpecialisms}
+        setSelectedSpecialisms={setSelectedSpecialisms}
+      /> */}
 
-                <strong>{item["Service name"]}</strong>: {item["Service address"]}
-              </li>
-            ))}
-          </ul>
-          {filteredData.length === 0 && <p>Sorry! No results found. Try another search?</p>}
-
-        </div>
-        <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
-        <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
-      </div>
-    </>
+      <MapBox
+        lng={lng}
+        lat={lat}
+        zoom={zoom}
+        data={geoJsonData}
+        setLng={setLng}
+        setLat={setLat}
+        setZoom={setZoom}
+      />
+    </div>
   );
 }
