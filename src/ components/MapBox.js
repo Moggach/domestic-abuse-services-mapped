@@ -3,14 +3,11 @@ import mapboxgl from 'mapbox-gl';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom }) {
-
+export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, zoomSetProgrammaticallyRef }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
- 
-
   useEffect(() => {
-    if (map.current) return; // Initialize map only once
+    if (map.current) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
@@ -18,10 +15,21 @@ export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom }
       zoom: zoom,
     });
 
-    map.current.on('load', () => {
-  
+    map.current.on('move', () => {
+      setLng(map.current.getCenter().lng.toFixed(4));
+      setLat(map.current.getCenter().lat.toFixed(4));
+
+      if (!zoomSetProgrammaticallyRef.current) {
+        setZoom(map.current.getZoom());
+      }
+    });
+  }, [lng, lat, zoom, setLng, setLat, setZoom, zoomSetProgrammaticallyRef]);
+
+  useEffect(() => {
+    if (!map.current) return;
+
+    const loadPoints = () => {
       if (data && data.features.length > 0) {
- 
         if (!map.current.getSource('points')) {
           map.current.addSource('points', {
             type: 'geojson',
@@ -30,18 +38,90 @@ export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom }
             clusterMaxZoom: 14,
             clusterRadius: 20,
           });
+
+          map.current.addLayer({
+            id: 'clusters',
+            type: 'circle',
+            source: 'points',
+            filter: ['has', 'point_count'],
+            paint: {
+              'circle-color': [
+                'step',
+                ['get', 'point_count'],
+                '#51bbd6',
+                100,
+                '#f1f075',
+                750,
+                '#f28cb1',
+              ],
+              'circle-radius': [
+                'step',
+                ['get', 'point_count'],
+                20,
+                100,
+                30,
+                750,
+                40,
+              ],
+            },
+          });
+
+          map.current.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: 'points',
+            filter: ['has', 'point_count'],
+            layout: {
+              'text-field': '{point_count_abbreviated}',
+              'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+              'text-size': 12,
+            },
+            paint: {
+              'text-color': '#ffffff',
+            },
+          });
+
+          map.current.addLayer({
+            id: 'unclustered-point',
+            type: 'circle',
+            source: 'points',
+            filter: ['!', ['has', 'point_count']],
+            paint: {
+              'circle-color': '#11b4da',
+              'circle-radius': 4,
+              'circle-stroke-width': 1,
+              'circle-stroke-color': '#fff',
+            },
+          });
+
         } else {
           map.current.getSource('points').setData(data);
         }
       }
-    });
+    };
 
-    map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(2));
-    });
-  }, [lng, lat, zoom, data]); 
+    if (map.current.isStyleLoaded()) {
+      loadPoints();
+    } else {
+      map.current.on('load', loadPoints);
+    }
+
+    return () => {
+      map.current.off('load', loadPoints);
+    };
+  }, [data]);
+
+  useEffect(() => {
+    if (map.current) {
+      map.current.flyTo({
+        center: [lng, lat],
+        zoom: zoom
+      });
+
+    }
+  }, [lng, lat, zoom])
+
+
 
   return <div ref={mapContainer} className="map-container" />;
 }
