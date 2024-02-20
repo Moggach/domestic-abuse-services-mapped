@@ -105,7 +105,7 @@ export default function App() {
     if (searchQuery) {
       filtered = filtered.filter(item => {
         return (item.location && item.location.toLowerCase().includes(searchQuery.toLowerCase())) ||
-               (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+          (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase()));
       });
     }
 
@@ -171,9 +171,18 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         onSubmit={handleSearchSubmit}
         onClear={handleSearchClear}
-        zoomSetProgrammaticallyRef={zoomSetProgrammaticallyRef} 
+        zoomSetProgrammaticallyRef={zoomSetProgrammaticallyRef}
 
       />
+      <div className="csv-data">
+        <ul>
+          {filteredData.map((item, index) => (
+            <li key={index}>
+              <strong>{item["Service name"]}</strong>: {item["Service address"]}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
