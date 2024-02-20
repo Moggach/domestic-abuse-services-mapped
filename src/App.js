@@ -30,10 +30,11 @@ export default function App() {
   const [specialisms, setSpecialisms] = useState([]);
   const [lng, setLng] = useState(-0.1276);
   const [lat, setLat] = useState(51.5072);
+  const [searchLng, setSearchlng] = useState('');
+  const [searchLat, setSearchLat] = useState('');
   const [zoom, setZoom] = useState(5);
   const zoomSetProgrammaticallyRef = useRef(false);
 
-  console.log(zoomSetProgrammaticallyRef)
 
   const [csvData, filteredData, setFilteredData] = useCsvData();
 
@@ -119,27 +120,28 @@ export default function App() {
 
     if (coordinates) {
       zoomSetProgrammaticallyRef.current = true;
+  
 
-      setLng(coordinates.longitude);
-      setLat(coordinates.latitude);
-      setZoom(10);
+      setSearchlng(coordinates.longitude);
+      setSearchLat(coordinates.latitude);
+      setZoom(15);
 
       setTimeout(() => {
         zoomSetProgrammaticallyRef.current = false;
       }, 500);
     }
+  
+
   };
 
 
   const handleSearchClear = () => {
-    // Reset map view or state as necessary
     setLng(-0.1276);
     setLat(51.5072);
     setZoom(5);
 
   };
 
-  console.log('app', zoomSetProgrammaticallyRef)
 
   return (
     <div>
@@ -153,6 +155,10 @@ export default function App() {
         setLat={setLat}
         setZoom={setZoom}
         zoomSetProgrammaticallyRef={zoomSetProgrammaticallyRef}
+        setSearchLng={setSearchlng}
+        setSearchLat={setSearchLat}
+        searchLng={searchLng}
+        searchLat={searchLat}
 
       />
       <ServiceTypeFilter

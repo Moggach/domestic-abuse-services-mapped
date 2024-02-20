@@ -3,11 +3,15 @@ import mapboxgl from 'mapbox-gl';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, zoomSetProgrammaticallyRef }) {
+export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, zoomSetProgrammaticallyRef, searchLng, searchLat
+}) {
+
   const mapContainer = useRef(null);
   const map = useRef(null);
+
+  // Initial map setup
   useEffect(() => {
-    if (map.current) return;
+    if (map.current) return; // Exit if map already initialized
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
@@ -18,12 +22,22 @@ export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, 
     map.current.on('move', () => {
       setLng(map.current.getCenter().lng.toFixed(4));
       setLat(map.current.getCenter().lat.toFixed(4));
-
       if (!zoomSetProgrammaticallyRef.current) {
         setZoom(map.current.getZoom());
       }
     });
   }, [lng, lat, zoom, setLng, setLat, setZoom, zoomSetProgrammaticallyRef]);
+
+  useEffect(() => {
+
+    if (searchLat && searchLng)  {
+      map.current.flyTo({
+        center: [searchLng, searchLat],
+        zoom: 12
+      });
+    }
+  }, [searchLat, searchLng, zoom]);
+
 
   useEffect(() => {
     if (!map.current) return;
@@ -93,7 +107,6 @@ export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, 
               'circle-stroke-color': '#fff',
             },
           });
-
         } else {
           map.current.getSource('points').setData(data);
         }
@@ -110,18 +123,6 @@ export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, 
       map.current.off('load', loadPoints);
     };
   }, [data]);
-
-  useEffect(() => {
-    if (map.current) {
-      map.current.flyTo({
-        center: [lng, lat],
-        zoom: zoom
-      });
-
-    }
-  }, [lng, lat, zoom])
-
-
 
   return <div ref={mapContainer} className="map-container" />;
 }
