@@ -123,6 +123,26 @@ export default function MapBox({
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
             },
+          }
+          );
+          map.current.on('click', 'unclustered-point', (e) => {
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
+              e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
+            }
+            new mapboxgl.Popup()
+              .setLngLat(e.features[0].geometry.coordinates)
+              .setHTML(`<h3>${e.features[0].properties.name}</h3><p>${e.features[0].properties.address}</p>`)
+              .addTo(map.current);
+          });
+    
+          map.current.on('mouseenter', 'unclustered-point', () => {
+            map.current.getCanvas().style.cursor = 'pointer';
+          });
+              map.current.on('mouseleave', 'unclustered-point', () => {
+            map.current.getCanvas().style.cursor = '';
           });
         } else {
           map.current.getSource('points').setData(data);
