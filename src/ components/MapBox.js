@@ -3,9 +3,18 @@ import mapboxgl from 'mapbox-gl';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, zoomSetProgrammaticallyRef, searchLng, searchLat
+export default function MapBox({
+  lng,
+  lat,
+  zoom,
+  data,
+  setLng,
+  setLat,
+  setZoom,
+  searchLng,
+  searchLat,
+  resetZoomTrigger,
 }) {
-
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -22,22 +31,30 @@ export default function MapBox({ lng, lat, zoom, data, setLng, setLat, setZoom, 
     map.current.on('move', () => {
       setLng(map.current.getCenter().lng.toFixed(4));
       setLat(map.current.getCenter().lat.toFixed(4));
-      if (!zoomSetProgrammaticallyRef.current) {
-        setZoom(map.current.getZoom());
-      }
     });
-  }, [lng, lat, zoom, setLng, setLat, setZoom, zoomSetProgrammaticallyRef]);
+  }, [lng, lat, zoom, setLng, setLat, setZoom]);
 
   useEffect(() => {
 
-    if (searchLat && searchLng)  {
+    if (map.current && searchLat && searchLng) {
       map.current.flyTo({
         center: [searchLng, searchLat],
-        zoom: 12
+        zoom: zoom,
       });
     }
+
   }, [searchLat, searchLng, zoom]);
 
+
+  useEffect(() => {
+
+    if (resetZoomTrigger) {
+      map.current.flyTo({
+        center: [lng, lat],
+        zoom: zoom,
+      });
+    }
+  }, [resetZoomTrigger, lng, lat, zoom]);
 
   useEffect(() => {
     if (!map.current) return;

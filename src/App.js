@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapBox from './ components/MapBox';
 import SearchInput from './ components/SearchInput';
 import Banner from './ components/Banner'
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
 import { useCsvData } from './ components/useCsvData'
+
 
 
 async function fetchCoordinates(postcode, accessToken) {
@@ -33,7 +34,6 @@ export default function App() {
   const [searchLng, setSearchlng] = useState('');
   const [searchLat, setSearchLat] = useState('');
   const [zoom, setZoom] = useState(5);
-  const zoomSetProgrammaticallyRef = useRef(false);
 
 
   const [csvData, filteredData, setFilteredData] = useCsvData();
@@ -117,28 +117,17 @@ export default function App() {
     if (!searchQuery) return;
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
     const coordinates = await fetchCoordinates(searchQuery, accessToken);
-
     if (coordinates) {
-      zoomSetProgrammaticallyRef.current = true;
-  
-
       setSearchlng(coordinates.longitude);
       setSearchLat(coordinates.latitude);
-      setZoom(15);
-
-      setTimeout(() => {
-        zoomSetProgrammaticallyRef.current = false;
-      }, 500);
+      setZoom(10); 
     }
-  
 
   };
-
-
   const handleSearchClear = () => {
     setLng(-0.1276);
     setLat(51.5072);
-    setZoom(5);
+    setZoom(5); 
 
   };
 
@@ -154,11 +143,11 @@ export default function App() {
         setLng={setLng}
         setLat={setLat}
         setZoom={setZoom}
-        zoomSetProgrammaticallyRef={zoomSetProgrammaticallyRef}
         setSearchLng={setSearchlng}
         setSearchLat={setSearchLat}
         searchLng={searchLng}
         searchLat={searchLat}
+
 
       />
       <ServiceTypeFilter
@@ -177,7 +166,6 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         onSubmit={handleSearchSubmit}
         onClear={handleSearchClear}
-        zoomSetProgrammaticallyRef={zoomSetProgrammaticallyRef}
 
       />
       <div className="csv-data">
