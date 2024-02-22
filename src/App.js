@@ -120,14 +120,14 @@ export default function App() {
     if (coordinates) {
       setSearchlng(coordinates.longitude);
       setSearchLat(coordinates.latitude);
-      setZoom(10); 
+      setZoom(10);
     }
 
   };
   const handleSearchClear = () => {
     setLng(-0.1276);
     setLat(51.5072);
-    setZoom(5); 
+    setZoom(5);
 
   };
 
@@ -177,6 +177,8 @@ export default function App() {
           ))}
         </ul>
       </div>
+      <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
+      <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
     </div>
   );
 }
