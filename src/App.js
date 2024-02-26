@@ -6,7 +6,18 @@ import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
 import { useCsvData } from './ components/useCsvData'
 
-
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+  return distance * 0.621371; // Convert to miles
+}
 
 async function fetchCoordinates(postcode, accessToken) {
   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(postcode)}.json?country=GB&access_token=${accessToken}`;
@@ -23,8 +34,6 @@ async function fetchCoordinates(postcode, accessToken) {
 }
 
 export default function App() {
-
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
@@ -34,7 +43,9 @@ export default function App() {
   const [searchLng, setSearchlng] = useState('');
   const [searchLat, setSearchLat] = useState('');
   const [zoom, setZoom] = useState(5);
-
+  const [searchInput, setSearchInput] = useState('');
+  const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
 
   const [csvData, filteredData, setFilteredData] = useCsvData();
 
@@ -82,9 +93,7 @@ export default function App() {
 
   useEffect(() => {
     const newServiceTypes = [...new Set(csvData.map(item => item['Service type']))].filter(Boolean);
-
     const newSpecialisms = [...new Set(csvData.map(item => item['Specialist services for']))].filter(Boolean);
-
     setServiceTypes(newServiceTypes);
     setSpecialisms(newSpecialisms);
   }, [csvData]);
@@ -103,35 +112,64 @@ export default function App() {
       );
     }
 
-    if (searchQuery) {
+    if (submittedSearchQuery) {
       filtered = filtered.filter(item => {
-        return (item.location && item.location.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+        return (item['Service address'] && item['Service address'].toLowerCase().includes(submittedSearchQuery.toLowerCase())) ||
+          (item['Service name'] && item['Service name'].toLowerCase().includes(submittedSearchQuery.toLowerCase()));
       });
     }
 
     setFilteredData(filtered);
-  }, [csvData, searchQuery, selectedServiceType, selectedSpecialisms, setFilteredData]);
+  }, [csvData, submittedSearchQuery, selectedServiceType, selectedSpecialisms, setFilteredData]);
+
 
   const handleSearchSubmit = async () => {
-    if (!searchQuery) return;
+    if (!searchInput) return;
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-    const coordinates = await fetchCoordinates(searchQuery, accessToken);
+    const coordinates = await fetchCoordinates(searchInput, accessToken);
     if (coordinates) {
       setSearchlng(coordinates.longitude);
       setSearchLat(coordinates.latitude);
       setZoom(10);
+      setSubmittedSearchQuery(searchInput);
+      setSearchSubmitted(true);
     }
-
   };
   const handleSearchClear = () => {
     setLng(-0.1276);
     setLat(51.5072);
     setZoom(5);
-
+    setSearchInput('');
+    setSubmittedSearchQuery('');
+    setSearchSubmitted(false);
   };
 
+  useEffect(() => {
+    const updateFilteredDataWithDistance = async () => {
+      const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+      let servicesWithDistance = await Promise.all(csvData.map(async (item) => {
+        const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
+        if (coordinates) {
+          const distance = calculateDistance(searchLat, searchLng, coordinates.latitude, coordinates.longitude);
+          return { ...item, distance };
+        }
+        return null;
+      }));
 
+      servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
+
+      servicesWithDistance.sort((a, b) => a.distance - b.distance);
+
+      const closestServices = servicesWithDistance.slice(0, 10);
+
+      setFilteredData(closestServices);
+    };
+
+    if (searchLat && searchLng && csvData.length > 0) {
+      updateFilteredDataWithDistance();
+    }
+  }, [csvData, searchLat, searchLng, setFilteredData]);
   return (
     <div>
       <Banner />
@@ -162,20 +200,23 @@ export default function App() {
         setSelectedSpecialisms={setSelectedSpecialisms}
       />
       <SearchInput
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+        searchQuery={searchInput}
+        setSearchQuery={setSearchInput}
         onSubmit={handleSearchSubmit}
         onClear={handleSearchClear}
-
       />
       <div className="csv-data">
-        <ul>
-          {filteredData.map((item, index) => (
-            <li key={index}>
-              <strong>{item["Service name"]}</strong>: {item["Service address"]}
-            </li>
-          ))}
-        </ul>
+        {searchSubmitted && filteredData.length === 0 ? (
+          <div>No services found within 10 miles of your search location.</div>
+        ) : (
+          <ul>
+            {filteredData.map((item, index) => (
+              <li key={index}>
+                <strong>{item["Service name"]}</strong>: {item["Service address"]}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
       <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
