@@ -112,14 +112,6 @@ export default function App() {
       );
     }
 
-    if (submittedSearchQuery) {
-      filtered = filtered.filter(item => {
-
-        return (item['Service address'] && item['Service address'].toLowerCase().includes(submittedSearchQuery.toLowerCase())) ||
-          (item['Service name'] && item['Service name'].toLowerCase().includes(submittedSearchQuery.toLowerCase()));
-      });
-    }
-
     setFilteredData(filtered);
   }, [csvData, submittedSearchQuery, selectedServiceType, selectedSpecialisms, setFilteredData]);
 
@@ -162,7 +154,6 @@ export default function App() {
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
 
       const closestServices = servicesWithDistance.slice(0, 10);
-
       setFilteredData(closestServices);
     };
 
