@@ -5,6 +5,7 @@ import Banner from './ components/Banner'
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
 import { useCsvData } from './ components/useCsvData'
+import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs } from './styles/LayoutStyles';
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in kilometers
@@ -38,8 +39,8 @@ export default function App() {
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
   const [specialisms, setSpecialisms] = useState([]);
-  const [lng, setLng] = useState(-0.1276);
-  const [lat, setLat] = useState(51.5072);
+  const [lng, setLng] = useState(-3.5);
+  const [lat, setLat] = useState(54.5);
   const [searchLng, setSearchlng] = useState('');
   const [searchLat, setSearchLat] = useState('');
   const [zoom, setZoom] = useState(5);
@@ -129,8 +130,8 @@ export default function App() {
     }
   };
   const handleSearchClear = () => {
-    setLng(-0.1276);
-    setLat(51.5072);
+    setLng(-3.5);
+    setLat(54.5);
     setZoom(5);
     setSearchInput('');
     setSubmittedSearchQuery('');
@@ -162,55 +163,60 @@ export default function App() {
     }
   }, [csvData, searchLat, searchLng, setFilteredData]);
   return (
-    <div>
+    <AppContainer>
       <Banner />
-      <MapBox
-        lng={lng}
-        lat={lat}
-        zoom={zoom}
-        data={geoJsonData}
-        setLng={setLng}
-        setLat={setLat}
-        setZoom={setZoom}
-        setSearchLng={setSearchlng}
-        setSearchLat={setSearchLat}
-        searchLng={searchLng}
-        searchLat={searchLat}
-
-
-      />
-      <ServiceTypeFilter
-        selectedServiceType={selectedServiceType}
-        setSelectedServiceType={setSelectedServiceType}
-        serviceTypes={serviceTypes}
-      />
-
-      <SpecialismCheckboxes
-        specialisms={specialisms}
-        selectedSpecialisms={selectedSpecialisms}
-        setSelectedSpecialisms={setSelectedSpecialisms}
-      />
-      <SearchInput
-        searchQuery={searchInput}
-        setSearchQuery={setSearchInput}
-        onSubmit={handleSearchSubmit}
-        onClear={handleSearchClear}
-      />
-      <div className="csv-data">
-        {searchSubmitted && filteredData.length === 0 ? (
-          <div>No services found within 10 miles of your search location.</div>
-        ) : (
-          <ul>
-            {filteredData.map((item, index) => (
-              <li key={index}>
-                <strong>{item["Service name"]}</strong>: {item["Service address"]}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <ContentContainer>
+        <MapContainer>
+          <MapBox
+            lng={lng}
+            lat={lat}
+            zoom={zoom}
+            data={geoJsonData}
+            setLng={setLng}
+            setLat={setLat}
+            setZoom={setZoom}
+            setSearchLng={setSearchlng}
+            setSearchLat={setSearchLat}
+            searchLng={searchLng}
+            searchLat={searchLat}
+          />
+        </MapContainer>
+        <DataContainer>
+          <Inputs>
+          <ServiceTypeFilter
+            selectedServiceType={selectedServiceType}
+            setSelectedServiceType={setSelectedServiceType}
+            serviceTypes={serviceTypes}
+          />
+          <SpecialismCheckboxes
+            specialisms={specialisms}
+            selectedSpecialisms={selectedSpecialisms}
+            setSelectedSpecialisms={setSelectedSpecialisms}
+          />
+          <SearchInput
+            searchQuery={searchInput}
+            setSearchQuery={setSearchInput}
+            onSubmit={handleSearchSubmit}
+            onClear={handleSearchClear}
+          />
+          </Inputs>
+          <div className="csv-data">
+            {searchSubmitted && filteredData.length === 0 ? (
+              <div>No services found within 10 miles of your search location.</div>
+            ) : (
+              <ul>
+                {filteredData.map((item, index) => (
+                  <li key={index}>
+                    {item["Service name"]}: {item["Service address"]}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </DataContainer>
+      </ContentContainer>
       <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
       <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
-    </div>
+    </AppContainer>
   );
 }
