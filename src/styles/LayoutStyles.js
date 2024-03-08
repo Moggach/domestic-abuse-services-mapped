@@ -12,7 +12,7 @@ export const AppContainer = styled.div`
 
 export const ContentContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: space-between;
   width: 100%;
   @media (max-width: 768px) {
