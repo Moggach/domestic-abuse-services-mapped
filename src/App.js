@@ -218,10 +218,10 @@ export default function App() {
       </ContentContainer>
 
     </AppContainer>
-         <FooterContainer>
+         <footer>
          <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
          <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
-         </FooterContainer>
+         </footer>
 </>   
   );
 }

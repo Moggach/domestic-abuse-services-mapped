@@ -14,7 +14,7 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
         onChange={(e) => setSearchQuery(e.target.value)}
       />
       <button onClick={onSubmit}>Submit</button>
-      <button onClick={handleClear}>Clear</button>
+      {/* <button onClick={handleClear}>Clear</button> */}
     </div>
   );
 }

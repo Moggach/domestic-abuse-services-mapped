@@ -43,25 +43,41 @@ export const DataContainer = styled.div`
 `;
 
 export const Inputs = styled.div`
-display: flex;
-flex-direction: column;
-padding: 10px;
-font-size: 18px;
-gap: 20px;
-background-color: white;
-position: absolute;
-top: 10px;
-left: 10px;
-z-index: 10;
-border-radius: 10px;
-box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.20);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  font-size: 18px;
+  gap: 20px;
+  background-color: white;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.20);
 
-label {
-    margin-right: 5px;
-}
+  label {
+      margin-right: 10px;
+  }
+  select, input {
+    padding: 5px;
+    border: 1px black dotted;
+  }
+
+
+
+  button {
+    background-color: #EA4C89;
+    border-radius: 5px;
+    border-style: none;
+    color: #FFFFFF;
+    cursor: pointer;
+    padding: 8px;
+    text-align: center;
+    margin-left: 10px;
+
+  }
+
 
 `;
 
-export const FooterContainer = styled.div`
-
-`
