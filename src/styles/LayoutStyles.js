@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 
 export const AppContainer = styled.div`
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-  font-family: 'Poppins', sans-serif;
-  font-size: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,7 +9,7 @@ export const AppContainer = styled.div`
 
 export const ContentContainer = styled.div`
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   justify-content: space-between;
   width: 100%;
   @media (max-width: 768px) {
@@ -48,10 +45,23 @@ export const DataContainer = styled.div`
 export const Inputs = styled.div`
 display: flex;
 flex-direction: column;
-gap: 10px;
+padding: 10px;
+font-size: 18px;
+gap: 20px;
+background-color: white;
+position: absolute;
+top: 10px;
+left: 10px;
+z-index: 10;
+border-radius: 10px;
+box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.20);
 
 label {
     margin-right: 5px;
 }
 
 `;
+
+export const FooterContainer = styled.div`
+
+`

@@ -5,7 +5,7 @@ import Banner from './ components/Banner'
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
 import { useCsvData } from './ components/useCsvData'
-import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs } from './styles/LayoutStyles';
+import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs, FooterContainer } from './styles/LayoutStyles';
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in kilometers
@@ -163,6 +163,7 @@ export default function App() {
     }
   }, [csvData, searchLat, searchLng, setFilteredData]);
   return (
+    <>
     <AppContainer>
       <Banner />
       <ContentContainer>
@@ -215,8 +216,12 @@ export default function App() {
           </div>
         </DataContainer>
       </ContentContainer>
-      <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
-      <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
+
     </AppContainer>
+         <FooterContainer>
+         <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
+         <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
+         </FooterContainer>
+</>   
   );
 }
