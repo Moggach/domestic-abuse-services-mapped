@@ -93,8 +93,40 @@ export default function App() {
   }, [airtableData]);
 
   useEffect(() => {
-    const newServiceTypes = [...new Set(airtableData.map(item => item['Service type']))].filter(Boolean);
-    const newSpecialisms = [...new Set(airtableData.map(item => item['Specialist services for']))].filter(Boolean);
+    const flattenAndUnique = (data) => {
+      const allServiceTypes = data.reduce((acc, item) => {
+        const serviceTypes = item['Service type'];
+        if (Array.isArray(serviceTypes)) {
+          acc.push(...serviceTypes);
+        } else if (typeof serviceTypes === 'string') {
+          acc.push(...serviceTypes.split(',').map(type => type.trim()));
+        } else {
+          acc.push(serviceTypes);
+        }
+        return acc;
+      }, []);
+          return [...new Set(allServiceTypes)].filter(Boolean);
+    };
+    
+    const newServiceTypes = flattenAndUnique(airtableData);    
+
+    const flattenAndUniqueSpecialisms = (data) => {
+      const allSpecialisms = data.reduce((acc, item) => {
+        const specialisms = item['Specialist services for'];
+        if (Array.isArray(specialisms)) {
+          acc.push(...specialisms);
+        } else if (typeof specialisms === 'string') {
+          acc.push(...specialisms.split(',').map(specialism => specialism.trim()));
+        } else {
+          acc.push(specialisms);
+        }
+        return acc;
+      }, []);
+    
+      return [...new Set(allSpecialisms)].filter(Boolean);
+    };
+    
+    const newSpecialisms = flattenAndUniqueSpecialisms(airtableData);    
     setServiceTypes(newServiceTypes);
     setSpecialisms(newSpecialisms);
   }, [airtableData]);
