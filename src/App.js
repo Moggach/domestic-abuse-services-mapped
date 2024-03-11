@@ -56,42 +56,48 @@ export default function App() {
     features: []
   });
 
-  useEffect(() => {
+  const generateGeoJsonData = async (data) => {
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-    const fetchAndSetCoordinates = async () => {
-      const featuresWithCoordinates = await Promise.all(airtableData.map(async (item) => {
-        const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
-        if (coordinates) {
-          return {
-            type: "Feature",
-            properties: {
-              name: item["Service name"],
-              address: item["Service address"],
-              postcode: item["Service postcode"],
-              serviceType: item["Service type"],
-              specialisms: item["Specialist services for"],
-            },
-            geometry: {
-              type: "Point",
-              coordinates: [coordinates.longitude, coordinates.latitude],
-            }
-          };
-        } else {
-          console.error('No coordinates for', item["Service postcode"]);
-          return null;
-        }
-      }));
+    const featuresWithCoordinates = await Promise.all(data.map(async (item) => {
+      const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
+      if (coordinates) {
+        return {
+          type: "Feature",
+          properties: {
+            name: item["Service name"],
+            address: item["Service address"],
+            postcode: item["Service postcode"],
+            serviceType: item["Service type"],
+            specialisms: item["Specialist services for"],
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [coordinates.longitude, coordinates.latitude],
+          }
+        };
+      } else {
+        console.error('No coordinates for', item["Service postcode"]);
+        return null;
+      }
+    }));
 
-      setGeoJsonData({
-        type: "FeatureCollection",
-        features: featuresWithCoordinates.filter(feature => feature !== null)
-      });
+    return {
+      type: "FeatureCollection",
+      features: featuresWithCoordinates.filter(feature => feature !== null)
     };
+  };
 
+  useEffect(() => {
     if (airtableData.length > 0) {
-      fetchAndSetCoordinates();
+      generateGeoJsonData(airtableData).then(setGeoJsonData);
     }
   }, [airtableData]);
+
+  useEffect(() => {
+    if (filteredData.length > 0) {
+      generateGeoJsonData(filteredData).then(setGeoJsonData);
+    }
+  }, [filteredData]);
 
   useEffect(() => {
     const flattenAndUnique = (data) => {
