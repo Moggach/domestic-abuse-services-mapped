@@ -49,6 +49,7 @@ export default function App() {
   const [searchSubmitted, setSearchSubmitted] = useState(false);
 
   const [airtableData, setAirTableData] = useAirTableData();
+  const [filteredData, setFilteredData] = useState([]);
 
   const [geoJsonData, setGeoJsonData] = useState({
     type: "FeatureCollection",
@@ -105,10 +106,10 @@ export default function App() {
         }
         return acc;
       }, []);
-          return [...new Set(allServiceTypes)].filter(Boolean);
+      return [...new Set(allServiceTypes)].filter(Boolean);
     };
-    
-    const newServiceTypes = flattenAndUnique(airtableData);    
+
+    const newServiceTypes = flattenAndUnique(airtableData);
 
     const flattenAndUniqueSpecialisms = (data) => {
       const allSpecialisms = data.reduce((acc, item) => {
@@ -122,32 +123,40 @@ export default function App() {
         }
         return acc;
       }, []);
-    
+
       return [...new Set(allSpecialisms)].filter(Boolean);
     };
-    
-    const newSpecialisms = flattenAndUniqueSpecialisms(airtableData);    
+
+    const newSpecialisms = flattenAndUniqueSpecialisms(airtableData);
     setServiceTypes(newServiceTypes);
     setSpecialisms(newSpecialisms);
   }, [airtableData]);
 
   useEffect(() => {
-    let filtered = airtableData;
+    let result = airtableData;
 
     if (selectedServiceType) {
-      filtered = filtered.filter(item => item['Service type'] === selectedServiceType);
+      result = result.filter(item => {
+        const serviceType = item['Service type'];
+        return Array.isArray(serviceType) ? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
+      });
     }
 
     if (selectedSpecialisms.length > 0) {
-      filtered = filtered.filter(item =>
-        selectedSpecialisms.some(specialism =>
-          item['Specialist services for'] && item['Specialist services for'].includes(specialism))
-      );
+      result = result.filter(item => {
+        const itemSpecialisms = item['Specialist services for'];
+        return selectedSpecialisms.some(specialism => {
+          if (Array.isArray(itemSpecialisms)) {
+            return itemSpecialisms.includes(specialism);
+          } else {
+            return itemSpecialisms === specialism;
+          }
+        });
+      });
     }
 
-    setAirTableData(filtered);
-  }, [airtableData, submittedSearchQuery, selectedServiceType, selectedSpecialisms, setAirTableData]);
-
+    setFilteredData(result);
+  }, [selectedServiceType, selectedSpecialisms, airtableData]);
 
   const handleSearchSubmit = async () => {
     if (!searchInput) return;
@@ -234,11 +243,11 @@ export default function App() {
               />
             </Inputs>
             <div className="csv-data">
-              {searchSubmitted && airtableData.length === 0 ? (
+              {searchSubmitted && filteredData.length === 0 ? (
                 <div>No services found within 10 miles of your search location.</div>
               ) : (
                 <ul>
-                  {airtableData.map((item, index) => (
+                  {filteredData.map((item, index) => (
                     <li key={index}>
                       {item["Service name"]}: {item["Service address"]}
                     </li>
