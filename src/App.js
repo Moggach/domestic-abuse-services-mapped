@@ -45,7 +45,7 @@ export default function App() {
   const [searchLat, setSearchLat] = useState('');
   const [zoom, setZoom] = useState(5);
   const [searchInput, setSearchInput] = useState('');
-  const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
+  const [setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
 
   const [airtableData, setAirTableData] = useAirTableData();
