@@ -4,8 +4,8 @@ import SearchInput from './ components/SearchInput';
 import Banner from './ components/Banner'
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
-import { useCsvData } from './ components/useCsvData'
-import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs, FooterContainer } from './styles/LayoutStyles';
+import { useAirTableData } from './ components/useAirtableData';
+import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs } from './styles/LayoutStyles';
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in kilometers
@@ -48,7 +48,7 @@ export default function App() {
   const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
 
-  const [csvData, filteredData, setFilteredData] = useCsvData();
+  const [airtableData, setAirTableData] = useAirTableData();
 
   const [geoJsonData, setGeoJsonData] = useState({
     type: "FeatureCollection",
@@ -58,7 +58,7 @@ export default function App() {
   useEffect(() => {
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
     const fetchAndSetCoordinates = async () => {
-      const featuresWithCoordinates = await Promise.all(filteredData.map(async (item) => {
+      const featuresWithCoordinates = await Promise.all(airtableData.map(async (item) => {
         const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
         if (coordinates) {
           return {
@@ -87,20 +87,20 @@ export default function App() {
       });
     };
 
-    if (filteredData.length > 0) {
+    if (airtableData.length > 0) {
       fetchAndSetCoordinates();
     }
-  }, [filteredData]);
+  }, [airtableData]);
 
   useEffect(() => {
-    const newServiceTypes = [...new Set(csvData.map(item => item['Service type']))].filter(Boolean);
-    const newSpecialisms = [...new Set(csvData.map(item => item['Specialist services for']))].filter(Boolean);
+    const newServiceTypes = [...new Set(airtableData.map(item => item['Service type']))].filter(Boolean);
+    const newSpecialisms = [...new Set(airtableData.map(item => item['Specialist services for']))].filter(Boolean);
     setServiceTypes(newServiceTypes);
     setSpecialisms(newSpecialisms);
-  }, [csvData]);
+  }, [airtableData]);
 
   useEffect(() => {
-    let filtered = csvData;
+    let filtered = airtableData;
 
     if (selectedServiceType) {
       filtered = filtered.filter(item => item['Service type'] === selectedServiceType);
@@ -113,8 +113,8 @@ export default function App() {
       );
     }
 
-    setFilteredData(filtered);
-  }, [csvData, submittedSearchQuery, selectedServiceType, selectedSpecialisms, setFilteredData]);
+    setAirTableData(filtered);
+  }, [airtableData, submittedSearchQuery, selectedServiceType, selectedSpecialisms, setAirTableData]);
 
 
   const handleSearchSubmit = async () => {
@@ -139,9 +139,9 @@ export default function App() {
   };
 
   useEffect(() => {
-    const updateFilteredDataWithDistance = async () => {
+    const updateairtableDataWithDistance = async () => {
       const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-      let servicesWithDistance = await Promise.all(csvData.map(async (item) => {
+      let servicesWithDistance = await Promise.all(airtableData.map(async (item) => {
         const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
         if (coordinates) {
           const distance = calculateDistance(searchLat, searchLng, coordinates.latitude, coordinates.longitude);
@@ -155,73 +155,72 @@ export default function App() {
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
 
       const closestServices = servicesWithDistance.slice(0, 10);
-      setFilteredData(closestServices);
+      setAirTableData(closestServices);
     };
 
-    if (searchLat && searchLng && csvData.length > 0) {
-      updateFilteredDataWithDistance();
+    if (searchLat && searchLng && airtableData.length > 0) {
+      updateairtableDataWithDistance();
     }
-  }, [csvData, searchLat, searchLng, setFilteredData]);
+  }, [airtableData, searchLat, searchLng, setAirTableData]);
   return (
     <>
-    <AppContainer>
-      <Banner />
-      <ContentContainer>
-        <MapContainer>
-          <MapBox
-            lng={lng}
-            lat={lat}
-            zoom={zoom}
-            data={geoJsonData}
-            setLng={setLng}
-            setLat={setLat}
-            setZoom={setZoom}
-            setSearchLng={setSearchlng}
-            setSearchLat={setSearchLat}
-            searchLng={searchLng}
-            searchLat={searchLat}
-          />
-        </MapContainer>
-        <DataContainer>
-          <Inputs>
-          <ServiceTypeFilter
-            selectedServiceType={selectedServiceType}
-            setSelectedServiceType={setSelectedServiceType}
-            serviceTypes={serviceTypes}
-          />
-          <SpecialismCheckboxes
-            specialisms={specialisms}
-            selectedSpecialisms={selectedSpecialisms}
-            setSelectedSpecialisms={setSelectedSpecialisms}
-          />
-          <SearchInput
-            searchQuery={searchInput}
-            setSearchQuery={setSearchInput}
-            onSubmit={handleSearchSubmit}
-            onClear={handleSearchClear}
-          />
-          </Inputs>
-          <div className="csv-data">
-            {searchSubmitted && filteredData.length === 0 ? (
-              <div>No services found within 10 miles of your search location.</div>
-            ) : (
-              <ul>
-                {filteredData.map((item, index) => (
-                  <li key={index}>
-                    {item["Service name"]}: {item["Service address"]}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </DataContainer>
-      </ContentContainer>
-
-    </AppContainer>
-         <footer>
-         <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
-         <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
-         </footer>
-</>   
+      <AppContainer>
+        <Banner />
+        <ContentContainer>
+          <MapContainer>
+            <MapBox
+              lng={lng}
+              lat={lat}
+              zoom={zoom}
+              data={geoJsonData}
+              setLng={setLng}
+              setLat={setLat}
+              setZoom={setZoom}
+              setSearchLng={setSearchlng}
+              setSearchLat={setSearchLat}
+              searchLng={searchLng}
+              searchLat={searchLat}
+            />
+          </MapContainer>
+          <DataContainer>
+            <Inputs>
+              <ServiceTypeFilter
+                selectedServiceType={selectedServiceType}
+                setSelectedServiceType={setSelectedServiceType}
+                serviceTypes={serviceTypes}
+              />
+              <SpecialismCheckboxes
+                specialisms={specialisms}
+                selectedSpecialisms={selectedSpecialisms}
+                setSelectedSpecialisms={setSelectedSpecialisms}
+              />
+              <SearchInput
+                searchQuery={searchInput}
+                setSearchQuery={setSearchInput}
+                onSubmit={handleSearchSubmit}
+                onClear={handleSearchClear}
+              />
+            </Inputs>
+            <div className="csv-data">
+              {searchSubmitted && airtableData.length === 0 ? (
+                <div>No services found within 10 miles of your search location.</div>
+              ) : (
+                <ul>
+                  {airtableData.map((item, index) => (
+                    <li key={index}>
+                      {item["Service name"]}: {item["Service address"]}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </DataContainer>
+        </ContentContainer>
+      </AppContainer>
+      <footer>
+        <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
+        <p>Service isn't listed? <a href="https://454j5he3hbn.typeform.com/to/jrZlmRgL">Submit here</a></p>
+      </footer>
+    </>
   );
 }
