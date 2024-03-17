@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
-
+import PopUp from '../ components/PopUp'
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 export default function MapBox({
@@ -17,6 +17,7 @@ export default function MapBox({
 }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
+  const [popupInfo, setPopupInfo] = React.useState(null);
 
   // Initial map setup
   useEffect(() => {
@@ -132,16 +133,20 @@ export default function MapBox({
             while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
               e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
             }
-            new mapboxgl.Popup()
-              .setLngLat(e.features[0].geometry.coordinates)
-              .setHTML(`<h3>${e.features[0].properties.name}</h3><p>${e.features[0].properties.address}</p>`)
-              .addTo(map.current);
+
+            const coordinates = e.features[0].geometry.coordinates;
+            const name = e.features[0].properties.name;
+            const address = e.features[0].properties.address;
+
+            setPopupInfo({ coordinates, name, address });
+
+
           });
-    
+
           map.current.on('mouseenter', 'unclustered-point', () => {
             map.current.getCanvas().style.cursor = 'pointer';
           });
-              map.current.on('mouseleave', 'unclustered-point', () => {
+          map.current.on('mouseleave', 'unclustered-point', () => {
             map.current.getCanvas().style.cursor = '';
           });
         } else {
@@ -161,5 +166,9 @@ export default function MapBox({
     };
   }, [data]);
 
-  return <div ref={mapContainer} className="map-container" />;
-}
+  return (
+    <div ref={mapContainer} className="map-container">
+      {popupInfo && <PopUp map={map} {...popupInfo} />}
+    </div>
+  )
+};
