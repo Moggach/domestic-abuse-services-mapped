@@ -83,6 +83,10 @@ export const Inputs = styled.div`
 `;
 
 export const GlobalStyles = createGlobalStyle`
+
+.mapboxgl-popup {
+  max-width: fit-content !important;
+}
 .pop-up-container {
   display: flex;
   flex-direction: column;
