@@ -72,6 +72,7 @@ export default function App() {
             email: item["Service email address"],
             website: item["Service website"],
             phone: item["Service phone number"],
+            donate: item["Service donation link"],
             serviceType: item["Service type"],
             specialisms: item["Specialist services for"],
           },

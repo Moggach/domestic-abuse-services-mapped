@@ -18,17 +18,17 @@ const PopUp = ({ map, coordinates, name, address, phone, website, email, donate 
                 htmlContent +=  `<div class="pop-up-itemt">${address}</div>`;
             }
             if (phone) {
-                htmlContent += `<div class="pop-up-item"><img src="${phoneIconUrl}" alt="Phone" style="height: 15px;"/> ${phone}</div>`;
+                htmlContent += `<div class="pop-up-item"><img src="${phoneIconUrl}" alt="Phone" style="height: 15px;"/><a href="tel:${phone}" style="text-decoration: none; color: inherit;"> ${phone}</a></div>`;
             }
             if (email) {
-                htmlContent += `<div class="pop-up-item"><img src="${emailIconUrl}" alt="Email" style="height: 15px;"/> ${email}</div>`;
+                htmlContent += `<div class="pop-up-item"><img src="${emailIconUrl}" alt="Email" style="height: 15px;"/><a href="mailto:${email}" style="text-decoration: none; color: inherit;"> ${email}</a></div>`;
             }
             if (website) {
                 htmlContent += `<div class="pop-up-item"><img src="${websiteIconUrl}" alt="Website" style="height: 15px;"/> <a href="${website}" target="_blank">${website}</a></div>`;
             }
         
             if (donate) {
-                htmlContent += `<div class="pop-up-item"><img src="${donateIconUrl}" alt="Donate" style="height: 15px;"/> ${donate}</div>`;
+                htmlContent += `<div class="pop-up-item"><img src="${donateIconUrl}" alt="Donate" style="height: 15px;"/>  <a href="${donate}" target="_blank">${donate}</a></div>`;
             }
             htmlContent += `</div>`;
 
