@@ -69,6 +69,9 @@ export default function App() {
             name: item["Service name"],
             address: item["Service address"],
             postcode: item["Service postcode"],
+            email: item["Service email address"],
+            website: item["Service website"],
+            phone: item["Service phone number"],
             serviceType: item["Service type"],
             specialisms: item["Specialist services for"],
           },
@@ -94,7 +97,6 @@ export default function App() {
       generateGeoJsonData(airtableData).then(setGeoJsonData);
     }
   }, [airtableData]);
-
   useEffect(() => {
     if (filteredData.length > 0) {
       generateGeoJsonData(filteredData).then(setGeoJsonData);

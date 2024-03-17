@@ -133,12 +133,18 @@ export default function MapBox({
             while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
               e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
             }
+            console.log(e.features[0])
 
             const coordinates = e.features[0].geometry.coordinates;
             const name = e.features[0].properties.name;
             const address = e.features[0].properties.address;
+            const phone = e.features[0].properties.phone;
+            const email = e.features[0].properties.email;
+            const website = e.features[0].properties.website;
+            const donate = e.features[0].properties.donate;
 
-            setPopupInfo({ coordinates, name, address });
+
+            setPopupInfo({ coordinates, name, address, phone, email, website, donate });
 
 
           });

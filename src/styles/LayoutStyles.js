@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
 export const AppContainer = styled.div`
   display: flex;
@@ -81,3 +82,28 @@ export const Inputs = styled.div`
 
 `;
 
+export const GlobalStyles = createGlobalStyle`
+.pop-up-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+  .popup-title {
+    font-size: 16px;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+  }
+ 
+  .pop-up-item {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .popup-link {
+    text-decoration: none;
+  }
+  .popup-icon {
+    height: 15px;
+  }
+`;
