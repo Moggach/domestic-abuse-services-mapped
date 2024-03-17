@@ -219,9 +219,7 @@ export default function App() {
     <>
       <AppContainer>
         <Banner />
-        <button onClick={toggleFiltersVisibility}>
-          {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
-        </button>
+
         <ContentContainer>
           <MapContainer>
             <MapBox
@@ -238,27 +236,32 @@ export default function App() {
               searchLat={searchLat}
             />
           </MapContainer>
+
           <DataContainer>
-            {isFiltersVisible && (
-              <Inputs>
-                <ServiceTypeFilter
-                  selectedServiceType={selectedServiceType}
-                  setSelectedServiceType={setSelectedServiceType}
-                  serviceTypes={serviceTypes}
-                />
-                <SpecialismCheckboxes
-                  specialisms={specialisms}
-                  selectedSpecialisms={selectedSpecialisms}
-                  setSelectedSpecialisms={setSelectedSpecialisms}
-                />
-                <SearchInput
-                  searchQuery={searchInput}
-                  setSearchQuery={setSearchInput}
-                  onSubmit={handleSearchSubmit}
-                  onClear={handleSearchClear}
-                />
-              </Inputs>
-            )}
+            <Inputs isVisible={isFiltersVisible}>
+
+              <ServiceTypeFilter
+                selectedServiceType={selectedServiceType}
+                setSelectedServiceType={setSelectedServiceType}
+                serviceTypes={serviceTypes}
+              />
+              <SpecialismCheckboxes
+                specialisms={specialisms}
+                selectedSpecialisms={selectedSpecialisms}
+                setSelectedSpecialisms={setSelectedSpecialisms}
+              />
+              <SearchInput
+                searchQuery={searchInput}
+                setSearchQuery={setSearchInput}
+                onSubmit={handleSearchSubmit}
+                onClear={handleSearchClear}
+              />
+
+            </Inputs>
+            <button onClick={toggleFiltersVisibility} style={{ 'position': 'fixed', 'top': '10px', 'left': '5px', 'z-index': '11' }}>
+              {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
+            </button>
+
             <div className="csv-data">
               {searchSubmitted && filteredData.length === 0 ? (
                 <div>No services found within 10 miles of your search location.</div>
