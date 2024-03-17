@@ -48,8 +48,10 @@ export default function App() {
   const [setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
 
-  const [airtableData, setAirTableData] = useAirTableData();
+  const [airtableData] = useAirTableData();
   const [filteredData, setFilteredData] = useState([]);
+  const [setFilteredDataWithDistance] = useState([]);
+
 
   const [geoJsonData, setGeoJsonData] = useState({
     type: "FeatureCollection",
@@ -184,9 +186,10 @@ export default function App() {
     setSubmittedSearchQuery('');
     setSearchSubmitted(false);
   };
-
   useEffect(() => {
-    const updateairtableDataWithDistance = async () => {
+    const updateAirtableDataWithDistance = async () => {
+      if (!searchLat || !searchLng) return;
+  
       const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
       let servicesWithDistance = await Promise.all(airtableData.map(async (item) => {
         const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
@@ -196,19 +199,16 @@ export default function App() {
         }
         return null;
       }));
-
+  
       servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
-
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
-
-      const closestServices = servicesWithDistance.slice(0, 10);
-      setAirTableData(closestServices);
+  
+      setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
     };
+  
+    updateAirtableDataWithDistance();
+  }, [searchLat, searchLng, airtableData, setFilteredDataWithDistance]); 
 
-    if (searchLat && searchLng && airtableData.length > 0) {
-      updateairtableDataWithDistance();
-    }
-  }, [airtableData, searchLat, searchLng, setAirTableData]);
   return (
     <>
       <AppContainer>

@@ -1,13 +1,12 @@
-
-
 import { useState, useEffect } from 'react';
 
 export function useAirTableData() {
     const [airtableData, setAirtableData] = useState([]);
 
-    let Airtable = require('airtable');
-    let base = new Airtable({ apiKey: process.env.REACT_APP_AIRTABLE_API_KEY }).base(process.env.REACT_APP_AIRTABLE_BASE_ID);
     useEffect(() => {
+        let Airtable = require('airtable');
+        let base = new Airtable({ apiKey: process.env.REACT_APP_AIRTABLE_API_KEY }).base(process.env.REACT_APP_AIRTABLE_BASE_ID);
+
         let allRecords = [];
         base('services').select({
             view: 'Grid view'
@@ -16,13 +15,14 @@ export function useAirTableData() {
                 allRecords.push(record.fields);
             });
             fetchNextPage();
-
         }, (err) => {
-            if (err) { console.error(err); return; }
+            if (err) { 
+                console.error(err); 
+                return; 
+            }
             setAirtableData(allRecords.filter(record => record.Approved === true));
         });
-    }, []);
-
+    }, []); 
 
     return [airtableData, setAirtableData];
 }
