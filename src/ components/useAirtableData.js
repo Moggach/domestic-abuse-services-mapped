@@ -21,7 +21,7 @@ export function useAirTableData() {
             if (err) { console.error(err); return; }
             setAirtableData(allRecords.filter(record => record.Approved === true));
         });
-    }, [base]);
+    }, []);
 
 
     return [airtableData, setAirtableData];
