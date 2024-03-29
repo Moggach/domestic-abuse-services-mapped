@@ -24,11 +24,11 @@ const PopUp = ({ map, coordinates, name, address, phone, website, email, donate 
                 htmlContent += `<div class="pop-up-item"><img src="${emailIconUrl}" alt="Email" style="height: 15px;"/><a href="mailto:${email}" style="text-decoration: none; color: inherit;"> ${email}</a></div>`;
             }
             if (website) {
-                htmlContent += `<div class="pop-up-item"><img src="${websiteIconUrl}" alt="Website" style="height: 15px;"/> <a href="${website}" target="_blank">${website}</a></div>`;
+                htmlContent += `<div class="pop-up-item"><img src="${websiteIconUrl}" alt="Website" style="height: 15px;"/> <a href="${website}" target="_blank">Website</a></div>`;
             }
         
             if (donate) {
-                htmlContent += `<div class="pop-up-item"><img src="${donateIconUrl}" alt="Donate" style="height: 15px;"/>  <a href="${donate}" target="_blank">${donate}</a></div>`;
+                htmlContent += `<div class="pop-up-item"><img src="${donateIconUrl}" alt="Donate" style="height: 15px;"/>  <a href="${donate}" target="_blank">Donate</a></div>`;
             }
             htmlContent += `</div>`;
 
