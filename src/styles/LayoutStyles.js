@@ -48,9 +48,7 @@ export const DataContainer = styled.div`
     color: #FFFFFF;
     cursor: pointer;
     padding: 8px;
-    text-align: center;
-    margin-left: 10px;
-    
+    text-align: center;    
 
   }
 
@@ -59,7 +57,7 @@ export const DataContainer = styled.div`
 export const Inputs = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 20px;
   font-size: 18px;
   gap: 20px;
   background-color: white;
@@ -72,17 +70,30 @@ export const Inputs = styled.div`
   left: ${({ isVisible }) => (isVisible ? '10px' : '-100%')};
   transition: left 0.5s ease-in-out;
 
-
   label {
       margin-right: 10px;
+      margin-bottom: 20px;
   }
+
   select, input {
     padding: 5px;
+    margin-top: 10px;
   }
 
+  input {
+  margin-right: 10px;
+ }
 
+  button:first-of-type {
+    margin-right: 10px;
+  }
 
-
+  @media (max-width: 768px) {
+    max-width: 75%;
+    button {
+     margin-top: 10px;
+    }
+  }  
 
 `;
 
