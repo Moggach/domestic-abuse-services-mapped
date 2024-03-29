@@ -21,7 +21,7 @@ const PopUp = ({ map, coordinates, name, address, phone, website, email, donate 
                 htmlContent += `<div class="pop-up-item"><img src="${phoneIconUrl}" alt="Phone" style="height: 15px;"/><a href="tel:${phone}" style="text-decoration: none; color: inherit;"> ${phone}</a></div>`;
             }
             if (email) {
-                htmlContent += `<div class="pop-up-item"><img src="${emailIconUrl}" alt="Email" style="height: 15px;"/><a href="mailto:${email}" style="text-decoration: none; color: inherit;"> ${email}</a></div>`;
+                htmlContent += `<div class="pop-up-item"><img src="${emailIconUrl}" alt="Email" style="height: 15px;"/><a href="mailto:${email}" style="text-decoration: none; color: inherit;"> Email</a></div>`;
             }
             if (website) {
                 htmlContent += `<div class="pop-up-item"><img src="${websiteIconUrl}" alt="Website" style="height: 15px;"/> <a href="${website}" target="_blank">Website</a></div>`;
