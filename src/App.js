@@ -259,7 +259,7 @@ export default function App() {
               />
 
             </Inputs>
-            <button onClick={toggleFiltersVisibility} style={{ 'position': 'fixed', 'top': '10px', 'left': '10px', 'z-index': '11' }}>
+            <button onClick={toggleFiltersVisibility} style={{ 'position': 'absolute', 'top': '10px', 'left': '10px', 'z-index': '11' }}>
               {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
             </button>
 
