@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import mapboxgl from 'mapbox-gl';
 import PopUp from '../ components/PopUp'
+import mapboxgl, { NavigationControl } from 'mapbox-gl';
+
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 export default function MapBox({
@@ -28,6 +29,9 @@ export default function MapBox({
       center: [lng, lat],
       zoom: zoom,
     });
+
+    map.current.addControl(new NavigationControl(), 'top-right');
+
 
     map.current.on('move', () => {
       setLng(map.current.getCenter().lng.toFixed(4));
