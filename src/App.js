@@ -49,7 +49,7 @@ export default function App() {
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [airtableData] = useAirTableData();
   const [filteredData, setFilteredData] = useState([]);
-  const [filterdDataWithDistance, setFilteredDataWithDistance] = useState([]);
+  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
   const [isFiltersVisible, setIsFiltersVisible] = useState(true);
 
   const toggleFiltersVisibility = () => {
@@ -210,6 +210,7 @@ export default function App() {
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
 
       setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
+
     };
 
     updateAirtableDataWithDistance();
@@ -263,9 +264,10 @@ export default function App() {
             </button>
 
             <div className="csv-data">
-              {searchSubmitted && filteredData.length === 0 ? (
-                <div>No services found within 10 miles of your search location.</div>
+              {searchSubmitted && filteredDataWithDistance.length === 0 ? (
+                <div>No services found within 10 miles of your search location {submittedSearchQuery}.</div>
               ) : (
+
                 <ul>
                   {filteredData.map((item, index) => (
                     <li key={index}>
