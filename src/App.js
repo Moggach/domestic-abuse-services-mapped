@@ -264,8 +264,14 @@ export default function App() {
             </button>
 
             <div className="csv-data">
-              {searchSubmitted && filteredDataWithDistance.length > 0 && (
-                <div>Showing services within 10 miles of {submittedSearchQuery}:</div>
+              {searchSubmitted && (
+                <>
+                  {filteredDataWithDistance.length > 0 ? (
+                    <div>Showing services within 10 miles of {submittedSearchQuery}:</div>
+                  ) : (
+                    <div>No search results within 10 miles of {submittedSearchQuery}</div>
+                  )}
+                </>
               )}
               <ul>
                 {(searchSubmitted ? filteredDataWithDistance : filteredData).map((item, index) => (
@@ -275,6 +281,7 @@ export default function App() {
                 ))}
               </ul>
             </div>
+
           </DataContainer>
         </ContentContainer>
       </AppContainer>
