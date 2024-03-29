@@ -264,21 +264,18 @@ export default function App() {
             </button>
 
             <div className="csv-data">
-              {searchSubmitted && filteredDataWithDistance.length === 0 ? (
-                <div>No services found within 10 miles of your search location {submittedSearchQuery}.</div>
-              ) : (
-
-                <ul>
-                  {filteredData.map((item, index) => (
-                    <li key={index}>
-                      {item["Service name"]}: {item["Service address"]}
-                    </li>
-                  ))}
-                </ul>
+              {searchSubmitted && filteredDataWithDistance.length > 0 && (
+                <div>Showing services within 10 miles of {submittedSearchQuery}:</div>
               )}
+              <ul>
+                {(searchSubmitted ? filteredDataWithDistance : filteredData).map((item, index) => (
+                  <li key={index}>
+                    {item["Service name"]}: {item["Service address"]}
+                  </li>
+                ))}
+              </ul>
             </div>
           </DataContainer>
-
         </ContentContainer>
       </AppContainer>
       <footer>
