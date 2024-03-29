@@ -46,16 +46,24 @@ export default function MapBox({
 
   }, [searchLat, searchLng, zoom]);
 
-
   useEffect(() => {
+    if (!map.current) return; 
+    
+    const handleZoomEnd = () => {
+      const currentZoom = map.current.getZoom();
+      if (currentZoom < 10) {
+        setPopupInfo(null);
+      }
+    };
 
-    if (resetZoomTrigger) {
-      map.current.flyTo({
-        center: [lng, lat],
-        zoom: zoom,
-      });
-    }
-  }, [resetZoomTrigger, lng, lat, zoom]);
+    map.current.on('zoomend', handleZoomEnd);
+
+    return () => {
+      if (map.current) {
+        map.current.off('zoomend', handleZoomEnd);
+      }
+    };
+  }, [setPopupInfo]);
 
   useEffect(() => {
     if (!map.current) return;
