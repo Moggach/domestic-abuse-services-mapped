@@ -45,11 +45,11 @@ export default function App() {
   const [searchLat, setSearchLat] = useState('');
   const [zoom, setZoom] = useState(5);
   const [searchInput, setSearchInput] = useState('');
-  const [setSubmittedSearchQuery] = useState('');
+  const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [airtableData] = useAirTableData();
   const [filteredData, setFilteredData] = useState([]);
-  const [setFilteredDataWithDistance] = useState([]);
+  const [filterdDataWithDistance, setFilteredDataWithDistance] = useState([]);
   const [isFiltersVisible, setIsFiltersVisible] = useState(true);
 
   const toggleFiltersVisibility = () => {
