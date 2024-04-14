@@ -1,10 +1,11 @@
-
 body {
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-  font-family: 'Poppins', sans-serif;
+  @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+  font-family: "Nunito Sans", sans-serif;
   font-size: 18px;
+  background: radial-gradient(circle farthest-corner at 35% 90%, #1ae4ff, transparent 50%),radial-gradient(circle farthest-corner at 0 140%, #9049fc, transparent 50%),radial-gradient(ellipse farthest-corner at 0 -25%, #1ab7ff, transparent 50%),radial-gradient(ellipse farthest-corner at 20% -50%, #9949fc, transparent 50%),radial-gradient(ellipse farthest-corner at 100% 0, #1ad1ff, transparent 50%),radial-gradient(ellipse farthest-corner at 60% -20%, #4e49fc, transparent 50%),radial-gradient(ellipse farthest-corner at 100% 100%, #b749fc, transparent),linear-gradient(#1a85ff, #4da0ff);
+  background-size: 200% 200%
 }
 
 .map-container {
   height: 800px;
-  }
+}

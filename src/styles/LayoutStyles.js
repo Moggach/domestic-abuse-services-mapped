@@ -6,12 +6,14 @@ export const AppContainer = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
+
 `;
 
 export const ContentContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  gap: 40px;
   width: 100%;
   @media (max-width: 768px) {
     flex-direction: column;
@@ -21,7 +23,6 @@ export const ContentContainer = styled.div`
 export const MapContainer = styled.div`
   height: 400px;
   flex: 1;
-  margin-right: 20px;
   @media (max-width: 768px) {
     margin-right: 0;
     margin-bottom: 20px;
@@ -38,14 +39,13 @@ export const DataContainer = styled.div`
   }
   li {
     list-style-type: none;
-    border: 1px solid #F0F0F0;
-    padding: 5px;
+  
   }
   button {
-    background-color: #EA4C89;
+    background-color: #FDCA40;
     border-radius: 5px;
     border-style: none;
-    color: #FFFFFF;
+    color: #292929;
     cursor: pointer;
     padding: 8px;
     text-align: center;    
@@ -127,5 +127,48 @@ export const GlobalStyles = createGlobalStyle`
 `;
 
 export const CheckboxContainer = styled.div`
+margin-top: 10px;
 
+`
+
+
+export const ServiceItem = styled.li`
+background: white;
+color: rgb(41, 41, 41);
+font-size: 16px;
+box shadow: 0 2px 3px 0 rgba(154,154,154,0.04);
+padding: 15px;
+border-radius: 4px;
+border: 1px solid rgba(118,118,118,0.1);
+
+h3 {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+`
+
+export const TagsContainer = styled.div`
+display: flex;
+gap: 10px;
+align-items: center;
+
+
+`
+
+export const Footer = styled.footer `
+color: white;
+a:visited {
+color: white;
+text-decoration: none;
+}
+`
+
+export const CSVData = styled.div `
+h2 {
+  color: white;
+  font-weight: 400;
+  font-size: 20px;
+
+}
 `

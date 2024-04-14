@@ -5,7 +5,7 @@ import Banner from './ components/Banner'
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
 import { useAirTableData } from './ components/useAirtableData';
-import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs } from './styles/LayoutStyles';
+import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs, ServiceItem, TagsContainer, Footer, CSVData } from './styles/LayoutStyles';
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in kilometers
@@ -263,33 +263,41 @@ export default function App() {
               {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
             </button>
 
-            <div className="csv-data">
+            <CSVData>
               {searchSubmitted && (
                 <>
                   {filteredDataWithDistance.length > 0 ? (
-                    <div>Showing services within 10 miles of {submittedSearchQuery}:</div>
+                    <h2>Showing services within 10 miles of {submittedSearchQuery}:</h2>
                   ) : (
-                    <div>No search results within 10 miles of {submittedSearchQuery}</div>
+                    <h2>No search results within 10 miles of {submittedSearchQuery} Try another search?</h2>
                   )}
                 </>
               )}
               <ul>
                 {(searchSubmitted ? filteredDataWithDistance : filteredData).map((item, index) => (
-                  <li key={index}>
-                    {item["Service name"]}
-                    {item["Service address"] ? `: ${item["Service address"]}` : ""}
-                  </li>
+                  <ServiceItem key={index}>
+
+                    <h3>{item["Service name"]}</h3>
+                    <p>{item["Service address"]}</p>
+                    <TagsContainer>
+                      <p>{item["Service type"]}</p>
+                      {item["Service type"] && item["Specialist services for"] && <span> • </span>}
+                      <p>{item["Specialist services for"]}</p>
+                    </TagsContainer>
+
+
+                  </ServiceItem>
                 ))}
               </ul>
-            </div>
+            </CSVData>
 
           </DataContainer>
         </ContentContainer>
       </AppContainer>
-      <footer>
+      <Footer>
         <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
         <p>Service isn't listed? <a href="https://airtable.com/appksbQlVr07Kxadu/pagEkSrTVCs0yk2OS/form">Submit here</a></p>
-      </footer>
+      </Footer>
     </>
   );
 }
