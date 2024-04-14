@@ -172,24 +172,31 @@ h2 {
 
 }
 `
-export const Banner = styled.div `
-position: 'fixed',
-top: 0,
-backgroundColor: 'white',
-padding: '20px',
-textAlign: 'center',
-minWidth: '100vw',
-zIndex: 1000,
+export const BannerContainer = styled.div `
+position: fixed;
+top: 0;
+font-size: 12px;
+background:  #FDCA40;
+min-width: 100vw;
+padding: 10px;
+z-index: 100;
 
+p {
+  margin-left: 20px;
+}
 button {
-  background-color: #FDCA40;
   border-radius: 5px;
   border-style: none;
   color: #292929;
   cursor: pointer;
   padding: 8px;
   text-align: center;    
+  margin-left: 20px;
 
+
+}
+a:visited {
+  color: black;
 }
 `
 
