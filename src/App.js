@@ -276,7 +276,8 @@ export default function App() {
               <ul>
                 {(searchSubmitted ? filteredDataWithDistance : filteredData).map((item, index) => (
                   <li key={index}>
-                    {item["Service name"]}: {item["Service address"]}
+                    {item["Service name"]}
+                    {item["Service address"] ? `: ${item["Service address"]}` : ""}
                   </li>
                 ))}
               </ul>
