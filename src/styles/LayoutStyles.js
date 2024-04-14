@@ -172,3 +172,24 @@ h2 {
 
 }
 `
+export const Banner = styled.div `
+position: 'fixed',
+top: 0,
+backgroundColor: 'white',
+padding: '20px',
+textAlign: 'center',
+minWidth: '100vw',
+zIndex: 1000,
+
+button {
+  background-color: #FDCA40;
+  border-radius: 5px;
+  border-style: none;
+  color: #292929;
+  cursor: pointer;
+  padding: 8px;
+  text-align: center;    
+
+}
+`
+
