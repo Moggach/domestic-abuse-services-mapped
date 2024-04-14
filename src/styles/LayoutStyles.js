@@ -125,3 +125,7 @@ export const GlobalStyles = createGlobalStyle`
     height: 15px;
   }
 `;
+
+export const CheckboxContainer = styled.div`
+
+`
