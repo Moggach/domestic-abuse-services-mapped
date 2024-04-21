@@ -5,6 +5,7 @@ import Banner from './ components/Banner'
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
 import { useAirTableData } from './ components/useAirtableData';
+import externalLinkIcon from './images/svgs/exernal_link.svg';
 import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs, ServiceItem, TagsContainer, Footer, CSVData } from './styles/LayoutStyles';
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -284,8 +285,7 @@ export default function App() {
                       {item["Service type"] && item["Specialist services for"] && <span> • </span>}
                       <p>{item["Specialist services for"]}</p>
                     </TagsContainer>
-
-
+                    <a href={item["Service website"]}><img alt="an SVG icon indicating an external link" src={externalLinkIcon} style={{width: '20px'}}></img></a>
                   </ServiceItem>
                 ))}
               </ul>
