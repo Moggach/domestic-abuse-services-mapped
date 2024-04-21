@@ -156,7 +156,7 @@ align-items: center;
 
 `
 
-export const Footer = styled.footer `
+export const Footer = styled.footer`
 color: white;
 a:visited {
 color: white;
@@ -164,7 +164,7 @@ text-decoration: none;
 }
 `
 
-export const CSVData = styled.div `
+export const CSVData = styled.div`
 h2 {
   color: white;
   font-weight: 400;
@@ -172,7 +172,7 @@ h2 {
 
 }
 `
-export const BannerContainer = styled.div `
+export const BannerContainer = styled.div`
 position: fixed;
 top: 0;
 font-size: 12px;
@@ -213,5 +213,20 @@ position: fixed;
 top: 25%;
 left: 12.5%;
 
+`;
+
+export const QuickExit = styled.button`
+position: fixed;
+right: 0px;
+bottom: 50%;
+z-index: 1000;
+background-color: red;
+border-radius: 5px;
+border-style: none;
+color: white;
+cursor: pointer;
+padding: 20px;
+text-align: center;
+}
 `;
 
