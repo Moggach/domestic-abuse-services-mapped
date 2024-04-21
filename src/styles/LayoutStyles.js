@@ -201,10 +201,17 @@ a:visited {
 `
 
 export const MapWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   height: 800px;
+  position: relative;
+
+
 
 `;
+
+export const Loading = styled.img`
+position: fixed;
+top: 25%;
+left: 12.5%;
+
+`;
+

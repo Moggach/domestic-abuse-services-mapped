@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import PopUp from '../ components/PopUp'
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
 import loadingIndicator from '../images/svgs/loading_indicator.svg';
-import { MapWrapper } from '../styles/LayoutStyles';
+import { MapWrapper, Loading } from '../styles/LayoutStyles';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -19,49 +19,46 @@ export default function MapBox({
 }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [popupInfo, setPopupInfo] = React.useState(null);
+  const [popupInfo, setPopupInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
 
-   
-   const getPointRadius = useCallback(() => {
+  const getPointRadius = useCallback(() => {
     return window.innerWidth <= 768 ? 6 : 4;
- }, []);
+  }, []);
 
-  // Initial map setup
+  // Initial map setup with artificial delay
   useEffect(() => {
-    if (map.current) return;
-    
+    if (map.current) return; // Prevent re-initialization
 
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
-        center: [lng, lat],
-        zoom: zoom,
-      });
-  
-      map.current.addControl(new NavigationControl(), 'top-right');
-  
-      map.current.on('load', () => {
-        setIsLoading(false);
-      });
-  
-      map.current.on('move', () => {
-        setLng(map.current.getCenter().lng.toFixed(4));
-        setLat(map.current.getCenter().lat.toFixed(4));
-      });
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
+      center: [lng, lat],
+      zoom: zoom,
+    });
+
+    map.current.addControl(new NavigationControl(), 'top-right');
+
+    map.current.on('load', () => {
+      setIsLoading(false); // Set loading to false when the map is loaded
+    });
+
+    map.current.on('move', () => {
+      setLng(map.current.getCenter().lng.toFixed(4));
+      setLat(map.current.getCenter().lat.toFixed(4));
+    });
+
   }, [lng, lat, zoom, setLng, setLat, setZoom]);
-  
-  useEffect(() => {
 
+  useEffect(() => {
     if (map.current && searchLat && searchLng) {
       map.current.flyTo({
         center: [searchLng, searchLat],
         zoom: zoom,
       });
     }
-
   }, [searchLat, searchLng, zoom]);
+
 
   useEffect(() => {
     if (!map.current) return;
@@ -198,7 +195,7 @@ export default function MapBox({
 
   return (
     <MapWrapper ref={mapContainer}>
-      {isLoading && <img alt="a rotating yellow circular line indicating a loading state"src={loadingIndicator}></img>}
+      {isLoading && <Loading alt="a rotating yellow circular line indicating a loading state" src={loadingIndicator} ></Loading>}
       {!isLoading && popupInfo && <PopUp map={map} {...popupInfo} />}
     </MapWrapper>
   )
