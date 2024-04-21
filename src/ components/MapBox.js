@@ -21,7 +21,14 @@ export default function MapBox({
   const map = useRef(null);
   const [popupInfo, setPopupInfo] = React.useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  
+  const isMobileDevice = () => {
+    return window.innerWidth <= 768;
+   };
+   
+   const getPointRadius = () => {
+    return isMobileDevice() ? 6 : 4;
+   };
 
   // Initial map setup
   useEffect(() => {
@@ -140,7 +147,7 @@ export default function MapBox({
             filter: ['!', ['has', 'point_count']],
             paint: {
               'circle-color': '#11b4da',
-              'circle-radius': 4,
+              'circle-radius': getPointRadius(),
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
             },
