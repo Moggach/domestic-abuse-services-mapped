@@ -1,6 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PopUp from '../ components/PopUp'
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
+import loadingIndicator from '../images/svgs/loading_indicator.svg';
+import { MapWrapper } from '../styles/LayoutStyles';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -14,31 +16,37 @@ export default function MapBox({
   setZoom,
   searchLng,
   searchLat,
-  resetZoomTrigger,
 }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [popupInfo, setPopupInfo] = React.useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   // Initial map setup
   useEffect(() => {
-    if (map.current) return; // Exit if map already initialized
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
-      center: [lng, lat],
-      zoom: zoom,
-    });
+    if (map.current) return;
+    
 
-    map.current.addControl(new NavigationControl(), 'top-right');
-
-
-    map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-    });
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
+        center: [lng, lat],
+        zoom: zoom,
+      });
+  
+      map.current.addControl(new NavigationControl(), 'top-right');
+  
+      map.current.on('load', () => {
+        setIsLoading(false);
+      });
+  
+      map.current.on('move', () => {
+        setLng(map.current.getCenter().lng.toFixed(4));
+        setLat(map.current.getCenter().lat.toFixed(4));
+      });
   }, [lng, lat, zoom, setLng, setLat, setZoom]);
-
+  
   useEffect(() => {
 
     if (map.current && searchLat && searchLng) {
@@ -51,8 +59,8 @@ export default function MapBox({
   }, [searchLat, searchLng, zoom]);
 
   useEffect(() => {
-    if (!map.current) return; 
-    
+    if (!map.current) return;
+
     const handleZoomEnd = () => {
       const currentZoom = map.current.getZoom();
       if (currentZoom < 10) {
@@ -185,8 +193,9 @@ export default function MapBox({
   }, [data]);
 
   return (
-    <div ref={mapContainer} className="map-container">
-      {popupInfo && <PopUp map={map} {...popupInfo} />}
-    </div>
+    <MapWrapper ref={mapContainer}>
+      {isLoading && <img alt="a rotating yellow circular line indicating a loading state"src={loadingIndicator}></img>}
+      {!isLoading && popupInfo && <PopUp map={map} {...popupInfo} />}
+    </MapWrapper>
   )
 };

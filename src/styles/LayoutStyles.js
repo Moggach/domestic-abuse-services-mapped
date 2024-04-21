@@ -200,3 +200,11 @@ a:visited {
 }
 `
 
+export const MapWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 800px;
+
+`;
