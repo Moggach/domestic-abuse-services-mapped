@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import PopUp from '../ components/PopUp'
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
 import loadingIndicator from '../images/svgs/loading_indicator.svg';
@@ -22,13 +22,11 @@ export default function MapBox({
   const [popupInfo, setPopupInfo] = React.useState(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  const isMobileDevice = () => {
-    return window.innerWidth <= 768;
-   };
+
    
-   const getPointRadius = () => {
-    return isMobileDevice() ? 6 : 4;
-   };
+   const getPointRadius = useCallback(() => {
+    return window.innerWidth <= 768 ? 6 : 4;
+ }, []);
 
   // Initial map setup
   useEffect(() => {
@@ -160,7 +158,6 @@ export default function MapBox({
             while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
               e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
             }
-            console.log(e.features[0])
 
             const coordinates = e.features[0].geometry.coordinates;
             const name = e.features[0].properties.name;
@@ -197,7 +194,7 @@ export default function MapBox({
     return () => {
       map.current.off('load', loadPoints);
     };
-  }, [data]);
+  }, [data, getPointRadius]);
 
   return (
     <MapWrapper ref={mapContainer}>
