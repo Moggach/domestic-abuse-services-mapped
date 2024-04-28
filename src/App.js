@@ -104,6 +104,7 @@ export default function App() {
       generateGeoJsonData(airtableData).then(setGeoJsonData);
     }
   }, [airtableData]);
+
   useEffect(() => {
     if (filteredData.length > 0) {
       generateGeoJsonData(filteredData).then(setGeoJsonData);
@@ -200,7 +201,7 @@ export default function App() {
       if (!searchLat || !searchLng) return;
 
       const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-      let servicesWithDistance = await Promise.all(airtableData.map(async (item) => {
+      let servicesWithDistance = await Promise.all(filteredData.map(async (item) => {
         const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
         if (coordinates) {
           const distance = calculateDistance(searchLat, searchLng, coordinates.latitude, coordinates.longitude);
@@ -213,17 +214,17 @@ export default function App() {
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
 
       setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
+      
 
     };
 
     updateAirtableDataWithDistance();
-  }, [searchLat, searchLng, airtableData, setFilteredDataWithDistance]);
+  }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
 
   return (
     <>
       <AppContainer>
         <Banner />
-
         <ContentContainer>
           <MapContainer>
             <MapBox
