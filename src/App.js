@@ -54,6 +54,11 @@ export default function App() {
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
   const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+  const [isBannerVisible, setIsBannerVisible] = useState(true);
+
+  const toggleBannerVisibility = () => {
+    setIsBannerVisible(!isBannerVisible);
+  };
 
   const toggleFiltersVisibility = () => {
     setIsFiltersVisible(!isFiltersVisible);
@@ -224,7 +229,8 @@ export default function App() {
   return (
     <>
       <AppContainer>
-        <Banner />
+        {isBannerVisible && <Banner onClose={toggleBannerVisibility} />} {/* Step 2: Modify the Banner component usage */}
+        {!isBannerVisible && <GoToGoogleButton />} {/* Step 3: Conditionally render the Quick Exit button */}
         <ContentContainer>
           <MapContainer>
             <MapBox
@@ -301,8 +307,6 @@ export default function App() {
         <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
         <p>Service isn't listed? <a href="https://airtable.com/appksbQlVr07Kxadu/pagEkSrTVCs0yk2OS/form">Submit here</a></p>
       </Footer>
-      <GoToGoogleButton />
-
     </>
   );
 }
