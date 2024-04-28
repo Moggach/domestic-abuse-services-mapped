@@ -4,6 +4,7 @@ import mapboxgl, { NavigationControl } from 'mapbox-gl';
 import loadingIndicator from '../images/svgs/loading_indicator.svg';
 import { MapWrapper, Loading } from '../styles/LayoutStyles';
 
+
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 export default function MapBox({
@@ -26,7 +27,6 @@ export default function MapBox({
     return window.innerWidth <= 768 ? 6 : 4;
   }, []);
 
-  // Initial map setup with artificial delay
   useEffect(() => {
     if (map.current) return; // Prevent re-initialization
 
@@ -59,7 +59,6 @@ export default function MapBox({
     }
   }, [searchLat, searchLng, zoom]);
 
-
   useEffect(() => {
     if (!map.current) return;
 
@@ -77,6 +76,26 @@ export default function MapBox({
         map.current.off('zoomend', handleZoomEnd);
       }
     };
+  }, [setPopupInfo]);
+
+  // A reusable function to handle both click and touch events
+  const handlePointSelect = useCallback((e) => {
+    while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
+      e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
+    }
+
+    const coordinates = e.features[0].geometry.coordinates;
+    const properties = e.features[0].properties;
+
+    setPopupInfo({
+      coordinates,
+      name: properties.name,
+      address: properties.address,
+      phone: properties.phone,
+      email: properties.email,
+      website: properties.website,
+      donate: properties.donate
+    });
   }, [setPopupInfo]);
 
   useEffect(() => {
@@ -146,29 +165,10 @@ export default function MapBox({
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
             },
-          }
-          );
-          map.current.on('click', 'unclustered-point', (e) => {
-            // Ensure that if the map is zoomed out such that multiple
-            // copies of the feature are visible, the popup appears
-            // over the copy being pointed to.
-            while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
-              e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
-            }
-
-            const coordinates = e.features[0].geometry.coordinates;
-            const name = e.features[0].properties.name;
-            const address = e.features[0].properties.address;
-            const phone = e.features[0].properties.phone;
-            const email = e.features[0].properties.email;
-            const website = e.features[0].properties.website;
-            const donate = e.features[0].properties.donate;
-
-
-            setPopupInfo({ coordinates, name, address, phone, email, website, donate });
-
-
           });
+
+          map.current.on('click', 'unclustered-point', handlePointSelect);
+          map.current.on('touchstart', 'unclustered-point', handlePointSelect);
 
           map.current.on('mouseenter', 'unclustered-point', () => {
             map.current.getCanvas().style.cursor = 'pointer';
@@ -191,12 +191,12 @@ export default function MapBox({
     return () => {
       map.current.off('load', loadPoints);
     };
-  }, [data, getPointRadius]);
+  }, [data, getPointRadius, handlePointSelect]);
 
   return (
     <MapWrapper ref={mapContainer}>
-      {isLoading && <Loading alt="a rotating yellow circular line indicating a loading state" src={loadingIndicator} ></Loading>}
+      {isLoading && <Loading alt="a rotating yellow circular line indicating a loading state" src={loadingIndicator} />}
       {!isLoading && popupInfo && <PopUp map={map} {...popupInfo} />}
     </MapWrapper>
-  )
+  );
 };
