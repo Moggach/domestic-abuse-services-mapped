@@ -290,7 +290,11 @@ export default function App() {
                     <h3>{item["Service name"]}</h3>
                     <p>{item["Service address"]}</p>
                     <TagsContainer>
-                      <p>{item["Service type"]}</p>
+                      <p>
+                        {Array.isArray(item["Service type"])
+                          ? item["Service type"].join(' • ')
+                          : item["Service type"]}
+                      </p>
                       {item["Service type"] && item["Specialist services for"] && <span> • </span>}
                       <p>{item["Specialist services for"]}</p>
                     </TagsContainer>
