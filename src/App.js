@@ -229,8 +229,8 @@ export default function App() {
   return (
     <>
       <AppContainer>
-        {isBannerVisible && <Banner onClose={toggleBannerVisibility} />} {/* Step 2: Modify the Banner component usage */}
-        {!isBannerVisible && <GoToGoogleButton />} {/* Step 3: Conditionally render the Quick Exit button */}
+        {isBannerVisible && <Banner onClose={toggleBannerVisibility} />}
+        {!isBannerVisible && <GoToGoogleButton />} 
         <ContentContainer>
           <MapContainer>
             <MapBox
