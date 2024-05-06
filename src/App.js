@@ -233,7 +233,7 @@ export default function App() {
         <title>Domestic Abuse Services Mapped</title>
         <meta property="og:title" content="Domestic Abuse Services Mapped" />
         <meta property="og:description" content="A tool for mapping domestic abuse services across the UK." />
-        <meta property="og:image" content="" />
+        <meta property="og:image" content="images/og_image.png" />
         <meta property="og:url" content="https://domesticabuseservices.uk" />
         <meta property="og:type" content="website" />
       </Helmet>
