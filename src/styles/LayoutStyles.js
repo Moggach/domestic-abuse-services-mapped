@@ -128,10 +128,17 @@ export const GlobalStyles = createGlobalStyle`
 `;
 
 export const CheckboxContainer = styled.div`
-margin-top: 10px;
-display: flex;
+ul {
+  display: flex;
+  flex-direction: row;
 flex-wrap: wrap;
+gap: 0;
+margin-block-start: 5px;
+margin-block-end: 0px;
 font-size: 14px;
+
+}
+
 
 `
 
