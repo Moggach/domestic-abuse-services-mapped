@@ -179,7 +179,7 @@ h2 {
 export const BannerContainer = styled.div`
 position: fixed;
 top: 0;
-font-size: 12px;
+font-size: 16px;
 background:  #FDCA40;
 min-width: 100vw;
 padding: 10px;
@@ -192,6 +192,7 @@ button {
   border-radius: 5px;
   border-style: none;
   color: #292929;
+  background: white;
   cursor: pointer;
   padding: 8px;
   text-align: center;    
