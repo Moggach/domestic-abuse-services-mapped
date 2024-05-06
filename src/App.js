@@ -157,14 +157,14 @@ export default function App() {
 
   useEffect(() => {
     let result = airtableData;
-
+  
     if (selectedServiceType) {
       result = result.filter(item => {
         const serviceType = item['Service type'];
         return Array.isArray(serviceType) ? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
       });
     }
-
+  
     if (selectedSpecialisms.length > 0) {
       result = result.filter(item => {
         const itemSpecialisms = item['Specialist services for'];
@@ -177,10 +177,10 @@ export default function App() {
         });
       });
     }
-
+  
     setFilteredData(result);
   }, [selectedServiceType, selectedSpecialisms, airtableData]);
-
+  
   const handleSearchSubmit = async () => {
     if (!searchInput) return;
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
