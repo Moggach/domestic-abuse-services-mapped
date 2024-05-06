@@ -3,6 +3,7 @@ import MapBox from './ components/MapBox';
 import SearchInput from './ components/SearchInput';
 import GoToGoogleButton from './ components/QuickExit'
 import Banner from './ components/Banner'
+import { Helmet } from 'react-helmet';
 
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
@@ -157,14 +158,14 @@ export default function App() {
 
   useEffect(() => {
     let result = airtableData;
-  
+
     if (selectedServiceType) {
       result = result.filter(item => {
         const serviceType = item['Service type'];
         return Array.isArray(serviceType) ? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
       });
     }
-  
+
     if (selectedSpecialisms.length > 0) {
       result = result.filter(item => {
         const itemSpecialisms = item['Specialist services for'];
@@ -177,10 +178,10 @@ export default function App() {
         });
       });
     }
-  
+
     setFilteredData(result);
   }, [selectedServiceType, selectedSpecialisms, airtableData]);
-  
+
   const handleSearchSubmit = async () => {
     if (!searchInput) return;
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -219,7 +220,7 @@ export default function App() {
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
 
       setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
-      
+
 
     };
 
@@ -228,9 +229,17 @@ export default function App() {
 
   return (
     <>
+      <Helmet>
+        <title>Domestic Abuse Services Mapped</title>
+        <meta property="og:title" content="Domestic Abuse Services Mapped" />
+        <meta property="og:description" content="A tool for mapping domestic abuse services across the UK." />
+        <meta property="og:image" content="" />
+        <meta property="og:url" content="https://domesticabuseservices.uk" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <AppContainer>
         {isBannerVisible && <Banner onClose={toggleBannerVisibility} />}
-        {!isBannerVisible && <GoToGoogleButton />} 
+        {!isBannerVisible && <GoToGoogleButton />}
         <ContentContainer>
           <MapContainer>
             <MapBox
@@ -298,7 +307,7 @@ export default function App() {
                       {item["Service type"] && item["Specialist services for"] && <span> • </span>}
                       <p>{item["Specialist services for"]}</p>
                     </TagsContainer>
-                    <a href={item["Service website"]}><img alt="an SVG icon indicating an external link" src={externalLinkIcon} style={{width: '20px'}}></img></a>
+                    <a href={item["Service website"]}><img alt="an SVG icon indicating an external link" src={externalLinkIcon} style={{ width: '20px' }}></img></a>
                   </ServiceItem>
                 ))}
               </ul>
