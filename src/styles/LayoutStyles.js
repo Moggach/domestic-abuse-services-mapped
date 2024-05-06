@@ -57,8 +57,9 @@ export const DataContainer = styled.div`
 export const Inputs = styled.div`
   display: flex;
   flex-direction: column;
+  max-width: 40%;
   padding: 20px;
-  font-size: 18px;
+  font-size: 16px;
   gap: 20px;
   background-color: white;
   position: absolute;
@@ -128,6 +129,9 @@ export const GlobalStyles = createGlobalStyle`
 
 export const CheckboxContainer = styled.div`
 margin-top: 10px;
+display: flex;
+flex-wrap: wrap;
+font-size: 14px;
 
 `
 
