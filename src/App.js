@@ -3,7 +3,6 @@ import MapBox from './ components/MapBox';
 import SearchInput from './ components/SearchInput';
 import GoToGoogleButton from './ components/QuickExit'
 import Banner from './ components/Banner'
-import { Helmet } from 'react-helmet';
 
 import ServiceTypeFilter from './ components/ServiceTypeFilter';
 import SpecialismCheckboxes from './ components/SpecialismCheckboxes';
