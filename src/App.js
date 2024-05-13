@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import MapBox from './ components/MapBox';
 import SearchInput from './ components/SearchInput';
 import GoToGoogleButton from './ components/QuickExit'
@@ -10,12 +10,12 @@ import { useAirTableData } from './ components/useAirtableData';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
 import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs, ServiceItem, TagsContainer, Footer, CSVData } from './styles/LayoutStyles';
 
+
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in kilometers
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -31,7 +31,6 @@ async function fetchCoordinates(postcode, accessToken) {
   if (data.features && data.features.length > 0) {
     const [longitude, latitude] = data.features[0].geometry.coordinates;
     return { longitude, latitude };
-
   } else {
     return null;
   }
@@ -69,7 +68,7 @@ export default function App() {
     features: []
   });
 
-  const generateGeoJsonData = async (data) => {
+  const generateGeoJsonData = useCallback(async (data) => {
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
     const featuresWithCoordinates = await Promise.all(data.map(async (item) => {
       const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
@@ -100,21 +99,28 @@ export default function App() {
 
     return {
       type: "FeatureCollection",
-      features: featuresWithCoordinates.filter(feature => feature !== null)
+      features: featuresWithCoordinates.filter(feature => feature!== null)
     };
-  };
+  }, []);
+
+  const updateFilteredData = useCallback((data) => {
+    setFilteredData(data);
+    generateGeoJsonData(data).then(geoData => {
+      setGeoJsonData(geoData);
+    });
+  }, [generateGeoJsonData, setGeoJsonData]);
 
   useEffect(() => {
     if (airtableData.length > 0) {
-      generateGeoJsonData(airtableData).then(setGeoJsonData);
+      updateFilteredData(airtableData);
     }
-  }, [airtableData]);
+  }, [airtableData, updateFilteredData]);
 
   useEffect(() => {
     if (filteredData.length > 0) {
-      generateGeoJsonData(filteredData).then(setGeoJsonData);
+      updateFilteredData(filteredData);
     }
-  }, [filteredData]);
+  }, [filteredData, updateFilteredData]);
 
   useEffect(() => {
     const flattenAndUnique = (data) => {
@@ -156,12 +162,13 @@ export default function App() {
   }, [airtableData]);
 
   useEffect(() => {
+
     let result = airtableData;
 
     if (selectedServiceType) {
       result = result.filter(item => {
         const serviceType = item['Service type'];
-        return Array.isArray(serviceType) ? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
+        return Array.isArray(serviceType)? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
       });
     }
 
@@ -178,8 +185,8 @@ export default function App() {
       });
     }
 
-    setFilteredData(result);
-  }, [selectedServiceType, selectedSpecialisms, airtableData]);
+    updateFilteredData(result);
+  }, [selectedServiceType, selectedSpecialisms, airtableData, updateFilteredData]);
 
   const handleSearchSubmit = async () => {
     if (!searchInput) return;
@@ -193,6 +200,7 @@ export default function App() {
       setSearchSubmitted(true);
     }
   };
+
   const handleSearchClear = () => {
     setLng(-3.5);
     setLat(54.5);
@@ -201,26 +209,25 @@ export default function App() {
     setSubmittedSearchQuery('');
     setSearchSubmitted(false);
   };
+
   useEffect(() => {
     const updateAirtableDataWithDistance = async () => {
-      if (!searchLat || !searchLng) return;
+      if (!searchLat ||!searchLng) return;
 
       const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
       let servicesWithDistance = await Promise.all(filteredData.map(async (item) => {
         const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
         if (coordinates) {
           const distance = calculateDistance(searchLat, searchLng, coordinates.latitude, coordinates.longitude);
-          return { ...item, distance };
+          return {...item, distance };
         }
         return null;
       }));
 
-      servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
+      servicesWithDistance = servicesWithDistance.filter(item => item!== null && item.distance <= 10);
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
 
       setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
-
-
     };
 
     updateAirtableDataWithDistance();
