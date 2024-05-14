@@ -100,10 +100,9 @@ export default function MapBox({
 
   useEffect(() => {
     if (!map.current) return;
-  
+
     const loadPoints = () => {
       if (data) {
-  
         if (!map.current.getSource('points')) {
           map.current.addSource('points', {
             type: 'geojson',
@@ -112,7 +111,7 @@ export default function MapBox({
             clusterMaxZoom: 14,
             clusterRadius: 20,
           });
-  
+
           map.current.addLayer({
             id: 'clusters',
             type: 'circle',
@@ -139,7 +138,7 @@ export default function MapBox({
               ],
             },
           });
-  
+
           map.current.addLayer({
             id: 'cluster-count',
             type: 'symbol',
@@ -154,7 +153,7 @@ export default function MapBox({
               'text-color': '#ffffff',
             },
           });
-  
+
           map.current.addLayer({
             id: 'unclustered-point',
             type: 'circle',
@@ -167,9 +166,10 @@ export default function MapBox({
               'circle-stroke-color': '#fff',
             },
           });
-  
+
           map.current.on('click', 'unclustered-point', handlePointSelect);
           map.current.on('touchstart', 'unclustered-point', handlePointSelect);
+
           map.current.on('mouseenter', 'unclustered-point', () => {
             map.current.getCanvas().style.cursor = 'pointer';
           });
@@ -181,26 +181,17 @@ export default function MapBox({
         }
       }
     };
-  
+
     if (map.current.isStyleLoaded()) {
       loadPoints();
     } else {
       map.current.on('load', loadPoints);
     }
-  
+
     return () => {
-      if (map.current) {
-        map.current.off('load', loadPoints);
-        if (map.current.getLayer('unclustered-point')) {
-          map.current.off('click', 'unclustered-point', handlePointSelect);
-          map.current.off('touchstart', 'unclustered-point', handlePointSelect);
-          map.current.off('mouseenter', 'unclustered-point');
-          map.current.off('mouseleave', 'unclustered-point');
-        }
-      }
+      map.current.off('load', loadPoints);
     };
   }, [data, getPointRadius, handlePointSelect]);
-  
 
   return (
     <MapWrapper ref={mapContainer}>
