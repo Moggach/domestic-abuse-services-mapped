@@ -48,7 +48,21 @@ export default function MapBox({
       setLat(map.current.getCenter().lat.toFixed(4));
     });
 
-  }, [lng, lat, zoom, setLng, setLat, setZoom]);
+    // Handle WebGL context loss
+    map.current.on('webglcontextlost', (event) => {
+      event.preventDefault();
+      console.log('WebGL context lost. Attempting to restore...');
+    });
+
+    // Handle WebGL context restored
+    map.current.on('webglcontextrestored', () => {
+      console.log('WebGL context restored.');
+      if (map.current.getSource('points')) {
+        map.current.getSource('points').setData(data);
+      }
+    });
+
+  }, [lng, lat, zoom, setLng, setLat, setZoom, data]);
 
   useEffect(() => {
     if (map.current && searchLat && searchLng) {
@@ -78,7 +92,6 @@ export default function MapBox({
     };
   }, [setPopupInfo]);
 
-  // A reusable function to handle both click and touch events
   const handlePointSelect = useCallback((e) => {
     while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
       e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
@@ -94,7 +107,7 @@ export default function MapBox({
       phone: properties.phone,
       email: properties.email,
       website: properties.website,
-      donate: properties.donate
+      donate: properties.donate,
     });
   }, [setPopupInfo]);
 
@@ -199,4 +212,4 @@ export default function MapBox({
       {!isLoading && popupInfo && <PopUp map={map} {...popupInfo} />}
     </MapWrapper>
   );
-};
+}
