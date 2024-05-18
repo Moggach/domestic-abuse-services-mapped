@@ -239,6 +239,11 @@ color: white;
 cursor: pointer;
 padding: 20px;
 text-align: center;
+
+@media (max-width: 768px) {
+  bottom: 0px;
+
+}  
 }
 `;
 
