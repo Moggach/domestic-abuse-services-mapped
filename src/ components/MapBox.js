@@ -48,19 +48,7 @@ export default function MapBox({
       setLat(map.current.getCenter().lat.toFixed(4));
     });
 
-    // Handle WebGL context loss
-    map.current.on('webglcontextlost', (event) => {
-      console.log('WebGL context lost. Attempting to restore...');
-    });
-
-    // Handle WebGL context restored
-    map.current.on('webglcontextrestored', () => {
-      console.log('WebGL context restored.');
-      if (map.current.getSource('points')) {
-        map.current.getSource('points').setData(data);
-      }
-    });
-
+  
   }, [lng, lat, zoom, setLng, setLat, setZoom, data]);
 
   useEffect(() => {
