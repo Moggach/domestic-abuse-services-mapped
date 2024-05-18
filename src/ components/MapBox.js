@@ -50,7 +50,6 @@ export default function MapBox({
 
     // Handle WebGL context loss
     map.current.on('webglcontextlost', (event) => {
-      event.preventDefault();
       console.log('WebGL context lost. Attempting to restore...');
     });
 
