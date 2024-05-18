@@ -25,6 +25,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 async function fetchCoordinates(postcode, accessToken) {
   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(postcode)}.json?country=GB&access_token=${accessToken}`;
+  console.log('url', url)
   const response = await fetch(url);
   console.log('response', response)
   const data = await response.json();
