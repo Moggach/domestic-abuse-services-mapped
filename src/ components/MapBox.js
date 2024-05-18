@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import PopUp from '../ components/PopUp'
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
-import loadingIndicator from '../images/svgs/loading_indicator.svg';
-import { MapWrapper, Loading } from '../styles/LayoutStyles';
+// import loadingIndicator from '../images/svgs/loading_indicator.svg';
+import { MapWrapper } from '../styles/LayoutStyles';
 
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -195,7 +195,7 @@ export default function MapBox({
 
   return (
     <MapWrapper ref={mapContainer}>
-      {isLoading && <Loading alt="a rotating yellow circular line indicating a loading state" src={loadingIndicator} />}
+      {/* {isLoading && <Loading alt="a rotating yellow circular line indicating a loading state" src={loadingIndicator} />} */}
       {!isLoading && popupInfo && <PopUp map={map} {...popupInfo} />}
     </MapWrapper>
   );
