@@ -5,7 +5,7 @@ export function useAirTableData() {
 
     useEffect(() => {
         let Airtable = require('airtable');
-        let base = new Airtable({ apiKey: process.env.REACT_APP_AIRTABLE_API_KEY }).base(process.env.REACT_APP_AIRTABLE_BASE_ID);
+        let base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_API_KEY }).base(process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID);
 
         let allRecords = [];
         base('services').select({

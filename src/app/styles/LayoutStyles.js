@@ -100,8 +100,6 @@ export const Inputs = styled.div`
 
 export const GlobalStyles = createGlobalStyle`
 
-.mapboxgl-popup {
-}
 .pop-up-container {
   display: flex;
   flex-direction: column;

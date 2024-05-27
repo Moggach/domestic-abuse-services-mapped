@@ -5,7 +5,7 @@ import loadingIndicator from '../images/svgs/loading_indicator.svg';
 import { MapWrapper, Loading } from '../styles/LayoutStyles';
 
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 export default function MapBox({
   lng,
@@ -21,7 +21,6 @@ export default function MapBox({
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [popupInfo, setPopupInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   const getPointRadius = useCallback(() => {
     return window.innerWidth <= 768 ? 6 : 4;
@@ -38,10 +37,6 @@ export default function MapBox({
     });
 
     map.current.addControl(new NavigationControl(), 'top-right');
-
-    map.current.on('load', () => {
-      setIsLoading(false); // Set loading to false when the map is loaded
-    });
 
     map.current.on('move', () => {
       setLng(map.current.getCenter().lng.toFixed(4));
@@ -195,8 +190,7 @@ export default function MapBox({
 
   return (
     <MapWrapper ref={mapContainer}>
-      {isLoading && <Loading alt="a rotating yellow circular line indicating a loading state" src={loadingIndicator} />}
-      {!isLoading && popupInfo && <PopUp map={map} {...popupInfo} />}
+      { popupInfo && <PopUp map={map} {...popupInfo} />}
     </MapWrapper>
   );
 }
