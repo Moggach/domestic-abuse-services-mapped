@@ -4,16 +4,36 @@ import Home from '../App';
 
 export async function generateStaticParams() {
   const slugs = [
-    { slug: [] }, 
+    { slug: [] },
   ];
 
   return slugs;
 }
 
 async function fetchAirtableData() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/airtable`);
-  const data = await response.json();
-  return data;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/airtable`;
+  console.log(`Fetching Airtable data from: ${url}`);
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const text = await response.text();
+    console.log('Response text:', text);
+
+    try {
+      const data = JSON.parse(text);
+      return data;
+    } catch (jsonError) {
+      throw new Error(`Failed to parse JSON: ${jsonError.message}`);
+    }
+  } catch (error) {
+    console.error('Error fetching Airtable data:', error.message);
+    // Return an empty array or a default value to prevent build failure
+    return [];
+  }
 }
 
 export default async function Page() {
