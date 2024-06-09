@@ -21,7 +21,6 @@ async function fetchAirtableData() {
     }
 
     const text = await response.text();
-    console.log('Response text:', text);
 
     try {
       const data = JSON.parse(text);
@@ -30,8 +29,6 @@ async function fetchAirtableData() {
       throw new Error(`Failed to parse JSON: ${jsonError.message}`);
     }
   } catch (error) {
-    console.error('Error fetching Airtable data:', error.message);
-    // Return an empty array or a default value to prevent build failure
     return [];
   }
 }
