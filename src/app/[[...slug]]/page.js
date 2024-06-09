@@ -1,7 +1,6 @@
 import '../../index.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-import { ClientOnly } from './client';
+import Home from '../App';
 
 export async function generateStaticParams() {
   const slugs = [
@@ -11,10 +10,18 @@ export async function generateStaticParams() {
   return slugs;
 }
 
-export default function Page() {
+async function fetchAirtableData() {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/airtable`);
+  const data = await response.json();
+  return data;
+}
+
+export default async function Page() {
+  const serverAirtableData = await fetchAirtableData();
+
   return (
     <>
-      <ClientOnly />
+      <Home serverAirtableData={serverAirtableData} />
     </>
   );
 }

@@ -1,43 +1,34 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import MapBox from '../app/ components/MapBox';
-import SearchInput from '../app/ components/SearchInput';
-import GoToGoogleButton from '../app/ components/QuickExit';
-import Banner from '../app/ components/Banner';
-import ServiceTypeFilter from '../app/ components/ServiceTypeFilter';
-import SpecialismCheckboxes from '../app/ components/SpecialismCheckboxes';
-import { useAirTableData } from '../app/ components/useAirtableData';
-import externalLinkIcon from '../app/images/svgs/exernal_link.svg';
-import { AppContainer, ContentContainer, MapContainer, DataContainer, Inputs, ServiceItem, TagsContainer, Footer, CSVData } from '../app/styles/LayoutStyles';
+import MapBox from './components/MapBox';
+import SearchInput from './components/SearchInput';
+import GoToGoogleButton from './components/QuickExit';
+import Banner from './components/Banner';
+import ServiceTypeFilter from './components/ServiceTypeFilter';
+import SpecialismCheckboxes from './components/SpecialismCheckboxes';
+import externalLinkIcon from './images/svgs/exernal_link.svg';
+import { calculateDistance } from './utils';
 
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Earth radius in kilometers
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c;
-  return distance * 0.621371; // Convert to miles
-}
+import {
+  AppContainer,
+  ContentContainer,
+  MapContainer,
+  DataContainer,
+  Inputs,
+  ServiceItem,
+  TagsContainer,
+  Footer,
+  CSVData
+} from './styles/LayoutStyles';
 
-async function fetchCoordinates(postcode, accessToken) {
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(postcode)}.json?country=GB&access_token=${accessToken}`;
-  const response = await fetch(url);
+async function fetchCoordinates(postcode) {
+  const response = await fetch(`/api/coordinates?postcode=${postcode}`);
   const data = await response.json();
-
-  if (data.features && data.features.length > 0) {
-    const [longitude, latitude] = data.features[0].geometry.coordinates;
-    return { longitude, latitude };
-  } else {
-    return null;
-  }
+  return data;
 }
 
-export default function App() {
-
+export default function Home({ serverAirtableData }) {
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
@@ -50,11 +41,15 @@ export default function App() {
   const [searchInput, setSearchInput] = useState('');
   const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
-  const [airtableData] = useAirTableData();
+  const [airtableData, setAirtableData] = useState(serverAirtableData || []);
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
   const [isFiltersVisible, setIsFiltersVisible] = useState(true);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
+  const [geoJsonData, setGeoJsonData] = useState({
+    type: "FeatureCollection",
+    features: []
+  });
 
   const toggleBannerVisibility = () => {
     setIsBannerVisible(!isBannerVisible);
@@ -64,45 +59,26 @@ export default function App() {
     setIsFiltersVisible(!isFiltersVisible);
   };
 
-  const [geoJsonData, setGeoJsonData] = useState({
-    type: "FeatureCollection",
-    features: []
-  });
+  useEffect(() => {
+    if (serverAirtableData.length > 0) {
+      setAirtableData(serverAirtableData);
+      updateFilteredData(serverAirtableData);
+    }
+  }, [serverAirtableData]);
 
   const generateGeoJsonData = useCallback(async (data) => {
-    const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-    const featuresWithCoordinates = await Promise.all(data.map(async (item) => {
-      const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
-      if (coordinates) {
-        return {
-          type: "Feature",
-          properties: {
-            name: item["Service name"],
-            address: item["Service address"],
-            postcode: item["Service postcode"],
-            email: item["Service email address"],
-            website: item["Service website"],
-            phone: item["Service phone number"],
-            donate: item["Service donation link"],
-            serviceType: item["Service type"],
-            specialisms: item["Specialist services for"],
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [coordinates.longitude, coordinates.latitude],
-          }
-        };
-      } else {
-        console.error('No coordinates for', item["Service postcode"]);
-        return null;
-      }
-    }));
+    const response = await fetch('/api/geojson', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data }),
+    });
 
-    return {
-      type: "FeatureCollection",
-      features: featuresWithCoordinates.filter(feature => feature !== null)
-    };
-  }, []);
+    const geoJsonData = await response.json();
+    setGeoJsonData(geoJsonData);
+    return geoJsonData;
+  }, [setGeoJsonData]);
 
   const updateFilteredData = useCallback((data) => {
     setFilteredData(data);
@@ -110,12 +86,6 @@ export default function App() {
       setGeoJsonData(geoData);
     });
   }, [generateGeoJsonData, setGeoJsonData]);
-
-  useEffect(() => {
-    if (airtableData.length > 0) {
-      updateFilteredData(airtableData);
-    }
-  }, [airtableData, updateFilteredData]);
 
   useEffect(() => {
     if (filteredData.length > 0) {
@@ -139,8 +109,6 @@ export default function App() {
       return [...new Set(allServiceTypes)].filter(Boolean);
     };
 
-    const newServiceTypes = flattenAndUnique(airtableData);
-
     const flattenAndUniqueSpecialisms = (data) => {
       const allSpecialisms = data.reduce((acc, item) => {
         const specialisms = item['Specialist services for'];
@@ -153,17 +121,16 @@ export default function App() {
         }
         return acc;
       }, []);
-
       return [...new Set(allSpecialisms)].filter(Boolean);
     };
-
+    const newServiceTypes = flattenAndUnique(airtableData);
     const newSpecialisms = flattenAndUniqueSpecialisms(airtableData);
+
     setServiceTypes(newServiceTypes);
     setSpecialisms(newSpecialisms);
   }, [airtableData]);
 
   useEffect(() => {
-
     let result = airtableData;
 
     if (selectedServiceType) {
@@ -191,8 +158,7 @@ export default function App() {
 
   const handleSearchSubmit = async () => {
     if (!searchInput) return;
-    const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-    const coordinates = await fetchCoordinates(searchInput, accessToken);
+    const coordinates = await fetchCoordinates(searchInput);
     if (coordinates) {
       setSearchlng(coordinates.longitude);
       setSearchLat(coordinates.latitude);
@@ -215,9 +181,8 @@ export default function App() {
     const updateAirtableDataWithDistance = async () => {
       if (!searchLat || !searchLng) return;
 
-      const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
       let servicesWithDistance = await Promise.all(filteredData.map(async (item) => {
-        const coordinates = await fetchCoordinates(item["Service postcode"], accessToken);
+        const coordinates = await fetchCoordinates(item["Service postcode"]);
         if (coordinates) {
           const distance = calculateDistance(searchLat, searchLng, coordinates.latitude, coordinates.longitude);
           return { ...item, distance };
@@ -235,7 +200,6 @@ export default function App() {
   }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
 
   return (
-
     <>
       <AppContainer>
         {isBannerVisible && <Banner onClose={toggleBannerVisibility} />}
@@ -259,7 +223,6 @@ export default function App() {
 
           <DataContainer>
             <Inputs isVisible={isFiltersVisible}>
-
               <ServiceTypeFilter
                 selectedServiceType={selectedServiceType}
                 setSelectedServiceType={setSelectedServiceType}
@@ -276,7 +239,6 @@ export default function App() {
                 onSubmit={handleSearchSubmit}
                 onClear={handleSearchClear}
               />
-
             </Inputs>
             <button onClick={toggleFiltersVisibility} style={{ 'position': 'absolute', 'top': '10px', 'left': '10px', 'z-index': '11' }}>
               {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
@@ -288,14 +250,14 @@ export default function App() {
                   {filteredDataWithDistance.length > 0 ? (
                     <h2>Showing services within 10 miles of {submittedSearchQuery}:</h2>
                   ) : (
-                    <h2>No search results within 10 miles of {submittedSearchQuery} Try another search?</h2>
+                    <h2>No search results within 10 miles of {submittedSearchQuery}. Try another search?</h2>
                   )}
                 </>
               )}
+
               <ul>
                 {(searchSubmitted ? filteredDataWithDistance : filteredData).map((item, index) => (
                   <ServiceItem key={index}>
-
                     <h3>{item["Service name"]}</h3>
                     <p>{item["Service address"]}</p>
                     <TagsContainer>
@@ -312,7 +274,6 @@ export default function App() {
                 ))}
               </ul>
             </CSVData>
-
           </DataContainer>
         </ContentContainer>
       </AppContainer>
@@ -320,8 +281,6 @@ export default function App() {
         <p>Made with ❤️ by <a href="https://github.com/Moggach">Moggach</a></p>
         <p>Service isn't listed? <a href="https://airtable.com/appksbQlVr07Kxadu/pagEkSrTVCs0yk2OS/form">Submit here</a></p>
       </Footer>
-      </>
-
-)
-
+    </>
+  );
 }

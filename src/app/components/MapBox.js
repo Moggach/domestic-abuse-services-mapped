@@ -1,9 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import PopUp from '../ components/PopUp'
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
-import loadingIndicator from '../images/svgs/loading_indicator.svg';
-import { MapWrapper, Loading } from '../styles/LayoutStyles';
-
+import PopUp from './PopUp';
+import { MapWrapper } from '../styles/LayoutStyles';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
@@ -43,8 +41,7 @@ export default function MapBox({
       setLat(map.current.getCenter().lat.toFixed(4));
     });
 
-  
-  }, [lng, lat, zoom, setLng, setLat, setZoom, data]);
+  }, [lng, lat, zoom, setLng, setLat]);
 
   useEffect(() => {
     if (map.current && searchLat && searchLng) {
@@ -91,11 +88,10 @@ export default function MapBox({
       website: properties.website,
       donate: properties.donate,
     });
-  }, [setPopupInfo]);
+  }, []);
 
   useEffect(() => {
     if (!map.current) return;
-
     const loadPoints = () => {
       if (data) {
         if (!map.current.getSource('points')) {
@@ -184,13 +180,15 @@ export default function MapBox({
     }
 
     return () => {
-      map.current.off('load', loadPoints);
+      if (map.current) {
+        map.current.off('load', loadPoints);
+      }
     };
   }, [data, getPointRadius, handlePointSelect]);
 
   return (
     <MapWrapper ref={mapContainer}>
-      { popupInfo && <PopUp map={map} {...popupInfo} />}
+      {popupInfo && <PopUp map={map} {...popupInfo} />}
     </MapWrapper>
   );
 }
