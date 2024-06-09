@@ -22,9 +22,7 @@ import {
   CSVData
 } from './styles/LayoutStyles';
 
-
-
-export default function Home({ serverAirtableData }) {
+const Home = ({ serverAirtableData }) => {
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
@@ -218,7 +216,7 @@ export default function Home({ serverAirtableData }) {
           </MapContainer>
 
           <DataContainer>
-            <Inputs isVisible={isFiltersVisible}>
+          <Inputs $isVisible={isFiltersVisible}>
               <ServiceTypeFilter
                 selectedServiceType={selectedServiceType}
                 setSelectedServiceType={setSelectedServiceType}
@@ -236,7 +234,7 @@ export default function Home({ serverAirtableData }) {
                 onClear={handleSearchClear}
               />
             </Inputs>
-            <button onClick={toggleFiltersVisibility} style={{ 'position': 'absolute', 'top': '10px', 'left': '10px', 'z-index': '11' }}>
+            <button onClick={toggleFiltersVisibility} style={{ 'position': 'absolute', 'top': '10px', 'left': '10px', 'zIndex': '11' }}>
               {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
             </button>
 
@@ -279,4 +277,6 @@ export default function Home({ serverAirtableData }) {
       </Footer>
     </>
   );
-}
+};
+
+export default Home;

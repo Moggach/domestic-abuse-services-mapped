@@ -55,7 +55,7 @@ export const DataContainer = styled.div`
 `;
 
 export const Inputs = styled.div`
-  display: flex;
+  display: ${({ $isVisible }) => ($isVisible ? 'flex' : 'none')};
   flex-direction: column;
   max-width: 40%;
   padding: 20px;
@@ -68,12 +68,11 @@ export const Inputs = styled.div`
   z-index: 10;
   border-radius: 10px;
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.20);
-  left: ${({ isVisible }) => (isVisible ? '10px' : '-100%')};
   transition: left 0.5s ease-in-out;
 
   label {
-      margin-right: 10px;
-      margin-bottom: 20px;
+    margin-right: 10px;
+    margin-bottom: 20px;
   }
 
   select, input {
@@ -82,8 +81,8 @@ export const Inputs = styled.div`
   }
 
   input {
-  margin-right: 10px;
- }
+    margin-right: 10px;
+  }
 
   button:first-of-type {
     margin-right: 10px;
@@ -92,10 +91,9 @@ export const Inputs = styled.div`
   @media (max-width: 768px) {
     max-width: 75%;
     button {
-     margin-top: 10px;
+      margin-top: 10px;
     }
-  }  
-
+  }
 `;
 
 export const GlobalStyles = createGlobalStyle`
