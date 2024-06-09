@@ -9,7 +9,7 @@ import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
 import { calculateDistance } from './utils';
-
+import { fetchCoordinates } from './api/geojson/route';
 import {
   AppContainer,
   ContentContainer,
@@ -22,11 +22,7 @@ import {
   CSVData
 } from './styles/LayoutStyles';
 
-async function fetchCoordinates(postcode) {
-  const response = await fetch(`/api/coordinates?postcode=${postcode}`);
-  const data = await response.json();
-  return data;
-}
+
 
 export default function Home({ serverAirtableData }) {
   const [selectedServiceType, setSelectedServiceType] = useState('');

@@ -10,3 +10,4 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
     return distance * 0.621371; // Convert to miles
   }
   
+  
