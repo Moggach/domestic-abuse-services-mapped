@@ -68,8 +68,10 @@ const Home = ({ serverAirtableData }) => {
       },
       body: JSON.stringify({ data }),
     });
+    console.log('this is the geo response',response )
 
     const geoJsonData = await response.json();
+    console.log('this is the geo data', geoJsonData)
     setGeoJsonData(geoJsonData);
     return geoJsonData;
   }, [setGeoJsonData]);
