@@ -163,7 +163,7 @@ align-items: center;
 
 `
 
-export const Footer = styled.footer`
+export const FooterStyles = styled.footer`
 color: white;
 a:visited {
 color: white;
