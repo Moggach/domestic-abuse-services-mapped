@@ -61,7 +61,6 @@ const Home = ({ serverAirtableData }) => {
   }, [serverAirtableData]);
 
   const generateGeoJsonData = useCallback(async (data) => {
-    console.log('this is the data being sent', data)
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/geojson`, {
       method: 'POST',
       headers: {
@@ -69,10 +68,8 @@ const Home = ({ serverAirtableData }) => {
       },
       body: JSON.stringify({ data }),
     });
-    console.log('this is the geo response body',response.body )
 
     const geoJsonData = await response.json();
-    console.log('this is the geo data', geoJsonData)
     setGeoJsonData(geoJsonData);
     return geoJsonData;
   }, [setGeoJsonData]);
