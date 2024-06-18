@@ -21,12 +21,11 @@ import {
   TagsContainer,
   CSVData
 } from './styles/LayoutStyles';
-
-const Home = ({ serverAirtableData }) => {
+const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
-  const [serviceTypes, setServiceTypes] = useState([]);
-  const [specialisms, setSpecialisms] = useState([]);
+  const [serviceTypes, setServiceTypes] = useState(initialServiceTypes);
+  const [specialisms, setSpecialisms] = useState(initialSpecialisms);
   const [lng, setLng] = useState(-3.5);
   const [lat, setLat] = useState(54.5);
   const [searchLng, setSearchlng] = useState('');
@@ -86,43 +85,6 @@ const Home = ({ serverAirtableData }) => {
       updateFilteredData(filteredData);
     }
   }, [filteredData, updateFilteredData]);
-
-  useEffect(() => {
-    const flattenAndUnique = (data) => {
-      const allServiceTypes = data.reduce((acc, item) => {
-        const serviceTypes = item['Service type'];
-        if (Array.isArray(serviceTypes)) {
-          acc.push(...serviceTypes);
-        } else if (typeof serviceTypes === 'string') {
-          acc.push(...serviceTypes.split(',').map(type => type.trim()));
-        } else {
-          acc.push(serviceTypes);
-        }
-        return acc;
-      }, []);
-      return [...new Set(allServiceTypes)].filter(Boolean);
-    };
-
-    const flattenAndUniqueSpecialisms = (data) => {
-      const allSpecialisms = data.reduce((acc, item) => {
-        const specialisms = item['Specialist services for'];
-        if (Array.isArray(specialisms)) {
-          acc.push(...specialisms);
-        } else if (typeof specialisms === 'string') {
-          acc.push(...specialisms.split(',').map(specialism => specialism.trim()));
-        } else {
-          acc.push(specialisms);
-        }
-        return acc;
-      }, []);
-      return [...new Set(allSpecialisms)].filter(Boolean);
-    };
-    const newServiceTypes = flattenAndUnique(airtableData);
-    const newSpecialisms = flattenAndUniqueSpecialisms(airtableData);
-
-    setServiceTypes(newServiceTypes);
-    setSpecialisms(newSpecialisms);
-  }, [airtableData]);
 
   useEffect(() => {
     let result = airtableData;
@@ -193,7 +155,6 @@ const Home = ({ serverAirtableData }) => {
     updateAirtableDataWithDistance();
   }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
 
-
   return (
     <>
       <AppContainer>
@@ -217,7 +178,7 @@ const Home = ({ serverAirtableData }) => {
           </MapContainer>
 
           <DataContainer>
-          <Inputs $isVisible={isFiltersVisible}>
+            <Inputs $isVisible={isFiltersVisible}>
               <ServiceTypeFilter
                 selectedServiceType={selectedServiceType}
                 setSelectedServiceType={setSelectedServiceType}
@@ -272,7 +233,7 @@ const Home = ({ serverAirtableData }) => {
           </DataContainer>
         </ContentContainer>
       </AppContainer>
-   <Footer/>
+      <Footer />
     </>
   );
 };
