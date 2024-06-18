@@ -1,24 +1,21 @@
 import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
+import NodeCache from 'node-cache';
 
-let cachedData = null;
-let lastFetchTime = null;
-const CACHE_DURATION = 60 * 1000; // 1 minute
+const cache = new NodeCache({ stdTTL: 600 }); 
 
 export async function GET() {
-  const now = Date.now();
-  if (cachedData && lastFetchTime && now - lastFetchTime < CACHE_DURATION) {
+  const cachedData = cache.get("geoJsonData");
+  
+  if (cachedData) {
     return NextResponse.json(cachedData);
   }
 
   let base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_API_KEY }).base(process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID);
-
   const records = await base('services').select().firstPage();
-  
   const data = records.map(record => record.fields);
 
-  cachedData = data;
-  lastFetchTime = now;
-
+  cache.set("geoJsonData", data);
+  
   return NextResponse.json(data);
 }
