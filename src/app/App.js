@@ -53,13 +53,6 @@ const Home = ({ serverAirtableData }) => {
     setIsFiltersVisible(!isFiltersVisible);
   };
 
-  useEffect(() => {
-    if (serverAirtableData.length > 0) {
-      setAirtableData(serverAirtableData);
-      updateFilteredData(serverAirtableData);
-    }
-  }, [serverAirtableData]);
-
   const generateGeoJsonData = useCallback(async (data) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/geojson`, {
       method: 'POST',
@@ -80,6 +73,13 @@ const Home = ({ serverAirtableData }) => {
       setGeoJsonData(geoData);
     });
   }, [generateGeoJsonData, setGeoJsonData]);
+
+  useEffect(() => {
+    if (serverAirtableData.length > 0) {
+      setAirtableData(serverAirtableData);
+      updateFilteredData(serverAirtableData);
+    }
+  }, [serverAirtableData, updateFilteredData]);
 
   useEffect(() => {
     if (filteredData.length > 0) {
@@ -192,6 +192,7 @@ const Home = ({ serverAirtableData }) => {
 
     updateAirtableDataWithDistance();
   }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
+
 
   return (
     <>
