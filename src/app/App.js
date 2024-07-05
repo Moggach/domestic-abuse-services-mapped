@@ -9,7 +9,7 @@ import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
-import { calculateDistance } from './utils';
+import { calculateDistance,fetchCoordinates } from './utils';
 import {
   AppContainer,
   ContentContainer,
@@ -21,25 +21,8 @@ import {
   CSVData
 } from './styles/LayoutStyles';
 
-const fetchCoordinates = async (postcode) => {
-  try {
-    const response = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
-    const data = await response.json();
-    if (data.status === 200) {
-      const { latitude, longitude } = data.result;
-      return { latitude, longitude };
-    } else {
-      console.error('Invalid postcode');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error fetching coordinates:', error);
-    return null;
-  }
-};
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
-
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes] = useState(initialServiceTypes);
@@ -54,7 +37,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
-
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
   const [isFiltersVisible, setIsFiltersVisible] = useState(true);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
@@ -68,17 +50,17 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   };
 
   useEffect(() => {
-    let result = serverAirtableData.features; 
+    let result = serverAirtableData.features;
     if (selectedServiceType) {
-       result = result.filter(item => {
-        const serviceType = item.properties.serviceType;
+      result = result.filter(item => {
+        const serviceType = item.properties?.serviceType || item['Service type'];
         return Array.isArray(serviceType) ? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
       });
     }
 
     if (selectedSpecialisms.length > 0) {
       result = result.filter(item => {
-        const itemSpecialisms = item.properties.serviceSpecialism;
+        const itemSpecialisms = item.properties?.serviceSpecialism || item['Specialist services for'];
         return selectedSpecialisms.some(specialism => {
           if (Array.isArray(itemSpecialisms)) {
             return itemSpecialisms.includes(specialism);
@@ -91,7 +73,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
     setFilteredData(result);
     setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
-  
   }, [selectedServiceType, selectedSpecialisms, serverAirtableData]);
 
   const handleSearchSubmit = async () => {
@@ -135,7 +116,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     };
 
     updateAirtableDataWithDistance();
-  }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
+  }, [searchLat, searchLng, filteredData]);
 
   return (
     <>
@@ -148,7 +129,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               lng={lng}
               lat={lat}
               zoom={zoom}
-              data={filteredMapBoxData} 
+              data={filteredMapBoxData}
               setLng={setLng}
               setLat={setLat}
               setZoom={setZoom}
@@ -194,22 +175,26 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               )}
 
               <ul>
-                {(filteredDataWithDistance.length > 0 ? filteredDataWithDistance : serverAirtableData.features).map((item, index) => (
-                  <ServiceItem key={index}>
-                    <h3>{item.properties.name}</h3>
-                    <p>{item.properties.address}</p>
-                    <TagsContainer>
-                      <p>
-                        {Array.isArray(item.properties.serviceType)
-                          ? item.properties.serviceType.join(' • ')
-                          : item.properties.serviceType}
-                      </p>
-                      {item.properties.serviceType && item.properties.serviceSpecialism && <span> • </span>}
-                      <p>{item.properties.serviceSpecialism}</p>
-                    </TagsContainer>
-                    <a href={item.properties.website}><img alt="an SVG icon indicating an external link" src={externalLinkIcon.src} style={{ width: '20px' }}></img></a>
-                  </ServiceItem>
-                ))}
+                {(filteredDataWithDistance.length > 0 ? filteredDataWithDistance : filteredData).map((item, index) => {
+                  const properties = item.properties || item;
+
+                  return (
+                    <ServiceItem key={index}>
+                      <h3>{properties.name || properties['Service name']}</h3>
+                      <p>{properties.address || properties['Service address']}</p>
+                      <TagsContainer>
+                        <p>
+                          {Array.isArray(properties.serviceType || properties['Service type'])
+                            ? (properties.serviceType || properties['Service type']).join(' • ')
+                            : properties.serviceType || properties['Service type']}
+                        </p>
+                        {(properties.serviceType || properties['Service type']) && (properties.serviceSpecialism || properties['Service specialism']) && <span> • </span>}
+                        <p>{properties.serviceSpecialism || properties['Specialist services for']}</p>
+                      </TagsContainer>
+                      <a href={properties.website || properties['Service website']}><img alt="an SVG icon indicating an external link" src={externalLinkIcon.src} style={{ width: '20px' }}></img></a>
+                    </ServiceItem>
+                  );
+                })}
               </ul>
             </CSVData>
           </DataContainer>
