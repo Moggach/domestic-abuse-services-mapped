@@ -35,7 +35,7 @@ async function fetchAirtableData() {
 
 const flattenAndUnique = (data) => {
   const allServiceTypes = data.reduce((acc, item) => {
-    const serviceTypes = item['Service type'];
+    const serviceTypes = item.properties.serviceType;
     if (Array.isArray(serviceTypes)) {
       acc.push(...serviceTypes);
     } else if (typeof serviceTypes === 'string') {
@@ -50,7 +50,7 @@ const flattenAndUnique = (data) => {
 
 const flattenAndUniqueSpecialisms = (data) => {
   const allSpecialisms = data.reduce((acc, item) => {
-    const specialisms = item['Specialist services for'];
+    const specialisms = item.properties.serviceSpecialism
     if (Array.isArray(specialisms)) {
       acc.push(...specialisms);
     } else if (typeof specialisms === 'string') {
@@ -67,12 +67,16 @@ const Page = async () => {
   const serverAirtableData = await fetchAirtableData();
   const initialServiceTypes = flattenAndUnique(serverAirtableData);
   const initialSpecialisms = flattenAndUniqueSpecialisms(serverAirtableData);
+  const featureCollection = {
+    type: "FeatureCollection",
+    features: serverAirtableData
+  };
 
   return (
     <Home
-      serverAirtableData={serverAirtableData}
-      initialServiceTypes={initialServiceTypes}
-      initialSpecialisms={initialSpecialisms}
+    serverAirtableData={featureCollection}
+    initialServiceTypes={initialServiceTypes}
+    initialSpecialisms={initialSpecialisms}
     />
   );
 };

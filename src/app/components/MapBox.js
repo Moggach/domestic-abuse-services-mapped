@@ -19,7 +19,6 @@ export default function MapBox({
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [popupInfo, setPopupInfo] = useState(null);
-
   const getPointRadius = useCallback(() => {
     return window.innerWidth <= 768 ? 6 : 4;
   }, []);

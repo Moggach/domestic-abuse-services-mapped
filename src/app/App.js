@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapBox from './components/MapBox';
 import SearchInput from './components/SearchInput';
 import GoToGoogleButton from './components/QuickExit';
@@ -10,7 +10,6 @@ import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
 import { calculateDistance } from './utils';
-import { fetchCoordinates } from './api/geojson/route';
 import {
   AppContainer,
   ContentContainer,
@@ -21,11 +20,14 @@ import {
   TagsContainer,
   CSVData
 } from './styles/LayoutStyles';
+
+
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
+
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
-  const [serviceTypes, setServiceTypes] = useState(initialServiceTypes);
-  const [specialisms, setSpecialisms] = useState(initialSpecialisms);
+  const [serviceTypes] = useState(initialServiceTypes);
+  const [specialisms] = useState(initialSpecialisms);
   const [lng, setLng] = useState(-3.5);
   const [lat, setLat] = useState(54.5);
   const [searchLng, setSearchlng] = useState('');
@@ -34,15 +36,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [searchInput, setSearchInput] = useState('');
   const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
-  const [airtableData, setAirtableData] = useState(serverAirtableData || []);
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
+
+  const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
   const [isFiltersVisible, setIsFiltersVisible] = useState(true);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
-  const [geoJsonData, setGeoJsonData] = useState({
-    type: "FeatureCollection",
-    features: []
-  });
 
   const toggleBannerVisibility = () => {
     setIsBannerVisible(!isBannerVisible);
@@ -52,53 +51,18 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setIsFiltersVisible(!isFiltersVisible);
   };
 
-  const generateGeoJsonData = useCallback(async (data) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/geojson`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ data }),
-    });
-
-    const geoJsonData = await response.json();
-    setGeoJsonData(geoJsonData);
-    return geoJsonData;
-  }, [setGeoJsonData]);
-
-  const updateFilteredData = useCallback((data) => {
-    setFilteredData(data);
-    generateGeoJsonData(data).then(geoData => {
-      setGeoJsonData(geoData);
-    });
-  }, [generateGeoJsonData, setGeoJsonData]);
-
   useEffect(() => {
-    if (serverAirtableData.length > 0) {
-      setAirtableData(serverAirtableData);
-      updateFilteredData(serverAirtableData);
-    }
-  }, [serverAirtableData, updateFilteredData]);
-
-  useEffect(() => {
-    if (filteredData.length > 0) {
-      updateFilteredData(filteredData);
-    }
-  }, [filteredData, updateFilteredData]);
-
-  useEffect(() => {
-    let result = airtableData;
-
+    let result = serverAirtableData.features; 
     if (selectedServiceType) {
-      result = result.filter(item => {
-        const serviceType = item['Service type'];
+       result = result.filter(item => {
+        const serviceType = item.properties.serviceType;
         return Array.isArray(serviceType) ? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
       });
     }
 
     if (selectedSpecialisms.length > 0) {
       result = result.filter(item => {
-        const itemSpecialisms = item['Specialist services for'];
+        const itemSpecialisms = item.properties.serviceSpecialism;
         return selectedSpecialisms.some(specialism => {
           if (Array.isArray(itemSpecialisms)) {
             return itemSpecialisms.includes(specialism);
@@ -109,51 +73,54 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       });
     }
 
-    updateFilteredData(result);
-  }, [selectedServiceType, selectedSpecialisms, airtableData, updateFilteredData]);
+    setFilteredData(result);
+    setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
+  
+  }, [selectedServiceType, selectedSpecialisms, serverAirtableData]);
 
   const handleSearchSubmit = async () => {
-    if (!searchInput) return;
-    const coordinates = await fetchCoordinates(searchInput);
-    if (coordinates) {
-      setSearchlng(coordinates.longitude);
-      setSearchLat(coordinates.latitude);
-      setZoom(10);
-      setSubmittedSearchQuery(searchInput);
-      setSearchSubmitted(true);
-    }
-  };
-
-  const handleSearchClear = () => {
-    setLng(-3.5);
-    setLat(54.5);
-    setZoom(5);
-    setSearchInput('');
-    setSubmittedSearchQuery('');
-    setSearchSubmitted(false);
-  };
-
-  useEffect(() => {
-    const updateAirtableDataWithDistance = async () => {
-      if (!searchLat || !searchLng) return;
-
-      let servicesWithDistance = await Promise.all(filteredData.map(async (item) => {
-        const coordinates = await fetchCoordinates(item["Service postcode"]);
-        if (coordinates) {
-          const distance = calculateDistance(searchLat, searchLng, coordinates.latitude, coordinates.longitude);
-          return { ...item, distance };
-        }
-        return null;
-      }));
-
-      servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
-      servicesWithDistance.sort((a, b) => a.distance - b.distance);
-
-      setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
+      if (!searchInput) return;
+      // const coordinates = await fetchCoordinates(searchInput);
+      if (coordinates) {
+        setSearchlng(coordinates.longitude);
+        setSearchLat(coordinates.latitude);
+        setZoom(10);
+        setSubmittedSearchQuery(searchInput);
+        setSearchSubmitted(true);
+      }
     };
-
-    updateAirtableDataWithDistance();
-  }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
+  
+    const handleSearchClear = () => {
+      setLng(-3.5);
+      setLat(54.5);
+      setZoom(5);
+      setSearchInput('');
+      setSubmittedSearchQuery('');
+      setSearchSubmitted(false);
+    };
+  
+    useEffect(() => {
+      const updateAirtableDataWithDistance = () => {
+        if (!searchLat || !searchLng) return;
+  
+        let servicesWithDistance = filteredData.map((item) => {
+          const { coordinates } = item.geometry;
+          if (coordinates && coordinates.length === 2) {
+            const distance = calculateDistance(searchLat, searchLng, coordinates[1], coordinates[0]); // Assuming coordinates are [longitude, latitude]
+            return { ...item, distance };
+          }
+          return null;
+        });
+  
+        servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
+        servicesWithDistance.sort((a, b) => a.distance - b.distance);
+  
+        setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
+      };
+  
+      updateAirtableDataWithDistance();
+    }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
+  
 
   return (
     <>
@@ -166,7 +133,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               lng={lng}
               lat={lat}
               zoom={zoom}
-              data={geoJsonData}
+              data={filteredMapBoxData} 
               setLng={setLng}
               setLat={setLat}
               setZoom={setZoom}
@@ -189,14 +156,14 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                 selectedSpecialisms={selectedSpecialisms}
                 setSelectedSpecialisms={setSelectedSpecialisms}
               />
-              <SearchInput
+             <SearchInput
                 searchQuery={searchInput}
                 setSearchQuery={setSearchInput}
                 onSubmit={handleSearchSubmit}
                 onClear={handleSearchClear}
               />
             </Inputs>
-            <button onClick={toggleFiltersVisibility} style={{ 'position': 'absolute', 'top': '10px', 'left': '10px', 'zIndex': '11' }}>
+            <button onClick={toggleFiltersVisibility} style={{ position: 'absolute', top: '10px', left: '10px', zIndex: '11' }}>
               {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
             </button>
 
@@ -212,20 +179,20 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               )}
 
               <ul>
-                {(searchSubmitted ? filteredDataWithDistance : filteredData).map((item, index) => (
+                {(filteredData.length > 0 ? filteredData : serverAirtableData.features).map((item, index) => (
                   <ServiceItem key={index}>
-                    <h3>{item["Service name"]}</h3>
-                    <p>{item["Service address"]}</p>
+                    <h3>{item.properties.name}</h3>
+                    <p>{item.properties.address}</p>
                     <TagsContainer>
                       <p>
-                        {Array.isArray(item["Service type"])
-                          ? item["Service type"].join(' • ')
-                          : item["Service type"]}
+                        {Array.isArray(item.properties.serviceType)
+                          ? item.properties.serviceType.join(' • ')
+                          : item.properties.serviceType}
                       </p>
-                      {item["Service type"] && item["Specialist services for"] && <span> • </span>}
-                      <p>{item["Specialist services for"]}</p>
+                      {item.properties.serviceType && item.properties.serviceSpecialism && <span> • </span>}
+                      <p>{item.properties.serviceSpecialism}</p>
                     </TagsContainer>
-                    <a href={item["Service website"]}><img alt="an SVG icon indicating an external link" src={externalLinkIcon.src} style={{ width: '20px' }}></img></a>
+                    <a href={item.properties.website}><img alt="an SVG icon indicating an external link" src={externalLinkIcon.src} style={{ width: '20px' }}></img></a>
                   </ServiceItem>
                 ))}
               </ul>
