@@ -37,14 +37,13 @@ async function fetchAirtableData() {
 }
 
 const flattenAndUnique = (data) => {
-
   const allServiceTypes = data.reduce((acc, item) => {
-    const serviceTypes = item.properties.serviceType;
+    const serviceTypes = item.properties?.serviceType || item['Service type'];
     if (Array.isArray(serviceTypes)) {
       acc.push(...serviceTypes);
     } else if (typeof serviceTypes === 'string') {
       acc.push(...serviceTypes.split(',').map(type => type.trim()));
-    } else {
+    } else if (serviceTypes) {
       acc.push(serviceTypes);
     }
     return acc;
@@ -54,12 +53,12 @@ const flattenAndUnique = (data) => {
 
 const flattenAndUniqueSpecialisms = (data) => {
   const allSpecialisms = data.reduce((acc, item) => {
-    const specialisms = item.properties.serviceSpecialism
+    const specialisms = item.properties?.serviceSpecialism || item['Service specialism'];
     if (Array.isArray(specialisms)) {
       acc.push(...specialisms);
     } else if (typeof specialisms === 'string') {
       acc.push(...specialisms.split(',').map(specialism => specialism.trim()));
-    } else {
+    } else if (specialisms) {
       acc.push(specialisms);
     }
     return acc;
@@ -78,9 +77,9 @@ const Page = async () => {
 
   return (
     <Home
-    serverAirtableData={featureCollection}
-    initialServiceTypes={initialServiceTypes}
-    initialSpecialisms={initialSpecialisms}
+      serverAirtableData={featureCollection}
+      initialServiceTypes={initialServiceTypes}
+      initialSpecialisms={initialSpecialisms}
     />
   );
 };
