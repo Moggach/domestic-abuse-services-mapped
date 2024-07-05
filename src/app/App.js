@@ -176,22 +176,22 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
               <ul>
                 {(filteredDataWithDistance.length > 0 ? filteredDataWithDistance : filteredData).map((item, index) => {
-                  const properties = item.properties || item;
+                  const properties = item.properties 
 
                   return (
                     <ServiceItem key={index}>
-                      <h3>{properties.name || properties['Service name']}</h3>
-                      <p>{properties.address || properties['Service address']}</p>
+                      <h3>{properties.name}</h3>
+                      <p>{properties.address}</p>
                       <TagsContainer>
                         <p>
-                          {Array.isArray(properties.serviceType || properties['Service type'])
-                            ? (properties.serviceType || properties['Service type']).join(' • ')
-                            : properties.serviceType || properties['Service type']}
+                          {Array.isArray(properties.serviceType)
+                            ? (properties.serviceType.join(' • '))
+                            : properties.serviceType}
                         </p>
-                        {(properties.serviceType || properties['Service type']) && (properties.serviceSpecialism || properties['Service specialism']) && <span> • </span>}
-                        <p>{properties.serviceSpecialism || properties['Specialist services for']}</p>
+                        {(properties.serviceType) && (properties.serviceSpecialism) && <span> • </span>}
+                        <p>{properties.serviceSpecialism}</p>
                       </TagsContainer>
-                      <a href={properties.website || properties['Service website']}><img alt="an SVG icon indicating an external link" src={externalLinkIcon.src} style={{ width: '20px' }}></img></a>
+                      <a href={properties.website}><img alt="an SVG icon indicating an external link" src={externalLinkIcon.src} style={{ width: '20px' }}></img></a>
                     </ServiceItem>
                   );
                 })}
