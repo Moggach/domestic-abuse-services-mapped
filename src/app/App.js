@@ -21,6 +21,22 @@ import {
   CSVData
 } from './styles/LayoutStyles';
 
+const fetchCoordinates = async (postcode) => {
+  try {
+    const response = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
+    const data = await response.json();
+    if (data.status === 200) {
+      const { latitude, longitude } = data.result;
+      return { latitude, longitude };
+    } else {
+      console.error('Invalid postcode');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching coordinates:', error);
+    return null;
+  }
+};
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
 
@@ -79,48 +95,47 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   }, [selectedServiceType, selectedSpecialisms, serverAirtableData]);
 
   const handleSearchSubmit = async () => {
-      if (!searchInput) return;
-      // const coordinates = await fetchCoordinates(searchInput);
-      if (coordinates) {
-        setSearchlng(coordinates.longitude);
-        setSearchLat(coordinates.latitude);
-        setZoom(10);
-        setSubmittedSearchQuery(searchInput);
-        setSearchSubmitted(true);
-      }
+    if (!searchInput) return;
+    const coordinates = await fetchCoordinates(searchInput);
+    if (coordinates) {
+      setSearchlng(coordinates.longitude);
+      setSearchLat(coordinates.latitude);
+      setZoom(10);
+      setSubmittedSearchQuery(searchInput);
+      setSearchSubmitted(true);
+    }
+  };
+
+  const handleSearchClear = () => {
+    setLng(-3.5);
+    setLat(54.5);
+    setZoom(5);
+    setSearchInput('');
+    setSubmittedSearchQuery('');
+    setSearchSubmitted(false);
+  };
+
+  useEffect(() => {
+    const updateAirtableDataWithDistance = () => {
+      if (!searchLat || !searchLng) return;
+
+      let servicesWithDistance = filteredData.map((item) => {
+        const { coordinates } = item.geometry;
+        if (coordinates && coordinates.length === 2) {
+          const distance = calculateDistance(searchLat, searchLng, coordinates[1], coordinates[0]); // Assuming coordinates are [longitude, latitude]
+          return { ...item, distance };
+        }
+        return null;
+      });
+
+      servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
+      servicesWithDistance.sort((a, b) => a.distance - b.distance);
+
+      setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
     };
-  
-    const handleSearchClear = () => {
-      setLng(-3.5);
-      setLat(54.5);
-      setZoom(5);
-      setSearchInput('');
-      setSubmittedSearchQuery('');
-      setSearchSubmitted(false);
-    };
-  
-    useEffect(() => {
-      const updateAirtableDataWithDistance = () => {
-        if (!searchLat || !searchLng) return;
-  
-        let servicesWithDistance = filteredData.map((item) => {
-          const { coordinates } = item.geometry;
-          if (coordinates && coordinates.length === 2) {
-            const distance = calculateDistance(searchLat, searchLng, coordinates[1], coordinates[0]); // Assuming coordinates are [longitude, latitude]
-            return { ...item, distance };
-          }
-          return null;
-        });
-  
-        servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
-        servicesWithDistance.sort((a, b) => a.distance - b.distance);
-  
-        setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
-      };
-  
-      updateAirtableDataWithDistance();
-    }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
-  
+
+    updateAirtableDataWithDistance();
+  }, [searchLat, searchLng, filteredData, setFilteredDataWithDistance]);
 
   return (
     <>
@@ -156,7 +171,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                 selectedSpecialisms={selectedSpecialisms}
                 setSelectedSpecialisms={setSelectedSpecialisms}
               />
-             <SearchInput
+              <SearchInput
                 searchQuery={searchInput}
                 setSearchQuery={setSearchInput}
                 onSubmit={handleSearchSubmit}
@@ -179,7 +194,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               )}
 
               <ul>
-                {(filteredData.length > 0 ? filteredData : serverAirtableData.features).map((item, index) => (
+                {(filteredDataWithDistance.length > 0 ? filteredDataWithDistance : serverAirtableData.features).map((item, index) => (
                   <ServiceItem key={index}>
                     <h3>{item.properties.name}</h3>
                     <p>{item.properties.address}</p>
