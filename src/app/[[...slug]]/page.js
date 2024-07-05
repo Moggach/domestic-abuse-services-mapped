@@ -21,19 +21,23 @@ async function fetchAirtableData() {
     }
 
     const text = await response.text();
+    console.log(`Fetched data: ${text}`);
 
     try {
       const data = JSON.parse(text);
+      console.log(`Parsed data: ${JSON.stringify(data, null, 2)}`);
       return data;
     } catch (jsonError) {
       throw new Error(`Failed to parse JSON: ${jsonError.message}`);
     }
   } catch (error) {
+    console.error(`Error fetching Airtable data: ${error.message}`);
     return [];
   }
 }
 
 const flattenAndUnique = (data) => {
+
   const allServiceTypes = data.reduce((acc, item) => {
     const serviceTypes = item.properties.serviceType;
     if (Array.isArray(serviceTypes)) {
