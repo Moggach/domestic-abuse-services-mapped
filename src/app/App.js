@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import MapBox from './components/MapBox';
 import SearchInput from './components/SearchInput';
 import GoToGoogleButton from './components/QuickExit';
@@ -9,7 +10,7 @@ import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
-import { calculateDistance,fetchCoordinates } from './utils';
+import { calculateDistance, fetchCoordinates } from './utils';
 import {
   AppContainer,
   ContentContainer,
@@ -21,8 +22,8 @@ import {
   CSVData
 } from './styles/LayoutStyles';
 
-
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
+  const router = useRouter();
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes] = useState(initialServiceTypes);
@@ -40,10 +41,41 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const serviceType = params.get('serviceType');
+    const specialisms = params.get('specialisms');
+
+    if (serviceType) {
+      setSelectedServiceType(serviceType);
+    }
+
+    if (specialisms) {
+      setSelectedSpecialisms(specialisms.split(','));
+    }
+  }, []);
+
   const toggleBannerVisibility = () => {
     setIsBannerVisible(!isBannerVisible);
   };
 
+  const updateURLParams = () => {
+    const params = new URLSearchParams();
+
+    if (selectedServiceType) {
+      params.set('serviceType', selectedServiceType);
+    }
+
+    if (selectedSpecialisms.length > 0) {
+      params.set('specialisms', selectedSpecialisms.join(','));
+    }
+
+    router.replace(`/?${params.toString()}`, { shallow: true });
+  };
+
+  useEffect(() => {
+    updateURLParams();
+  }, [selectedServiceType, selectedSpecialisms]);
 
   useEffect(() => {
     let result = serverAirtableData.features;
@@ -140,7 +172,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                 onClear={handleSearchClear}
               />
             </Inputs>
-
 
             <CSVData>
               {searchSubmitted && (
