@@ -22,7 +22,7 @@ export const ContentContainer = styled.div`
 
 export const MapContainer = styled.div`
   height: 400px;
-  flex: 1;
+  width: 40%;
   @media (max-width: 768px) {
     margin-right: 0;
     margin-bottom: 20px;
@@ -30,7 +30,7 @@ export const MapContainer = styled.div`
 `;
 
 export const DataContainer = styled.div`
-  flex-basis: 2;
+  width: 60%;
   ul {
     padding-inline-start: 0px;
     display: flex;
