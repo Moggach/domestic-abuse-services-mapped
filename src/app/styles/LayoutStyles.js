@@ -30,7 +30,7 @@ export const MapContainer = styled.div`
 `;
 
 export const DataContainer = styled.div`
-  flex: 1;
+  flex-basis: 2;
   ul {
     padding-inline-start: 0px;
     display: flex;
@@ -55,20 +55,15 @@ export const DataContainer = styled.div`
 `;
 
 export const Inputs = styled.div`
-  display: ${({ $isVisible }) => ($isVisible ? 'flex' : 'none')};
   flex-direction: column;
-  max-width: 40%;
   padding: 20px;
   font-size: 16px;
   gap: 20px;
   background-color: white;
-  position: absolute;
-  top: 45px;
-  left: 10px;
-  z-index: 10;
+
+ 
   border-radius: 10px;
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.20);
-  transition: left 0.5s ease-in-out;
 
   label {
     margin-right: 10px;

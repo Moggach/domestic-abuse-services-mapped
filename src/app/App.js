@@ -38,16 +38,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
-  const [isFiltersVisible, setIsFiltersVisible] = useState(true);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
 
   const toggleBannerVisibility = () => {
     setIsBannerVisible(!isBannerVisible);
   };
 
-  const toggleFiltersVisibility = () => {
-    setIsFiltersVisible(!isFiltersVisible);
-  };
 
   useEffect(() => {
     let result = serverAirtableData.features;
@@ -124,24 +120,9 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
         {isBannerVisible && <Banner onClose={toggleBannerVisibility} />}
         {!isBannerVisible && <GoToGoogleButton />}
         <ContentContainer>
-          <MapContainer>
-            <MapBox
-              lng={lng}
-              lat={lat}
-              zoom={zoom}
-              data={filteredMapBoxData}
-              setLng={setLng}
-              setLat={setLat}
-              setZoom={setZoom}
-              setSearchLng={setSearchlng}
-              setSearchLat={setSearchLat}
-              searchLng={searchLng}
-              searchLat={searchLat}
-            />
-          </MapContainer>
-
+    
           <DataContainer>
-            <Inputs $isVisible={isFiltersVisible}>
+            <Inputs>
               <ServiceTypeFilter
                 selectedServiceType={selectedServiceType}
                 setSelectedServiceType={setSelectedServiceType}
@@ -159,9 +140,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                 onClear={handleSearchClear}
               />
             </Inputs>
-            <button onClick={toggleFiltersVisibility} style={{ position: 'absolute', top: '10px', left: '10px', zIndex: '11' }}>
-              {isFiltersVisible ? 'Hide Filters' : 'Show Filters'}
-            </button>
+
 
             <CSVData>
               {searchSubmitted && (
@@ -198,7 +177,23 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               </ul>
             </CSVData>
           </DataContainer>
+          <MapContainer>
+            <MapBox
+              lng={lng}
+              lat={lat}
+              zoom={zoom}
+              data={filteredMapBoxData}
+              setLng={setLng}
+              setLat={setLat}
+              setZoom={setZoom}
+              setSearchLng={setSearchlng}
+              setSearchLat={setSearchLat}
+              searchLng={searchLng}
+              searchLat={searchLat}
+            />
+          </MapContainer>
         </ContentContainer>
+        
       </AppContainer>
       <Footer />
     </>
