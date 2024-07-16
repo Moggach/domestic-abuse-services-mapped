@@ -10,7 +10,7 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
     return distance * 0.621371; // Convert to miles
   }
   
- export  const fetchCoordinates = async (postcode) => {
+  export const fetchCoordinates = async (postcode) => {
     try {
       const response = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
       const data = await response.json();
@@ -26,4 +26,3 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
       return null;
     }
   };
-  

@@ -45,6 +45,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     const params = new URLSearchParams(window.location.search);
     const serviceType = params.get('serviceType');
     const specialisms = params.get('specialisms');
+    const searchQuery = params.get('search');
 
     if (serviceType) {
       setSelectedServiceType(serviceType);
@@ -52,6 +53,11 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
     if (specialisms) {
       setSelectedSpecialisms(specialisms.split(','));
+    }
+
+    if (searchQuery) {
+      setSearchInput(searchQuery);
+      handleSearchSubmit(searchQuery); 
     }
   }, []);
 
@@ -70,12 +76,16 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       params.set('specialisms', selectedSpecialisms.join(','));
     }
 
+    if (searchInput) {
+      params.set('search', searchInput);
+    }
+
     router.replace(`/?${params.toString()}`, { shallow: true });
   };
 
   useEffect(() => {
     updateURLParams();
-  }, [selectedServiceType, selectedSpecialisms]);
+  }, [selectedServiceType, selectedSpecialisms, searchInput]);
 
   useEffect(() => {
     let result = serverAirtableData.features;
@@ -103,14 +113,14 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
   }, [selectedServiceType, selectedSpecialisms, serverAirtableData]);
 
-  const handleSearchSubmit = async () => {
-    if (!searchInput) return;
-    const coordinates = await fetchCoordinates(searchInput);
+  const handleSearchSubmit = async (searchQuery) => {
+    if (!searchQuery) return;
+    const coordinates = await fetchCoordinates(searchQuery);
     if (coordinates) {
       setSearchlng(coordinates.longitude);
       setSearchLat(coordinates.latitude);
       setZoom(10);
-      setSubmittedSearchQuery(searchInput);
+      setSubmittedSearchQuery(searchQuery);
       setSearchSubmitted(true);
     }
   };
@@ -168,7 +178,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               <SearchInput
                 searchQuery={searchInput}
                 setSearchQuery={setSearchInput}
-                onSubmit={handleSearchSubmit}
+                onSubmit={() => handleSearchSubmit(searchInput)}  // Correctly pass searchInput
                 onClear={handleSearchClear}
               />
             </Inputs>

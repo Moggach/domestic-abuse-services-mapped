@@ -4,6 +4,11 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
     onClear();
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault(); 
+    onSubmit(searchQuery);
+  };
+
   return (
     <div>
       <label htmlFor="searchInput">Search by location: </label>
@@ -13,7 +18,7 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <button onClick={onSubmit}>Submit</button>
+      <button onClick={handleSubmit}>Submit</button>
       <button onClick={handleClear}>Clear</button>
     </div>
   );
