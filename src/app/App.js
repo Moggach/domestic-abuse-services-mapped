@@ -65,7 +65,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setIsBannerVisible(!isBannerVisible);
   };
 
-  const updateURLParams = () => {
+  const updateURLParams = (searchQuery) => {
     const params = new URLSearchParams();
 
     if (selectedServiceType) {
@@ -76,16 +76,16 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       params.set('specialisms', selectedSpecialisms.join(','));
     }
 
-    if (searchInput) {
-      params.set('search', searchInput);
+    if (searchQuery) {
+      params.set('search', searchQuery);
     }
 
     router.replace(`/?${params.toString()}`, { shallow: true });
   };
 
   useEffect(() => {
-    updateURLParams();
-  }, [selectedServiceType, selectedSpecialisms, searchInput]);
+    updateURLParams(submittedSearchQuery);
+  }, [selectedServiceType, selectedSpecialisms, submittedSearchQuery]);
 
   useEffect(() => {
     let result = serverAirtableData.features;
@@ -122,6 +122,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       setZoom(10);
       setSubmittedSearchQuery(searchQuery);
       setSearchSubmitted(true);
+      updateURLParams(searchQuery); // Update URL parameters on search submit
     }
   };
 
