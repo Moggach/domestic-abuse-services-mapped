@@ -14,7 +14,7 @@ function transformServiceData(serviceData) {
             email: serviceData["Service email address"] || "",
             website: serviceData["Service website"] || "",
             phone: serviceData["Service phone number"] || "",
-            donate: "",  // Add the donation URL if available, otherwise leave it empty
+            donate: serviceData["Service donation link"] || "", 
             serviceType: serviceData["Service type"] || [],
             serviceSpecialism: serviceData["Specialist services for"] || []
         },

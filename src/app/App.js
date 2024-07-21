@@ -122,7 +122,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       setZoom(10);
       setSubmittedSearchQuery(searchQuery);
       setSearchSubmitted(true);
-      updateURLParams(searchQuery); // Update URL parameters on search submit
+      updateURLParams(searchQuery); 
     }
   };
 
@@ -179,7 +179,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               <SearchInput
                 searchQuery={searchInput}
                 setSearchQuery={setSearchInput}
-                onSubmit={() => handleSearchSubmit(searchInput)}  // Correctly pass searchInput
+                onSubmit={() => handleSearchSubmit(searchInput)} 
                 onClear={handleSearchClear}
               />
             </Inputs>
