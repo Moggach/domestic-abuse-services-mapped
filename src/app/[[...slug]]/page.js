@@ -1,4 +1,4 @@
-import '../../index.css';
+import '../styles/globals.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Home from '../App';
 
@@ -21,7 +21,6 @@ async function fetchAirtableData() {
     }
 
     const text = await response.text();
-    console.log(`Fetched data: ${text}`);
 
     try {
       const data = JSON.parse(text);

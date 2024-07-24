@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
 import PopUp from './PopUp';
-import { MapWrapper } from '../styles/LayoutStyles';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
@@ -151,7 +150,7 @@ export default function MapBox({
             filter: ['!', ['has', 'point_count']],
             paint: {
               'circle-color': '#11b4da',
-              'circle-radius': getPointRadius(),
+              'circle-radius': 4,
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
             },
@@ -186,8 +185,8 @@ export default function MapBox({
   }, [data, getPointRadius, handlePointSelect]);
 
   return (
-    <MapWrapper ref={mapContainer}>
+    <div className='h-[400px] w-full mb-8 md:h-[800px] md:mb-0'ref={mapContainer}>
       {popupInfo && <PopUp map={map} {...popupInfo} />}
-    </MapWrapper>
+    </div>
   );
 }

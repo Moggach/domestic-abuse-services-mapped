@@ -1,6 +1,5 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
-import { GlobalStyles } from '../styles/LayoutStyles'; 
 
 import phoneIconUrl from '../images/svgs/phone.svg';
 import websiteIconUrl from '../images/svgs/website.svg';
@@ -41,7 +40,7 @@ const PopUp = ({ map, coordinates, name, address, phone, website, email, donate 
         }
     }, [map, coordinates, name, address, phone, website, email, donate]);
 
-    return <GlobalStyles />;
+    return null;
 };
 
 export default PopUp;

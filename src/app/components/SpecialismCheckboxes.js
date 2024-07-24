@@ -1,5 +1,4 @@
 import React from 'react';
-import { CheckboxContainer } from '../styles/LayoutStyles';
 
 export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms, setSelectedSpecialisms }) {
   const handleCheckboxChange = (specialism) => {
@@ -11,22 +10,29 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
 
   return (
     <>
-    <CheckboxContainer>
-     <div> Select a specialism</div>
-     <ul>
-      {specialisms.map((specialism, index) => (
-        <li key={index}>
-          <input
-            type="checkbox"
-            id={`specialism-${specialism}`}
-            checked={selectedSpecialisms.includes(specialism)}
-            onChange={() => handleCheckboxChange(specialism)}
-          />
-          <label htmlFor={`specialism-${specialism}`}>{specialism}</label>
-        </li>
-      ))}
-      </ul>
-    </CheckboxContainer>
+ 
+
+    <div className="collapse collapse-arrow">
+       <input type="checkbox" />
+       <div className="collapse-title pl-0">Select a specialism</div>
+        <ul className="collapse-content flex flex-wrap gap-2 pl-0">
+
+          {specialisms.map((specialism, index) => (
+            <li className="flex items-center gap-1" key={index}>
+
+              <input
+                type="checkbox"
+                className="checkbox"
+                id={`specialism-${specialism}`}
+                checked={selectedSpecialisms.includes(specialism)}
+                onChange={() => handleCheckboxChange(specialism)}
+              />
+              <label className="label cursor-pointer" htmlFor={`specialism-${specialism}`}>{specialism}</label>
+
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 }

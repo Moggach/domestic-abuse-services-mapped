@@ -1,5 +1,4 @@
 import React from 'react';
-import { QuickExit } from '../styles/LayoutStyles';
 
 const GoToGoogleButton = () => {
  const handleClick = () => {
@@ -7,9 +6,9 @@ const GoToGoogleButton = () => {
  };
 
  return (
-    <QuickExit onClick={handleClick}>
+    <div onClick={handleClick}>
      Exit this site
-    </QuickExit>
+    </div>
  );
 };
 

@@ -11,16 +11,6 @@ import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
 import { calculateDistance, fetchCoordinates } from './utils';
-import {
-  AppContainer,
-  ContentContainer,
-  MapContainer,
-  DataContainer,
-  Inputs,
-  ServiceItem,
-  TagsContainer,
-  CSVData
-} from './styles/LayoutStyles';
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
   const router = useRouter();
@@ -38,6 +28,8 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
+  const [isSearchCleared, setIsSearchCleared] = useState(false);
+
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
 
@@ -57,7 +49,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
     if (searchQuery) {
       setSearchInput(searchQuery);
-      handleSearchSubmit(searchQuery); 
+      handleSearchSubmit(searchQuery);
     }
   }, []);
 
@@ -122,7 +114,9 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       setZoom(10);
       setSubmittedSearchQuery(searchQuery);
       setSearchSubmitted(true);
-      updateURLParams(searchQuery); 
+      updateURLParams(searchQuery);
+      setIsSearchCleared(false);
+
     }
   };
 
@@ -133,16 +127,19 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setSearchInput('');
     setSubmittedSearchQuery('');
     setSearchSubmitted(false);
+    setFilteredDataWithDistance([])
+    setIsSearchCleared(true);
+
   };
 
   useEffect(() => {
     const updateAirtableDataWithDistance = () => {
-      if (!searchLat || !searchLng) return;
+      if (isSearchCleared) return;
 
       let servicesWithDistance = filteredData.map((item) => {
         const { coordinates } = item.geometry;
         if (coordinates && coordinates.length === 2) {
-          const distance = calculateDistance(searchLat, searchLng, coordinates[1], coordinates[0]); // Assuming coordinates are [longitude, latitude]
+          const distance = calculateDistance(searchLat, searchLng, coordinates[1], coordinates[0]);
           return { ...item, distance };
         }
         return null;
@@ -150,8 +147,8 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
       servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
-
       setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
+
     };
 
     updateAirtableDataWithDistance();
@@ -159,84 +156,79 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
   return (
     <>
-      <AppContainer>
-        {isBannerVisible && <Banner onClose={toggleBannerVisibility} />}
-        {!isBannerVisible && <GoToGoogleButton />}
-        <ContentContainer>
-    
-          <DataContainer>
-            <Inputs>
-              <ServiceTypeFilter
-                selectedServiceType={selectedServiceType}
-                setSelectedServiceType={setSelectedServiceType}
-                serviceTypes={serviceTypes}
-              />
-              <SpecialismCheckboxes
-                specialisms={specialisms}
-                selectedSpecialisms={selectedSpecialisms}
-                setSelectedSpecialisms={setSelectedSpecialisms}
-              />
-              <SearchInput
-                searchQuery={searchInput}
-                setSearchQuery={setSearchInput}
-                onSubmit={() => handleSearchSubmit(searchInput)} 
-                onClear={handleSearchClear}
-              />
-            </Inputs>
+      <main className="bg-slate-300 p-4 md:flex md:flex-row-reverse md:gap-6">
+        <MapBox
+          lng={lng}
+          lat={lat}
+          zoom={zoom}
+          data={filteredMapBoxData}
+          setLng={setLng}
+          setLat={setLat}
+          setZoom={setZoom}
+          setSearchLng={setSearchlng}
+          setSearchLat={setSearchLat}
+          searchLng={searchLng}
+          searchLat={searchLat}
+        />
 
-            <CSVData>
-              {searchSubmitted && (
-                <>
-                  {filteredDataWithDistance.length > 0 ? (
-                    <h2>Showing services within 10 miles of {submittedSearchQuery}:</h2>
-                  ) : (
-                    <h2>No search results within 10 miles of {submittedSearchQuery}. Try another search?</h2>
-                  )}
-                </>
+        <div>
+          <ServiceTypeFilter
+            selectedServiceType={selectedServiceType}
+            setSelectedServiceType={setSelectedServiceType}
+            serviceTypes={serviceTypes}
+          />
+          <SpecialismCheckboxes
+            specialisms={specialisms}
+            selectedSpecialisms={selectedSpecialisms}
+            setSelectedSpecialisms={setSelectedSpecialisms}
+          />
+          <SearchInput
+            searchQuery={searchInput}
+            setSearchQuery={setSearchInput}
+            onSubmit={() => handleSearchSubmit(searchInput)}
+            onClear={handleSearchClear}
+          />
+          {searchSubmitted && (
+            <div className='mt-2'>
+              {filteredDataWithDistance.length > 0 ? (
+                <h2>Showing services within 10 miles of {submittedSearchQuery}:</h2>
+              ) : (
+                <h2>No search results within 10 miles of {submittedSearchQuery}. Try another search?</h2>
               )}
-
-              <ul>
-                {(filteredDataWithDistance.length > 0 ? filteredDataWithDistance : filteredData).map((item, index) => {
-                  const properties = item.properties 
-
-                  return (
-                    <ServiceItem key={index}>
-                      <h3>{properties.name}</h3>
-                      <p>{properties.address}</p>
-                      <TagsContainer>
-                        <p>
-                          {Array.isArray(properties.serviceType)
-                            ? (properties.serviceType.join(' • '))
-                            : properties.serviceType}
-                        </p>
-                        {(properties.serviceType) && (properties.serviceSpecialism) && <span> • </span>}
-                        <p>{properties.serviceSpecialism}</p>
-                      </TagsContainer>
-                      <a href={properties.website}><img alt="an SVG icon indicating an external link" src={externalLinkIcon.src} style={{ width: '20px' }}></img></a>
-                    </ServiceItem>
-                  );
-                })}
-              </ul>
-            </CSVData>
-          </DataContainer>
-          <MapContainer>
-            <MapBox
-              lng={lng}
-              lat={lat}
-              zoom={zoom}
-              data={filteredMapBoxData}
-              setLng={setLng}
-              setLat={setLat}
-              setZoom={setZoom}
-              setSearchLng={setSearchlng}
-              setSearchLat={setSearchLat}
-              searchLng={searchLng}
-              searchLat={searchLat}
-            />
-          </MapContainer>
-        </ContentContainer>
-        
-      </AppContainer>
+            </div>
+          )}
+          <ul className="flex flex-col gap-4 mt-6">
+            {(filteredDataWithDistance.length > 0 ? filteredDataWithDistance : filteredData).map((item, index) => {
+              const properties = item.properties;
+              return (
+                <div className="card bg-base-100 w-full shadow-xl" key={index}>
+                  <div className="card-body">
+                    <h3 className="card-title">{properties.name}</h3>
+                    <div className="card-actions justify-end"></div>
+                    <p>{properties.address}</p>
+                    <div>
+                      <p>
+                        {Array.isArray(properties.serviceType)
+                          ? properties.serviceType.join(' • ')
+                          : properties.serviceType}
+                      </p>
+                      {properties.serviceType && properties.serviceSpecialism && <span> • </span>}
+                      <p>{properties.serviceSpecialism}</p>
+                    </div>
+                    <a href={properties.website}>
+                      <img
+                        alt="an SVG icon indicating an external link"
+                        src={externalLinkIcon.src}
+                        style={{ width: '20px' }}
+                      />
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </ul>
+        </div>
+      </main>
       <Footer />
     </>
   );
