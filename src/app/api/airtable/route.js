@@ -13,7 +13,8 @@ function transformServiceData(serviceData) {
             phone: serviceData["Service phone number"] || "",
             donate: serviceData["Service donation link"] || "", 
             serviceType: serviceData["Service type"] || [],
-            serviceSpecialism: serviceData["Specialist services for"] || []
+            serviceSpecialism: serviceData["Specialist services for"] || [], 
+            approved: serviceData["Approved"]
         },
         geometry: {
             type: "Point",
@@ -44,13 +45,16 @@ export async function GET() {
             });
         });
     };
+
     try {
         await fetchAllRecords();
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch records' }, { status: 500 });
     }
 
-    const data = allRecords.map(record => transformServiceData(record.fields));
+    const approvedRecords = allRecords.filter(record => record.fields["Approved"] === true);
+
+    const data = approvedRecords.map(record => transformServiceData(record.fields));
 
     return NextResponse.json(data);
 }
