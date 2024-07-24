@@ -1,8 +1,5 @@
 import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
-import NodeCache from 'node-cache';
-
-const cache = new NodeCache({ stdTTL: 0 }); 
 
 function transformServiceData(serviceData) {
     return {
@@ -29,17 +26,31 @@ function transformServiceData(serviceData) {
 }
 
 export async function GET() {
-  const cachedData = cache.get("geoJsonData");
-  
-  if (cachedData) {
-    return NextResponse.json(cachedData);
-  }
+    let base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_API_KEY }).base(process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID);
+    let allRecords = [];
 
-  let base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_API_KEY }).base(process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID);
-  const records = await base('services').select().firstPage();
-  const data = records.map(record => transformServiceData(record.fields));
+    const fetchAllRecords = async () => {
+        return new Promise((resolve, reject) => {
+            base('services').select().eachPage((records, fetchNextPage) => {
+                allRecords = allRecords.concat(records);
+                fetchNextPage();
+            }, (error) => {
+                if (error) {
+                    console.error('Error fetching records:', error);
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    };
+    try {
+        await fetchAllRecords();
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to fetch records' }, { status: 500 });
+    }
 
-  cache.set("geoJsonData", data);
-  
-  return NextResponse.json(data);
+    const data = allRecords.map(record => transformServiceData(record.fields));
+
+    return NextResponse.json(data);
 }
