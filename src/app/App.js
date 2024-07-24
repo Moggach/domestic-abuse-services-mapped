@@ -116,7 +116,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       setSearchSubmitted(true);
       updateURLParams(searchQuery);
       setIsSearchCleared(false);
-
     }
   };
 
@@ -127,9 +126,8 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setSearchInput('');
     setSubmittedSearchQuery('');
     setSearchSubmitted(false);
-    setFilteredDataWithDistance([])
+    setFilteredDataWithDistance([]);
     setIsSearchCleared(true);
-
   };
 
   useEffect(() => {
@@ -148,7 +146,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
       setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
-
     };
 
     updateAirtableDataWithDistance();
@@ -198,34 +195,65 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
             </div>
           )}
           <ul className="flex flex-col gap-4 mt-6">
-            {(filteredDataWithDistance.length > 0 ? filteredDataWithDistance : filteredData).map((item, index) => {
-              const properties = item.properties;
-              return (
-                <div className="card bg-base-100 w-full shadow-xl" key={index}>
-                  <div className="card-body">
-                    <h3 className="card-title">{properties.name}</h3>
-                    <div className="card-actions justify-end"></div>
-                    <p>{properties.address}</p>
-                    <div>
-                      <p>
-                        {Array.isArray(properties.serviceType)
-                          ? properties.serviceType.join(' • ')
-                          : properties.serviceType}
-                      </p>
-                      {properties.serviceType && properties.serviceSpecialism && <span> • </span>}
-                      <p>{properties.serviceSpecialism}</p>
+            {searchSubmitted ? (
+              filteredDataWithDistance.length > 0 ? filteredDataWithDistance.map((item, index) => {
+                const properties = item.properties;
+                return (
+                  <div className="card bg-base-100 w-full shadow-xl" key={index}>
+                    <div className="card-body">
+                      <h3 className="card-title">{properties.name}</h3>
+                      <div className="card-actions justify-end"></div>
+                      <p>{properties.address}</p>
+                      <div>
+                        <p>
+                          {Array.isArray(properties.serviceType)
+                            ? properties.serviceType.join(' • ')
+                            : properties.serviceType}
+                        </p>
+                        {properties.serviceType && properties.serviceSpecialism && <span> • </span>}
+                        <p>{properties.serviceSpecialism}</p>
+                      </div>
+                      <a href={properties.website}>
+                        <img
+                          alt="an SVG icon indicating an external link"
+                          src={externalLinkIcon.src}
+                          style={{ width: '20px' }}
+                        />
+                      </a>
                     </div>
-                    <a href={properties.website}>
-                      <img
-                        alt="an SVG icon indicating an external link"
-                        src={externalLinkIcon.src}
-                        style={{ width: '20px' }}
-                      />
-                    </a>
                   </div>
-                </div>
-              );
-            })}
+                );
+              }) : <li>No services found within the specified distance.</li>
+            ) : (
+              filteredData.map((item, index) => {
+                const properties = item.properties;
+                return (
+                  <div className="card bg-base-100 w-full shadow-xl" key={index}>
+                    <div className="card-body">
+                      <h3 className="card-title">{properties.name}</h3>
+                      <div className="card-actions justify-end"></div>
+                      <p>{properties.address}</p>
+                      <div>
+                        <p>
+                          {Array.isArray(properties.serviceType)
+                            ? properties.serviceType.join(' • ')
+                            : properties.serviceType}
+                        </p>
+                        {properties.serviceType && properties.serviceSpecialism && <span> • </span>}
+                        <p>{properties.serviceSpecialism}</p>
+                      </div>
+                      <a href={properties.website}>
+                        <img
+                          alt="an SVG icon indicating an external link"
+                          src={externalLinkIcon.src}
+                          style={{ width: '20px' }}
+                        />
+                      </a>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </ul>
         </div>
       </main>
