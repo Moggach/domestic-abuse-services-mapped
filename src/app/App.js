@@ -29,9 +29,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
   const [isSearchCleared, setIsSearchCleared] = useState(false);
-
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
-  const [isBannerVisible, setIsBannerVisible] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -53,9 +51,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     }
   }, []);
 
-  const toggleBannerVisibility = () => {
-    setIsBannerVisible(!isBannerVisible);
-  };
 
   const updateURLParams = (searchQuery) => {
     const params = new URLSearchParams();
