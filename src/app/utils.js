@@ -26,3 +26,20 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
       return null;
     }
   };
+
+  export const colorMapping = {
+    "Domestic abuse support": "bg-pink-400",
+    "Legal advice": "bg-yellow-400",
+    "Immigration advice": "bg-purple-400",
+    "Pet fostering": "bg-cyan-400",
+    "Honour based abuse": "bg-indigo-400",
+    "Stalking support": "bg-teal-400",
+    "Housing support": "bg-amber-400",
+    "BAME women": "border-amber-400 border-2 text-amber-400 font-bold",
+    "Jewish Women": "border-cyan-400 border-2 text-cyan-400 font-bold",
+    "LGBTQ survivors": "border-purple-400 border-2 text-purple-400 font-bold",
+    "Latin American Women": "border-lime-400 border-2 text-lime-400 font-bold",
+    "Asian women": "border-amber-400 border-2 text-amber-400 font-bold",
+    "Gypsy, Roma and Traveller women": "border-indigo-400 border-2 text-indigo-400 font-bold",
+    "Deaf survivors": "border-teal-400 border-2 text-teal-400 font-bold",
+  };

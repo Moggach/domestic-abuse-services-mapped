@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
-import { calculateDistance, fetchCoordinates } from './utils';
+import { calculateDistance, fetchCoordinates, colorMapping } from './utils';
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
   const router = useRouter();
@@ -151,6 +151,11 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     updateAirtableDataWithDistance();
   }, [searchLat, searchLng, filteredData]);
 
+
+  const getColorForBadge = (text) => {
+    return colorMapping[text] || "bg-blue-400"; 
+  };
+
   return (
     <>
       <main className="bg-slate-300 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
@@ -195,7 +200,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               )}
             </div>
           )}
-          <ul className="flex flex-col gap-4 mt-6">
+                   <ul className="flex flex-col gap-4 mt-6">
             {searchSubmitted ? (
               filteredDataWithDistance.length > 0 ? (
                 filteredDataWithDistance.map((item, index) => {
@@ -212,12 +217,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                               ? properties.serviceType.map((type, i) => (
                                 <div
                                   key={i}
-                                  className="badge bg-pink-400 text-white"
+                                  className={`badge ${getColorForBadge(type)} text-white`}
                                 >
                                   {type}
                                 </div>
                               ))
-                              : <div className="badge bg-pink-400 text-white">{properties.serviceType}</div>}
+                              : <div className={`badge ${getColorForBadge(properties.serviceType)} text-white`}>{properties.serviceType}</div>}
                           </div>
                           {properties.serviceSpecialism && (
                             <div className="flex flex-wrap gap-2 mt-2">
@@ -225,12 +230,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                                 ? properties.serviceSpecialism.map((spec, i) => (
                                   <div
                                     key={i}
-                                    className="badge bg-pink-400 text-white"
+                                    className={`badge ${getColorForBadge(spec)} text-white`}
                                   >
                                     {spec}
                                   </div>
                                 ))
-                                : <div className="badge bg-pink-400 text-white">{properties.serviceSpecialism}</div>}
+                                : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)} text-white`}>{properties.serviceSpecialism}</div>}
                             </div>
                           )}
                         </div>
@@ -273,12 +278,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                             ? properties.serviceType.map((type, i) => (
                               <div
                                 key={i}
-                                className="badge bg-pink-400 text-white p-5"
+                                className={`badge ${getColorForBadge(type)} text-white p-5`}
                               >
                                 {type}
                               </div>
                             ))
-                            : <div className="badge bg-pink-400 text-white p-5">{properties.serviceType}</div>}
+                            : <div className={`badge ${getColorForBadge(properties.serviceType)} text-white p-5`}>{properties.serviceType}</div>}
                         </div>
                         {properties.serviceSpecialism && (
                           <div className="flex flex-wrap gap-2 mt-2">
@@ -286,12 +291,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                               ? properties.serviceSpecialism.map((spec, i) => (
                                 <div
                                   key={i}
-                                  className="badge bg-pink-400 text-white p-5"
+                                  className={`badge ${getColorForBadge(spec)} text-white p-5`}
                                 >
                                   {spec}
                                 </div>
                               ))
-                              : <div className="badge bg-pink-400 text-white p-5">{properties.serviceSpecialism}</div>}
+                              : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)} text-white p-5`}>{properties.serviceSpecialism}</div>}
                           </div>
                         )}
                       </div>
