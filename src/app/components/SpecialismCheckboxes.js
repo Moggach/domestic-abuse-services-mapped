@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms, setSelectedSpecialisms }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleCheckboxChange = (specialism) => {
     const updatedSpecialisms = selectedSpecialisms.includes(specialism)
       ? selectedSpecialisms.filter(s => s !== specialism)
@@ -8,30 +10,40 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
     setSelectedSpecialisms(updatedSpecialisms);
   };
 
+  const toggleCollapse = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <>
- 
-
-    <div className="collapse collapse-arrow pl-4 bg-base-100">
-       <input type="checkbox" />
-       <div className="collapse-title pl-0">Select a specialism</div>
-        <ul className="collapse-content flex flex-wrap gap-2 pl-0">
-
-          {specialisms.map((specialism, index) => (
-            <li className="flex items-center gap-1" key={index}>
-
-              <input
-                type="checkbox"
-                className="checkbox"
-                id={`specialism-${specialism}`}
-                checked={selectedSpecialisms.includes(specialism)}
-                onChange={() => handleCheckboxChange(specialism)}
-              />
-              <label className="label cursor-pointer" htmlFor={`specialism-${specialism}`}>{specialism}</label>
-
-            </li>
-          ))}
-        </ul>
+      <div className="collapse collapse-arrow pl-4 bg-base-100">
+        <input type="checkbox" checked={isOpen} onChange={toggleCollapse} />
+        <div className="collapse-title pl-0 flex justify-between items-center">
+          <div className="indicator">
+            {selectedSpecialisms.length > 0 && (
+              <span className="indicator-item badge badge-secondary translate-x-5">
+                {selectedSpecialisms.length}
+              </span>
+            )}
+            <span>Select a specialism</span>
+          </div>
+        </div>
+        {isOpen && (
+          <ul className="collapse-content flex flex-wrap gap-2 pl-0">
+            {specialisms.map((specialism, index) => (
+              <li className="flex items-center gap-1" key={index}>
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  id={`specialism-${specialism}`}
+                  checked={selectedSpecialisms.includes(specialism)}
+                  onChange={() => handleCheckboxChange(specialism)}
+                />
+                <label className="label cursor-pointer" htmlFor={`specialism-${specialism}`}>{specialism}</label>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </>
   );
