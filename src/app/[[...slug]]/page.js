@@ -12,7 +12,6 @@ export async function generateStaticParams() {
 
 async function fetchAirtableData() {
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/airtable`;
-  console.log(`Fetching Airtable data from: ${url}`);
 
   try {
     const response = await fetch(url);
