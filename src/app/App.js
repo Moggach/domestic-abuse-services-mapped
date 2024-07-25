@@ -154,7 +154,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   return (
     <>
       <main className="bg-slate-300 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
-        <QuickExit/>
+        <QuickExit />
         <MapBox
           lng={lng}
           lat={lat}
@@ -197,65 +197,112 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
           )}
           <ul className="flex flex-col gap-4 mt-6">
             {searchSubmitted ? (
-              filteredDataWithDistance.length > 0 ? filteredDataWithDistance.map((item, index) => {
-                const properties = item.properties;
-                return (
-                  <div className="card bg-base-100 w-full shadow-xl" key={index}>
-                    <div className="card-body">
-                      <h3 className="card-title">{properties.name}</h3>
-                      <div className="card-actions justify-end"></div>
-                      <p>{properties.address}</p>
-                      <div>
-                        <p>
-                          {Array.isArray(properties.serviceType)
-                            ? properties.serviceType.join(' • ')
-                            : properties.serviceType}
-                        </p>
-                        {properties.serviceType && properties.serviceSpecialism && <span> • </span>}
-                        <p>{properties.serviceSpecialism}</p>
+              filteredDataWithDistance.length > 0 ? (
+                filteredDataWithDistance.map((item, index) => {
+                  const properties = item.properties;
+                  return (
+                    <div className="card bg-base-100 w-full shadow-xl" key={index}>
+                      <div className="card-body">
+                        <h3 className="card-title">{properties.name}</h3>
+                        <div className="card-actions justify-end"></div>
+                        <p>{properties.address}</p>
+                        <div>
+                          <div className="flex flex-wrap gap-2">
+                            {Array.isArray(properties.serviceType)
+                              ? properties.serviceType.map((type, i) => (
+                                <div
+                                  key={i}
+                                  className="badge bg-pink-400 text-white"
+                                >
+                                  {type}
+                                </div>
+                              ))
+                              : <div className="badge bg-pink-400 text-white">{properties.serviceType}</div>}
+                          </div>
+                          {properties.serviceSpecialism && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {Array.isArray(properties.serviceSpecialism)
+                                ? properties.serviceSpecialism.map((spec, i) => (
+                                  <div
+                                    key={i}
+                                    className="badge bg-pink-400 text-white"
+                                  >
+                                    {spec}
+                                  </div>
+                                ))
+                                : <div className="badge bg-pink-400 text-white">{properties.serviceSpecialism}</div>}
+                            </div>
+                          )}
+                        </div>
+                        <a href={properties.website}>
+                          <img
+                            alt="an SVG icon indicating an external link"
+                            src={externalLinkIcon.src}
+                            style={{ width: '20px' }}
+                          />
+                        </a>
                       </div>
-                      <a href={properties.website}>
-                        <img
-                          alt="an SVG icon indicating an external link"
-                          src={externalLinkIcon.src}
-                          style={{ width: '20px' }}
-                        />
-                      </a>
                     </div>
-                  </div>
-                );
-              }) : <li>No services found within the specified distance.</li>
+                  );
+                })
+              ) : (
+                <li>No services found within the specified distance.</li>
+              )
             ) : (
               filteredData.map((item, index) => {
                 const properties = item.properties;
                 return (
                   <div className="card bg-base-100 w-full shadow-xl" key={index}>
                     <div className="card-body">
-                      <h3 className="card-title">{properties.name}</h3>
+                      <div className='flex justify-between items-center'>
+                        <h3 className="card-title">{properties.name}</h3>
+
+                        <a href={properties.website}>
+                          <img
+                            alt="an SVG icon indicating an external link"
+                            src={externalLinkIcon.src}
+                            style={{ width: '20px' }}
+                          />
+                        </a>
+                      </div>
                       <div className="card-actions justify-end"></div>
                       <p>{properties.address}</p>
                       <div>
-                        <p>
+                        <div className="flex flex-wrap gap-2 mt-3">
                           {Array.isArray(properties.serviceType)
-                            ? properties.serviceType.join(' • ')
-                            : properties.serviceType}
-                        </p>
-                        {properties.serviceType && properties.serviceSpecialism && <span> • </span>}
-                        <p>{properties.serviceSpecialism}</p>
+                            ? properties.serviceType.map((type, i) => (
+                              <div
+                                key={i}
+                                className="badge bg-pink-400 text-white p-5"
+                              >
+                                {type}
+                              </div>
+                            ))
+                            : <div className="badge bg-pink-400 text-white p-5">{properties.serviceType}</div>}
+                        </div>
+                        {properties.serviceSpecialism && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {Array.isArray(properties.serviceSpecialism)
+                              ? properties.serviceSpecialism.map((spec, i) => (
+                                <div
+                                  key={i}
+                                  className="badge bg-pink-400 text-white p-5"
+                                >
+                                  {spec}
+                                </div>
+                              ))
+                              : <div className="badge bg-pink-400 text-white p-5">{properties.serviceSpecialism}</div>}
+                          </div>
+                        )}
                       </div>
-                      <a href={properties.website}>
-                        <img
-                          alt="an SVG icon indicating an external link"
-                          src={externalLinkIcon.src}
-                          style={{ width: '20px' }}
-                        />
-                      </a>
+
                     </div>
                   </div>
                 );
               })
             )}
           </ul>
+
         </div>
       </main>
       <Footer />
