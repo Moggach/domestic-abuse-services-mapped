@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+const isValidUKPostcode = (postcode) => {
+  const postcodeRegex = /^([A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}|GIR\s?0AA)$/i;
+  return postcodeRegex.test(postcode.trim());
+};
 
 export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onClear }) {
+  const [error, setError] = useState('');
+
   const handleClear = () => {
     setSearchQuery('');
     onClear();
+    setError('');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(searchQuery);
+    if (isValidUKPostcode(searchQuery)) {
+      onSubmit(searchQuery);
+      setError('');
+    } else {
+      setError('Please enter a valid UK postcode');
+    }
   };
 
   return (
@@ -54,6 +67,8 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
           </button>
         )}
       </label>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 }
+
