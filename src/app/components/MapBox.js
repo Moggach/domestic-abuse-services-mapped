@@ -185,7 +185,7 @@ export default function MapBox({
   }, [data, getPointRadius, handlePointSelect]);
 
   return (
-    <div className='h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0'ref={mapContainer}>
+    <div className='h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2'ref={mapContainer}>
       {popupInfo && <PopUp map={map} {...popupInfo} />}
     </div>
   );
