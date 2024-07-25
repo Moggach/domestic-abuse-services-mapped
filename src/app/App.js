@@ -169,7 +169,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
           searchLat={searchLat}
         />
 
-        <div>
+        <div className='flex flex-col gap-5'>
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}

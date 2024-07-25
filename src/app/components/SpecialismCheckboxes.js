@@ -12,7 +12,7 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
     <>
  
 
-    <div className="collapse collapse-arrow">
+    <div className="collapse collapse-arrow outline outline-1 pl-4">
        <input type="checkbox" />
        <div className="collapse-title pl-0">Select a specialism</div>
         <ul className="collapse-content flex flex-wrap gap-2 pl-0">
