@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import MapBox from './components/MapBox';
 import SearchInput from './components/SearchInput';
-import GoToGoogleButton from './components/QuickExit';
+import QuickExit from './components/QuickExit';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
@@ -154,6 +154,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   return (
     <>
       <main className="bg-slate-300 p-4 md:flex md:flex-row-reverse md:gap-6">
+        <QuickExit/>
         <MapBox
           lng={lng}
           lat={lat}
