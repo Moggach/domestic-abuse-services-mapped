@@ -153,7 +153,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
   return (
     <>
-      <main className="bg-slate-300 p-4 md:flex md:flex-row-reverse md:gap-6">
+      <main className="bg-slate-300 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
         <QuickExit/>
         <MapBox
           lng={lng}
