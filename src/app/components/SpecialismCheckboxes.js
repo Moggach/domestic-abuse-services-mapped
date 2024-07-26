@@ -29,7 +29,7 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
           </div>
         </div>
         {isOpen && (
-          <ul className="collapse-content flex flex-wrap gap-2 pl-0 w-[500px]">
+          <ul className="collapse-content flex flex-wrap gap-2 pl-0">
             {specialisms.map((specialism, index) => (
               <li className="flex items-center gap-1" key={index}>
                 <input
