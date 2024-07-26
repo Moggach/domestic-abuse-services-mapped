@@ -149,14 +149,18 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
 
   const getColorForBadge = (text) => {
-    return colorMapping[text] || "bg-blue-400 text-white"; 
+    return colorMapping[text] || "bg-blue-400 text-white";
   };
 
   return (
     <>
+
       <main className="bg-base-200 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
-        <Modal/>
+      <input type="checkbox" value="dark" className="toggle theme-controller" />
+
+        <Modal />
         <QuickExit />
+
         <MapBox
           lng={lng}
           lat={lat}
@@ -170,6 +174,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
           searchLng={searchLng}
           searchLat={searchLat}
         />
+
 
         <div className='flex flex-col gap-5 basis-1/2'>
           <ServiceTypeFilter
@@ -197,7 +202,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               )}
             </div>
           )}
-                   <ul className="flex flex-col gap-4 mt-6">
+          <ul className="flex flex-col gap-4 mt-6">
             {searchSubmitted ? (
               filteredDataWithDistance.length > 0 ? (
                 filteredDataWithDistance.map((item, index) => {
