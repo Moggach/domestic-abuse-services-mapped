@@ -227,12 +227,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                                 ? properties.serviceSpecialism.map((spec, i) => (
                                   <div
                                     key={i}
-                                    className={`badge ${getColorForBadge(spec)} p-5 text-white`}
+                                    className={`badge ${getColorForBadge(spec)} p-5`}
                                   >
                                     {spec}
                                   </div>
                                 ))
-                                : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)} p-5 text-white`}>{properties.serviceSpecialism}</div>}
+                                : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)} p-5`}>{properties.serviceSpecialism}</div>}
                             </div>
                           )}
                         </div>
