@@ -43,3 +43,13 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
     "Gypsy, Roma and Traveller women": "border-indigo-400 border-2 text-indigo-400 font-bold",
     "Deaf survivors": "border-teal-400 border-2 text-teal-400 font-bold",
   };
+
+
+  export const determineZoomLevel = () => {
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 768;
+    if (screenWidth >= 768) {
+      return 5; 
+    } else {
+      return 4; 
+    }
+  };

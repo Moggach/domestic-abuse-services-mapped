@@ -10,7 +10,8 @@ import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
-import { calculateDistance, fetchCoordinates, colorMapping } from './utils';
+import { calculateDistance, fetchCoordinates, colorMapping, determineZoomLevel } from './utils';
+
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
   const router = useRouter();
@@ -22,7 +23,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [lat, setLat] = useState(54.5);
   const [searchLng, setSearchlng] = useState('');
   const [searchLat, setSearchLat] = useState('');
-  const [zoom, setZoom] = useState(4);
+  const [zoom, setZoom] = useState(determineZoomLevel());
   const [searchInput, setSearchInput] = useState('');
   const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
@@ -117,7 +118,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const handleSearchClear = () => {
     setLng(-3.5);
     setLat(54.5);
-    setZoom(4);
+    setZoom(determineZoomLevel());
     setSearchInput('');
     setSubmittedSearchQuery('');
     setSearchSubmitted(false);
