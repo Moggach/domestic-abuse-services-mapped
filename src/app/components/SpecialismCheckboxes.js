@@ -16,7 +16,7 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
 
   return (
     <>
-      <div className="collapse collapse-arrow pl-4 bg-base-100">
+      <div className="collapse collapse-arrow pl-4  outline-dotted">
         <input type="checkbox" checked={isOpen} onChange={toggleCollapse} />
         <div className="collapse-title pl-0 flex justify-between items-center">
           <div className="indicator">
@@ -25,7 +25,7 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
                 {selectedSpecialisms.length}
               </span>
             )}
-            <span>Select a specialism</span>
+            <span className='font-semibold text-xl'>Select a specialism</span>
           </div>
         </div>
         {isOpen && (

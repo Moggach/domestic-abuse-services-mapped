@@ -1,7 +1,7 @@
 export default function ServiceTypeFilter({ selectedServiceType, setSelectedServiceType, serviceTypes }) {
   return (
     <div>
-      <label className="mr-4" htmlFor="serviceFilter">Filter by service type</label>
+      <label className="mr-4 font-semibold text-xl" htmlFor="serviceFilter">Filter by service type</label>
       <select className="select select-bordered w-full max-w-xs mt-2"
         id="serviceFilter"
         value={selectedServiceType}

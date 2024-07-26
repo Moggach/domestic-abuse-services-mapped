@@ -26,7 +26,7 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
 
   return (
     <div>
-      <label htmlFor="searchInput">Search by location: </label>
+      <label className="font-semibold text-xl" htmlFor="searchInput">Search by location </label>
       <label className="input input-bordered flex items-center gap-2 mt-2">
         <input
           type="text"

@@ -154,7 +154,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
   return (
     <>
-      <main className="bg-slate-300 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
+      <main className="bg-base-200 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal/>
         <QuickExit />
         <MapBox
@@ -203,7 +203,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                 filteredDataWithDistance.map((item, index) => {
                   const properties = item.properties;
                   return (
-                    <div className="card bg-base-100 w-full shadow-xl" key={index}>
+                    <div className="card bg-primary-content w-full shadow-xl" key={index}>
                       <div className="card-body">
                         <h3 className="card-title">{properties.name}</h3>
                         <div className="card-actions justify-end"></div>
@@ -254,7 +254,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               filteredData.map((item, index) => {
                 const properties = item.properties;
                 return (
-                  <div className="card bg-base-100 w-full shadow-xl" key={index}>
+                  <div className="card bg-primary-content w-full shadow-xl" key={index}>
                     <div className="card-body">
                       <div className='flex justify-between items-center'>
                         <h3 className="card-title">{properties.name}</h3>
