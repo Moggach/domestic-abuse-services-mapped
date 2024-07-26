@@ -22,7 +22,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [lat, setLat] = useState(54.5);
   const [searchLng, setSearchlng] = useState('');
   const [searchLat, setSearchLat] = useState('');
-  const [zoom, setZoom] = useState(5);
+  const [zoom, setZoom] = useState(4);
   const [searchInput, setSearchInput] = useState('');
   const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
@@ -117,7 +117,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const handleSearchClear = () => {
     setLng(-3.5);
     setLat(54.5);
-    setZoom(5);
+    setZoom(4);
     setSearchInput('');
     setSubmittedSearchQuery('');
     setSearchSubmitted(false);
