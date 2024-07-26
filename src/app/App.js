@@ -213,12 +213,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                               ? properties.serviceType.map((type, i) => (
                                 <div
                                   key={i}
-                                  className={`badge ${getColorForBadge(type)}`}
+                                  className={`badge ${getColorForBadge(type)} p-5`}
                                 >
                                   {type}
                                 </div>
                               ))
-                              : <div className={`badge ${getColorForBadge(properties.serviceType)}`}>{properties.serviceType}</div>}
+                              : <div className={`badge ${getColorForBadge(properties.serviceType)} p-5`}>{properties.serviceType}</div>}
                           </div>
                           {properties.serviceSpecialism && (
                             <div className="flex flex-wrap gap-2 mt-2">
@@ -226,12 +226,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                                 ? properties.serviceSpecialism.map((spec, i) => (
                                   <div
                                     key={i}
-                                    className={`badge ${getColorForBadge(spec)}`}
+                                    className={`badge ${getColorForBadge(spec)} p-5`}
                                   >
                                     {spec}
                                   </div>
                                 ))
-                                : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)}`}>{properties.serviceSpecialism}</div>}
+                                : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)} p-5`}>{properties.serviceSpecialism}</div>}
                             </div>
                           )}
                         </div>
