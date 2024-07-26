@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import MapBox from './components/MapBox';
 import SearchInput from './components/SearchInput';
 import QuickExit from './components/QuickExit';
-import Banner from './components/Banner';
+import Modal from './components/Modal';
 import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
@@ -154,7 +154,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   return (
     <>
       <main className="bg-slate-300 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
-        <Banner/>
+        <Modal/>
         <QuickExit />
         <MapBox
           lng={lng}
