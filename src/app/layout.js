@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
     <html data-theme="light" lang="en">
       <head>
       </head>
-      <body>
+      <body className="bg-base-200">
         <div id="root">{children}</div>
       </body>
     </html>

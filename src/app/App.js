@@ -7,6 +7,7 @@ import SearchInput from './components/SearchInput';
 import QuickExit from './components/QuickExit';
 import Modal from './components/Modal';
 import Footer from './components/Footer';
+import ThemeSwitcher from './components/ThemeSwitcher';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import externalLinkIcon from './images/svgs/exernal_link.svg';
@@ -154,10 +155,10 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
   return (
     <>
+    
+      <ThemeSwitcher />
 
-      <main className="bg-base-200 p-4 lg:flex lg:flex-row-reverse lg:gap-6">
-      <input type="checkbox" value="dark" className="toggle theme-controller" />
-
+      <main className="p-4 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal />
         <QuickExit />
 
