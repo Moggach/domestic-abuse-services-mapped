@@ -16,7 +16,7 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
 
   return (
     <>
-      <div className="collapse collapse-arrow pl-4  outline-dotted">
+      <div className="collapse collapse-arrow">
         <input type="checkbox" checked={isOpen} onChange={toggleCollapse} />
         <div className="collapse-title pl-0 flex justify-between items-center">
           <div className="indicator">
