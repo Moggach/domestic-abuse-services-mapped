@@ -156,12 +156,9 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   return (
     <>
     
-      <ThemeSwitcher />
-
       <main className="p-4 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal />
         <QuickExit />
-
         <MapBox
           lng={lng}
           lat={lat}
@@ -178,6 +175,8 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
 
         <div className='flex flex-col gap-5 basis-1/2'>
+        <ThemeSwitcher />
+
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
