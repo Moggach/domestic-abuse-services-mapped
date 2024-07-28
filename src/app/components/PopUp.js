@@ -14,7 +14,7 @@ const PopUp = ({ map, coordinates, name, address, phone, website, email, donate 
             <h3 class="popup-title">${name}</h3>`
            
             if (address) {
-                htmlContent +=  `<div class="pop-up-itemt">${address}</div>`;
+                htmlContent +=  `<div class="pop-up-item">${address}</div>`;
             }
             if (phone) {
                 htmlContent += `<div class="pop-up-item"><img src="${phoneIconUrl.src}" alt="Phone" style="height: 15px;"/><a href="tel:${phone}" style="text-decoration: none; color: inherit;"> ${phone}</a></div>`;
