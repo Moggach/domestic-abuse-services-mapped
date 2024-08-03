@@ -15,10 +15,10 @@ const NavBar = () => {
         <>
             <nav className="p-4">
                 <div className="container min-w-full flex justify-between items-center">
-                    <div className="font-semibold text-xl">Domestic Abuse Services Mapped</div>
+                    <h1 className=" text-xl font-monserrat">Domestic Abuse Services Mapped</h1>
                     <div className="hidden md:flex space-x-4 items-center">
                         {menuItems.map((item) => (
-                            <a href={`#${item.toLowerCase()}`} key={item} className="font-semibold text-xl">
+                            <a href={`#${item.toLowerCase()}`} key={item} className=" text-xl">
                                 {item}
                             </a>
                         ))}
@@ -53,7 +53,7 @@ const NavBar = () => {
                         <a
                             href={`#${item.toLowerCase()}`}
                             key={item}
-                            className="block font-semibold text-xl"
+                            className="block  text-xl"
                             onClick={toggleDrawer}
                         >
                             {item}

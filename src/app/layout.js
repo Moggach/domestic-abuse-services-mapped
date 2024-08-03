@@ -8,9 +8,25 @@ export const metadata = {
   },
 }
 
+import localFont from '@next/font/local'
+
+const poppins = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Poppins-Regular.ttf',
+      weight: '400'
+    },
+    {
+      path: '../../public/fonts/Poppins-Bold.ttf',
+      weight: '700'
+    }
+  ],
+  variable: '--font-poppins'
+})
+
 export default function RootLayout({ children }) {
   return (
-    <html data-theme="light" lang="en">
+    <html data-theme="light" lang="en" className={`${poppins.variable} font-sans`}>
       <head>
       </head>
       <body className="bg-base-200">
