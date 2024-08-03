@@ -1,3 +1,5 @@
+import Navbar from "./components/NavBar"
+
 export const metadata = {
   title: 'Domestic abuse services mapping',
   description: 'A tool for mapping domestic abuse services across the UK.',
@@ -12,6 +14,7 @@ export default function RootLayout({ children }) {
       <head>
       </head>
       <body className="bg-base-200">
+        <Navbar />
         <div id="root">{children}</div>
       </body>
     </html>

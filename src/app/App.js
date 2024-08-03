@@ -7,7 +7,6 @@ import SearchInput from './components/SearchInput';
 import QuickExit from './components/QuickExit';
 import Modal from './components/Modal';
 import Footer from './components/Footer';
-import ThemeSwitcher from './components/ThemeSwitcher';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import { calculateDistance, fetchCoordinates, colorMapping, determineZoomLevel } from './utils';
@@ -174,8 +173,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
 
         <div className='flex flex-col gap-5 basis-1/2'>
-          <ThemeSwitcher />
-
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
