@@ -1,4 +1,6 @@
 import Navbar from "./components/NavBar"
+import localFont from '@next/font/local'
+
 
 export const metadata = {
   title: 'Domestic abuse services mapping',
@@ -8,7 +10,6 @@ export const metadata = {
   },
 }
 
-import localFont from '@next/font/local'
 
 const poppins = localFont({
   src: [
