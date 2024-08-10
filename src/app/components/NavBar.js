@@ -15,12 +15,18 @@ const NavBar = () => {
         <>
             <nav className="p-4">
                 <div className="container min-w-full flex justify-between items-center">
-                <h1 className="font-headings text-3xl"><a href="/">Domestic Abuse Services Mapped</a></h1>
+                    <h1 className="font-headings text-3xl">
+                        <a href="/">Domestic Abuse Services Mapped</a>
+                    </h1>
                     <div className="hidden md:flex space-x-4 items-center">
                         {menuItems.map((item) => (
-                            <a href={`${item.toLowerCase()}`} key={item} className="font-headings text-2xl">
-                                {item}
-                            </a>
+                            item === 'Home' ? (
+                                <a href="/"  key={item} className="font-headings text-2xl">Home</a>
+                            ) : (
+                                <a href={`/${item.toLowerCase()}`} key={item} className="font-headings text-2xl">
+                                    {item}
+                                </a>
+                            )
                         ))}
                         <ThemeSwitcher />
                     </div>
@@ -50,14 +56,18 @@ const NavBar = () => {
             >
                 <div className="p-4 flex flex-col gap-4">
                     {menuItems.map((item) => (
-                        <a
-                            href={`${item.toLowerCase()}`}
-                            key={item}
-                            className="block text-2xl font-headings"
-                            onClick={toggleDrawer}
-                        >
-                            {item}
-                        </a>
+                        item === 'Home' ? (
+                            <a href="/" key={item} className="block text-2xl font-headings">Home</a>
+                        ) : (
+                            <a
+                                href={`/${item.toLowerCase()}`}
+                                key={item}
+                                className="block text-2xl font-headings"
+                                onClick={toggleDrawer}
+                            >
+                                {item}
+                            </a>
+                        )
                     ))}
                     <ThemeSwitcher />
                 </div>
