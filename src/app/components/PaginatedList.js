@@ -18,7 +18,7 @@ const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
       <button
         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
         disabled={currentPage === 1}
-        className="px-4 py-2 mr-2 btn btn-accent  font-semibold"
+        className="px-4 py-2 mr-2 btn btn-accent  text-white font-semibold"
       >
         Previous
       </button>
@@ -26,7 +26,7 @@ const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
       <button
         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 ml-2 btn btn-accent font-semibold "
+        className="px-4 py-2 ml-2 btn btn-accent font-semibold text-white"
       >
         Next
       </button>
