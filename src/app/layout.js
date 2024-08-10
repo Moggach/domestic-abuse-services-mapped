@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
     <html data-theme="light" lang="en" className={`${poppins.variable} ${opensans.variable}`}>
       <head>
       </head>
-      <body className="bg-base-200 font-body">
+      <body className="bg-base-200 font-body h-screen">
         <Navbar />
         <div id="root" className="font-body">
           {children}
