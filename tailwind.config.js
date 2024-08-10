@@ -5,10 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
-
       fontFamily: {
-        sans: ['var(--font-poppins)']
-
+        headings: ['var(--font-poppins)'],
+        body: ['var(--font-opensans)']
       },
     },
   },

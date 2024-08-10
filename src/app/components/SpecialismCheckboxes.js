@@ -25,13 +25,13 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
                 {selectedSpecialisms.length}
               </span>
             )}
-            <span className=' text-xl'>Select a specialism</span>
+            <span className='font-headings text-xl'>Select a specialism</span>
           </div>
         </div>
         {isOpen && (
           <ul className="collapse-content flex flex-wrap gap-2 pl-0">
             {specialisms.map((specialism, index) => (
-              <li className="flex items-center gap-1" key={index}>
+              <li className="flex items-center gap-1 text-sm" key={index}>
                 <input
                   type="checkbox"
                   className="checkbox"

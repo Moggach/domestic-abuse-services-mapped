@@ -25,14 +25,27 @@ const poppins = localFont({
   variable: '--font-poppins'
 })
 
+const opensans = localFont({
+  src: [
+    {
+      path: '../../public/fonts/OpenSans-Regular.ttf',
+      weight: '400'
+    },
+    
+  ],
+  variable: '--font-opensans'
+})
+
 export default function RootLayout({ children }) {
   return (
-    <html data-theme="light" lang="en" className={`${poppins.variable} font-sans`}>
+    <html data-theme="light" lang="en" className={`${poppins.variable} ${opensans.variable}`}>
       <head>
       </head>
-      <body className="bg-base-200">
+      <body className="bg-base-200 font-body">
         <Navbar />
-        <div id="root">{children}</div>
+        <div id="root" className="font-body">
+          {children}
+        </div>
       </body>
     </html>
   )
