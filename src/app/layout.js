@@ -38,10 +38,10 @@ const opensans = localFont({
 
 export default function RootLayout({ children }) {
   return (
-    <html data-theme="light" lang="en" className={`${poppins.variable} ${opensans.variable}`}>
+    <html data-theme="light" lang="en" className={`${poppins.variable} ${opensans.variable} bg-base-200`}>
       <head>
       </head>
-      <body className="bg-base-200 font-body h-screen">
+      <body className="font-body h-screen">
         <Navbar />
         <div id="root" className="font-body">
           {children}
