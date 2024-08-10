@@ -269,7 +269,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                             ? properties.serviceType.map((type, i) => (
                               <div
                                 key={i}
-                                className={`badge ${getColorForBadge(type)} p-5 text-white`}
+                                className={`badge ${getColorForBadge(type)} p-5 text-white text-sm`}
                               >
                                 {type}
                               </div>
@@ -282,12 +282,12 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
                               ? properties.serviceSpecialism.map((spec, i) => (
                                 <div
                                   key={i}
-                                  className={`badge ${getColorForBadge(spec)} p-5`}
+                                  className={`badge ${getColorForBadge(spec)} p-5 text-sm`}
                                 >
                                   {spec}
                                 </div>
                               ))
-                              : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)} p-5`}>{properties.serviceSpecialism}</div>}
+                              : <div className={`badge ${getColorForBadge(properties.serviceSpecialism)} p-5 text-sm`}>{properties.serviceSpecialism}</div>}
                           </div>
                         )}
                       </div>
