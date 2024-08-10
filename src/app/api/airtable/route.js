@@ -6,6 +6,7 @@ function transformServiceData(serviceData) {
         type: "Feature",
         properties: {
             name: serviceData["Service name"] || "",
+            description: serviceData["Service description"] || "",
             address: serviceData["Service address"] || "",
             postcode: serviceData["Service postcode"] || "",
             email: serviceData["Service email address"] || "",
