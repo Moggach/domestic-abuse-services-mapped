@@ -22,6 +22,7 @@ const Modal = () => {
           </form>
           <div className="flex flex-col gap-2">
           <p>If you are in an emergency, please call 999</p>
+          <p>If you need a refuge space please contact the <a className="underline" href="https://www.nationaldahelpline.org.uk/">National Domestic Abuse Helpline</a> on 0808 2000 247</p>
           <p>If you’re worried someone might be monitoring your devices, exit this website and visit from a device only you have access to. </p>
           <p>Learn more about <a className="underline" href="https://refugetechsafety.org/">safe browsing, and keeping your technology safe.</a></p>
           </div>
