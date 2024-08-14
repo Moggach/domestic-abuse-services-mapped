@@ -12,7 +12,7 @@ export const metadata = {
     description: 'A tool for mapping domestic abuse services across the UK.',
     images: [
       {
-        url: '/og-image.png', 
+        url: '/og_image.png', 
         width: 1200,
         height: 630,
         alt: 'Domestic abuse services mapping',
