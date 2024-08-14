@@ -30,8 +30,8 @@ const NavBar = () => {
                         ))}
                         <ThemeSwitcher />
                     </div>
-                    <div className="md:hidden">
-                        <button onClick={toggleDrawer} className="">
+                    <div className="md:hidden text-accent">
+                        <button onClick={toggleDrawer}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
