@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import ThemeSwitcher from './ThemeSwitcher';
 
@@ -18,10 +18,11 @@ const NavBar = () => {
                     <h1 className="font-headings text-3xl font-bold text-accent">
                         <a href="/">Domestic Abuse Services Mapped</a>
                     </h1>
+
                     <div className="hidden md:flex space-x-4 items-center">
                         {menuItems.map((item) => (
                             item === 'Home' ? (
-                                <a href="/"  key={item} className="font-headings text-2xl font-bold text-accent">Home</a>
+                                <a href="/" key={item} className="font-headings text-2xl font-bold text-accent">Home</a>
                             ) : (
                                 <a href={`/${item.toLowerCase()}`} key={item} className="font-headings text-2xl font-bold text-accent">
                                     {item}
@@ -54,7 +55,14 @@ const NavBar = () => {
             <div
                 className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${drawerOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform`}
             >
-                <div className="p-4 flex flex-col gap-4">
+                <div className="p-4 flex flex-col gap-4 text-accent">
+                    <div className="self-end">
+                        <button onClick={toggleDrawer} aria-label="Close menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block h-6 w-6 stroke-current">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                     {menuItems.map((item) => (
                         item === 'Home' ? (
                             <a href="/" key={item} className="block text-2xl font-headings font-bold text-accent">Home</a>
