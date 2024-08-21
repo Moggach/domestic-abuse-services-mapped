@@ -9,7 +9,7 @@ const NavBar = () => {
         setDrawerOpen(!drawerOpen);
     };
 
-    const menuItems = ['Home', 'About', 'Privacy'];
+    const menuItems = ['About', 'Privacy']; // Removed 'Home' from the menu items
 
     return (
         <>
@@ -21,13 +21,9 @@ const NavBar = () => {
 
                     <div className="hidden md:flex space-x-4 items-center">
                         {menuItems.map((item) => (
-                            item === 'Home' ? (
-                                <a href="/" key={item} className="font-headings text-2xl font-bold text-accent">Home</a>
-                            ) : (
-                                <a href={`/${item.toLowerCase()}`} key={item} className="font-headings text-2xl font-bold text-accent">
-                                    {item}
-                                </a>
-                            )
+                            <a href={`/${item.toLowerCase()}`} key={item} className="font-headings text-2xl font-bold text-accent">
+                                {item}
+                            </a>
                         ))}
                         <ThemeSwitcher />
                     </div>
@@ -64,18 +60,14 @@ const NavBar = () => {
                         </button>
                     </div>
                     {menuItems.map((item) => (
-                        item === 'Home' ? (
-                            <a href="/" key={item} className="block text-2xl font-headings font-bold text-accent">Home</a>
-                        ) : (
-                            <a
-                                href={`/${item.toLowerCase()}`}
-                                key={item}
-                                className="block text-2xl font-headings font-bold text-accent"
-                                onClick={toggleDrawer}
-                            >
-                                {item}
-                            </a>
-                        )
+                        <a
+                            href={`/${item.toLowerCase()}`}
+                            key={item}
+                            className="block text-2xl font-headings font-bold text-accent"
+                            onClick={toggleDrawer}
+                        >
+                            {item}
+                        </a>
                     ))}
                     <ThemeSwitcher />
                 </div>
