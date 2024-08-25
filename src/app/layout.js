@@ -65,6 +65,7 @@ export default function RootLayout({ children }) {
         <meta property="og:image:height" content={metadata.openGraph.images[0].height} />
         <meta property="og:image:alt" content={metadata.openGraph.images[0].alt} />
         <meta property="og:type" content={metadata.openGraph.type} />
+        <script async defer src="https://scripts.withcabin.com/hello.js"></script>
       </head>
       <body className={`${poppins.variable} ${opensans.variable} font-body h-screen`}>
         <Navbar />
