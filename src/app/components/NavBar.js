@@ -9,8 +9,8 @@ const NavBar = () => {
         setDrawerOpen(!drawerOpen);
     };
 
-    const menuItems = ['About', 'Privacy']; // Removed 'Home' from the menu items
-
+    const menuItems = ['About', 'Privacy'];
+    
     return (
         <>
             <nav className="p-4">

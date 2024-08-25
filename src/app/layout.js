@@ -48,9 +48,16 @@ const opensans = localFont({
 
 export default function RootLayout({ children }) {
   return (
-    <html data-theme="light" lang="en" className={`${poppins.variable} ${opensans.variable} bg-base-200`}>
+    <html lang="en">
       <head>
-        {/* Open Graph meta tags */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              const theme = localStorage.getItem('theme') || 'light';
+              document.documentElement.setAttribute('data-theme', theme);
+            })();
+          `
+        }} />
         <meta property="og:title" content={metadata.openGraph.title} />
         <meta property="og:description" content={metadata.openGraph.description} />
         <meta property="og:image" content={metadata.openGraph.images[0].url} />
@@ -59,7 +66,7 @@ export default function RootLayout({ children }) {
         <meta property="og:image:alt" content={metadata.openGraph.images[0].alt} />
         <meta property="og:type" content={metadata.openGraph.type} />
       </head>
-      <body className="font-body h-screen">
+      <body className={`${poppins.variable} ${opensans.variable} font-body h-screen`}>
         <Navbar />
         <div id="root" className="font-body">
           {children}
