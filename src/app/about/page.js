@@ -1,7 +1,12 @@
+'use client';
+
 import '../styles/globals.css';
+import QuickExit from '../components/QuickExit';
+
 
 const About = () => {
   return (
+    <>
     <main className="p-4"><h1 className='font-headings text-3xl mb-4'>About</h1>
     <div className="flex flex-col gap-4 text-xl">
     <p>Domestic abuse services mapped is a project built and maintained by <a className="underline" href="https://github.com/Moggach">Moggach</a></p>
@@ -13,6 +18,8 @@ const About = () => {
 
   
     </main>
+    <QuickExit/>
+    </>
   );
 };
 
