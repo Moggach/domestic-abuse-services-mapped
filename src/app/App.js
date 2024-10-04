@@ -156,7 +156,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     <>
       <main className="p-4 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal />
-        <QuickExit />
         <MapBox
           lng={lng}
           lat={lat}
@@ -205,6 +204,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
           />
         </div>
       </main>
+      <QuickExit />
       <Footer />
     </>
   );
