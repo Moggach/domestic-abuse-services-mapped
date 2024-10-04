@@ -48,7 +48,7 @@ const opensans = localFont({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning lang="en">
       <head>
         <script dangerouslySetInnerHTML={{
           __html: `
