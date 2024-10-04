@@ -148,10 +148,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   }, [searchLat, searchLng, filteredData]);
 
 
-  const getColorForBadge = (text) => {
-    return colorMapping[text] || "bg-blue-400 text-white";
-  };
-
   return (
     <>
       <main className="p-4 lg:flex lg:flex-row-reverse lg:gap-6">
