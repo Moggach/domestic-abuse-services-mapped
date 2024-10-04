@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { colorMapping } from '../utils';
-
 
 const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -11,14 +10,12 @@ const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
     }
   }, [totalPages, currentPage, setCurrentPage]);
 
-  
-
   return (
     <div className="flex justify-center items-center mt-4">
       <button
         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
         disabled={currentPage === 1}
-        className="px-4 py-2 mr-2 btn btn-accent  text-white font-semibold"
+        className="px-4 py-2 mr-2 btn btn-accent text-white font-semibold"
       >
         Previous
       </button>
@@ -34,8 +31,7 @@ const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
   );
 };
 
-const PaginatedList = ({ data, itemsPerPage }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const PaginatedList = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
   const [paginatedData, setPaginatedData] = useState([]);
 
   useEffect(() => {
@@ -43,10 +39,6 @@ const PaginatedList = ({ data, itemsPerPage }) => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     setPaginatedData(data.slice(indexOfFirstItem, indexOfLastItem));
   }, [currentPage, data, itemsPerPage]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [data]);
 
   const getColorForBadge = (text) => {
     return colorMapping[text] || "bg-blue-400 text-white";
@@ -95,7 +87,12 @@ const PaginatedList = ({ data, itemsPerPage }) => {
           );
         })}
       </ul>
-      <Pagination data={data} itemsPerPage={itemsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <Pagination 
+        data={data} 
+        itemsPerPage={itemsPerPage} 
+        currentPage={currentPage} 
+        setCurrentPage={setCurrentPage} 
+      />
     </div>
   );
 };

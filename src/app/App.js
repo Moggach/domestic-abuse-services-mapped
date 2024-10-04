@@ -10,11 +10,12 @@ import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import PaginatedList from './components/PaginatedList';
-import { calculateDistance, fetchCoordinates, colorMapping, determineZoomLevel } from './utils';
+import { calculateDistance, fetchCoordinates, determineZoomLevel } from './utils';
 
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes] = useState(initialServiceTypes);
@@ -32,8 +33,10 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
 
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
     const serviceType = params.get('serviceType');
     const specialisms = params.get('specialisms');
     const searchQuery = params.get('search');
@@ -68,12 +71,16 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       params.set('search', searchQuery);
     }
 
+    if (currentPage) {
+      params.set('page', currentPage);
+    }
+
     router.replace(`/?${params.toString()}`, { shallow: true });
   };
 
   useEffect(() => {
     updateURLParams(submittedSearchQuery);
-  }, [selectedServiceType, selectedSpecialisms, submittedSearchQuery]);
+  }, [selectedServiceType, selectedSpecialisms, submittedSearchQuery, currentPage]);
 
   useEffect(() => {
     let result = serverAirtableData.features;
@@ -192,11 +199,11 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
               )}
             </div>
           )}
-          {/* Use the PaginatedList component */}
-          <PaginatedList 
-            data={searchSubmitted ? filteredDataWithDistance : filteredData} 
-            itemsPerPage={10} 
-            searchSubmitted={searchSubmitted} 
+          <PaginatedList
+            data={searchSubmitted ? filteredDataWithDistance : filteredData}
+            itemsPerPage={10}
+            currentPage={currentPage} 
+            setCurrentPage={setCurrentPage} 
           />
         </div>
       </main>
