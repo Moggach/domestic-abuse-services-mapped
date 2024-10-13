@@ -33,6 +33,10 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
 
+  const isPostcode = (input) => {
+    const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
+    return postcodeRegex.test(input.trim());
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -54,7 +58,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       handleSearchSubmit(searchQuery);
     }
   }, []);
-
 
   const updateURLParams = (searchQuery) => {
     const params = new URLSearchParams();
@@ -84,6 +87,8 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
   useEffect(() => {
     let result = serverAirtableData.features;
+
+    // Filter by selected service type
     if (selectedServiceType) {
       result = result.filter(item => {
         const serviceType = item.properties?.serviceType || item['Service type'];
@@ -91,6 +96,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       });
     }
 
+    // Filter by selected specialisms
     if (selectedSpecialisms.length > 0) {
       result = result.filter(item => {
         const itemSpecialisms = item.properties?.serviceSpecialism || item['Specialist services for'];
@@ -104,21 +110,46 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       });
     }
 
+    if (searchInput && !isPostcode(searchInput)) {
+      const searchQueryLower = searchInput.toLowerCase();
+      result = result.filter(item => {
+        const name = item.properties?.name || item['Name'];
+        return name && name.toLowerCase().includes(searchQueryLower);
+      });
+    }
+
     setFilteredData(result);
     setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
-  }, [selectedServiceType, selectedSpecialisms, serverAirtableData]);
+  }, [selectedServiceType, selectedSpecialisms, searchInput, serverAirtableData]);
 
   const handleSearchSubmit = async (searchQuery) => {
     if (!searchQuery) return;
-    const coordinates = await fetchCoordinates(searchQuery);
-    if (coordinates) {
-      setSearchlng(coordinates.longitude);
-      setSearchLat(coordinates.latitude);
-      setZoom(10);
-      setSubmittedSearchQuery(searchQuery);
+
+    const trimmedQuery = searchQuery.trim();
+
+    if (isPostcode(trimmedQuery)) {
+      const coordinates = await fetchCoordinates(trimmedQuery);
+      if (coordinates) {
+        setSearchlng(coordinates.longitude);
+        setSearchLat(coordinates.latitude);
+        setZoom(10);
+        setSubmittedSearchQuery(trimmedQuery);
+        setSearchSubmitted(true);
+        updateURLParams(trimmedQuery);
+        setIsSearchCleared(false);
+      }
+    } else {
+      const searchQueryLower = trimmedQuery.toLowerCase();
+      let filteredByName = serverAirtableData.features.filter(item => {
+        const name = item.properties?.name || item['Name'];
+        return name && name.toLowerCase().includes(searchQueryLower);
+      });
+
+      setFilteredData(filteredByName);
+      setFilteredMapBoxData({ type: 'FeatureCollection', features: filteredByName });
       setSearchSubmitted(true);
-      updateURLParams(searchQuery);
-      setIsSearchCleared(false);
+      setSubmittedSearchQuery(trimmedQuery);
+      updateURLParams(trimmedQuery);
     }
   };
 

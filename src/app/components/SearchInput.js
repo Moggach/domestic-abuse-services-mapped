@@ -31,7 +31,7 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
         <input
           type="text"
           className="grow"
-          placeholder="Enter your postcode"
+          placeholder="Search by name or postcode"
           id="searchInput"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
