@@ -88,7 +88,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   useEffect(() => {
     let result = serverAirtableData.features;
 
-    // Filter by selected service type
     if (selectedServiceType) {
       result = result.filter(item => {
         const serviceType = item.properties?.serviceType || item['Service type'];
@@ -96,7 +95,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       });
     }
 
-    // Filter by selected specialisms
     if (selectedSpecialisms.length > 0) {
       result = result.filter(item => {
         const itemSpecialisms = item.properties?.serviceSpecialism || item['Specialist services for'];
@@ -110,8 +108,8 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
       });
     }
 
-    if (searchInput && !isPostcode(searchInput)) {
-      const searchQueryLower = searchInput.toLowerCase();
+    if (searchSubmitted && !isPostcode(submittedSearchQuery)) {
+      const searchQueryLower = submittedSearchQuery.toLowerCase();
       result = result.filter(item => {
         const name = item.properties?.name || item['Name'];
         return name && name.toLowerCase().includes(searchQueryLower);
@@ -120,7 +118,7 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
 
     setFilteredData(result);
     setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
-  }, [selectedServiceType, selectedSpecialisms, searchInput, serverAirtableData]);
+  }, [selectedServiceType, selectedSpecialisms, searchSubmitted, submittedSearchQuery, serverAirtableData]);
 
   const handleSearchSubmit = async (searchQuery) => {
     if (!searchQuery) return;
@@ -139,16 +137,8 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
         setIsSearchCleared(false);
       }
     } else {
-      const searchQueryLower = trimmedQuery.toLowerCase();
-      let filteredByName = serverAirtableData.features.filter(item => {
-        const name = item.properties?.name || item['Name'];
-        return name && name.toLowerCase().includes(searchQueryLower);
-      });
-
-      setFilteredData(filteredByName);
-      setFilteredMapBoxData({ type: 'FeatureCollection', features: filteredByName });
-      setSearchSubmitted(true);
       setSubmittedSearchQuery(trimmedQuery);
+      setSearchSubmitted(true);
       updateURLParams(trimmedQuery);
     }
   };
@@ -222,19 +212,27 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
             onClear={handleSearchClear}
           />
           {searchSubmitted && (
-            <div className='mt-2'>
-              {filteredDataWithDistance.length > 0 ? (
-                <h2>Showing services within 10 miles of {submittedSearchQuery}:</h2>
+            <div className="mt-2">
+              {isPostcode(submittedSearchQuery) ? (
+                filteredDataWithDistance.length > 0 ? (
+                  <h2>Showing services within 10 miles of {submittedSearchQuery}:</h2>
+                ) : (
+                  <h2>No search results within 10 miles of {submittedSearchQuery}. Try another search?</h2>
+                )
               ) : (
-                <h2>No search results within 10 miles of {submittedSearchQuery}. Try another search?</h2>
+                filteredData.length > 0 ? (
+                  <h2>Showing services matching "{submittedSearchQuery}":</h2>
+                ) : (
+                  <h2>No services found matching "{submittedSearchQuery}". Try another search?</h2>
+                )
               )}
             </div>
           )}
           <PaginatedList
-            data={searchSubmitted ? filteredDataWithDistance : filteredData}
+            data={isPostcode(submittedSearchQuery) ? filteredDataWithDistance : filteredData}
             itemsPerPage={10}
-            currentPage={currentPage} 
-            setCurrentPage={setCurrentPage} 
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
           />
         </div>
       </main>
