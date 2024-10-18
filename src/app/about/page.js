@@ -15,8 +15,8 @@ const About = () => {
     <p>Please note that addresses of services may be approximate. Please contact any service before visiting them</p>
     <p>The information on this site is for reference only. If there are no services listed in your location go to your local authority website and search for domestic abuse.
    To find your local authority go to <a className="underline" href="https://www.gov.uk/find-local-council">gov.uk/find-local-council</a></p>
-
     <p>Refuges are not listed for safety reasons. To access a refuge space please contact the 24/7 freephone <a className="underline" href="https://www.nationaldahelpline.org.uk/">National Domestic Abuse Helpline</a> on 0808 2000 247</p>
+    <p>The services listed are based in the UK only. For information about international services visit <a className="underline" href="https://www.hotpeachpages.net">HotPeachPages</a></p>
     </div>
 
   
