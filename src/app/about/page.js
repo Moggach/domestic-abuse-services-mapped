@@ -22,7 +22,6 @@ const About = () => {
   
     </main>
     <QuickExit/>
-    <Footer />
     </>
   );
 };

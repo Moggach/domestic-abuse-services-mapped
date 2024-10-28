@@ -16,7 +16,6 @@ const Privacy = () => {
             <p>If you have questions about this policy, please contact <a className="underline" href="mailto:hello@domesticabuseservices.uk">hello@domesticabuseservices.uk</a></p>
         </div>
       </main>
-      <Footer />
       <QuickExit />
     </>
   );
