@@ -17,9 +17,7 @@ export default function MapBox({
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [popupInfo, setPopupInfo] = useState(null);
-  const getPointRadius = useCallback(() => {
-    return window.innerWidth <= 768 ? 6 : 4;
-  }, []);
+
 
   useEffect(() => {
     if (map.current) return; // Prevent re-initialization
@@ -150,7 +148,13 @@ export default function MapBox({
             filter: ['!', ['has', 'point_count']],
             paint: {
               'circle-color': '#11b4da',
-              'circle-radius': 4,
+              'circle-radius': [
+                'interpolate', ['linear'], ['zoom'],
+                5, 4,   
+                10, 8,    
+                15, 12,  
+                20, 16   
+              ],
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
             },
@@ -187,7 +191,7 @@ export default function MapBox({
         map.current.off('load', loadPoints);
       }
     };
-  }, [data, getPointRadius, handlePointSelect]);
+  }, [data, handlePointSelect]);
 
   return (
     <div className='h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2'ref={mapContainer}>
