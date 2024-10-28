@@ -11,7 +11,6 @@ export default function MapBox({
   data,
   setLng,
   setLat,
-  setZoom,
   searchLng,
   searchLat,
 }) {
@@ -90,6 +89,7 @@ export default function MapBox({
 
   useEffect(() => {
     if (!map.current) return;
+
     const loadPoints = () => {
       if (data) {
         if (!map.current.getSource('points')) {
@@ -156,9 +156,14 @@ export default function MapBox({
             },
           });
 
+          map.current.on('mouseenter', 'unclustered-point', () => {
+            map.current.getCanvas().style.cursor = 'pointer';
+          });
+          map.current.on('mouseleave', 'unclustered-point', () => {
+            map.current.getCanvas().style.cursor = '';
+          });
           map.current.on('click', 'unclustered-point', handlePointSelect);
           map.current.on('touchstart', 'unclustered-point', handlePointSelect);
-
           map.current.on('mouseenter', 'unclustered-point', () => {
             map.current.getCanvas().style.cursor = 'pointer';
           });
