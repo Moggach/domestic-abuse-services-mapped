@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onClear }) {
   const [error, setError] = useState('');
 
@@ -15,9 +14,17 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
     onSubmit(searchQuery);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e);
+    }
+  };
+
   return (
     <div>
-      <label className="font-headings text-xl" htmlFor="searchInput">Search by service name or location </label>
+      <label className="font-headings text-xl" htmlFor="searchInput">
+        Search by service name or location
+      </label>
       <label className="input input-bordered flex items-center gap-2 mt-2">
         <input
           type="text"
@@ -26,6 +33,7 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
           id="searchInput"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleKeyDown} 
         />
         <button onClick={handleSubmit} aria-label="Search">
           <svg
@@ -62,4 +70,3 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
     </div>
   );
 }
-
