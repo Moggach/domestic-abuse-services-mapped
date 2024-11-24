@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+
 import PopUp from './PopUp';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;

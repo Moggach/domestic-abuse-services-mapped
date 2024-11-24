@@ -1,10 +1,10 @@
-import React from 'react';
 import mapboxgl from 'mapbox-gl';
+import React from 'react';
 
+import donateIconUrl from '../images/svgs/donate.svg';
+import emailIconUrl from '../images/svgs/email.svg';
 import phoneIconUrl from '../images/svgs/phone.svg';
 import websiteIconUrl from '../images/svgs/website.svg';
-import emailIconUrl from '../images/svgs/email.svg';
-import donateIconUrl from '../images/svgs/donate.svg';
 
 const PopUp = ({
   map,

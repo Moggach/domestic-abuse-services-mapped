@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import { colorMapping } from '../utils';
 
 const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {

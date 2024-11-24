@@ -1,18 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import MapBox from './components/MapBox';
-import SearchInput from './components/SearchInput';
-import QuickExit from './components/QuickExit';
-import Modal from './components/Modal';
+
 import Footer from './components/Footer';
+import MapBox from './components/MapBox';
+import Modal from './components/Modal';
+import PaginatedList from './components/PaginatedList';
+import QuickExit from './components/QuickExit';
+import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
-import PaginatedList from './components/PaginatedList';
 import { useSearch } from './contexts/SearchContext';
+import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
 import { useURLParams } from './hooks/useUrlParams';
-import { useMapData } from './hooks/useMapData';
 
 const Home = ({
   serverAirtableData,

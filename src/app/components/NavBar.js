@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+
 import ThemeSwitcher from './ThemeSwitcher';
 
 const NavBar = () => {

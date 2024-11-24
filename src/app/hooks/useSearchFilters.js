@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import { filterByServiceType, filterBySpecialisms } from '../utils';
 
 export const useSearchFilters = (

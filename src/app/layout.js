@@ -1,5 +1,6 @@
-import Navbar from './components/NavBar';
 import localFont from '@next/font/local';
+
+import Navbar from './components/NavBar';
 import { SearchProvider } from './contexts/SearchContext';
 
 export const metadata = {
