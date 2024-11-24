@@ -123,11 +123,13 @@ const Home = ({
                   </h2>
                 )
               ) : filteredData.length > 0 ? (
-                <h2>Showing services matching "{submittedSearchQuery}":</h2>
+                <h2>
+                  Showing services matching &quot;{submittedSearchQuery}&quot;:
+                </h2>
               ) : (
                 <h2>
-                  No services found matching "{submittedSearchQuery}". Try
-                  another search?
+                  No services found matching &quot;{submittedSearchQuery}&quot;.
+                  Try another search?
                 </h2>
               )}
             </div>

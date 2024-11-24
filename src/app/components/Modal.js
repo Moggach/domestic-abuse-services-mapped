@@ -35,8 +35,8 @@ const Modal = () => {
               on 0808 2000 247
             </p>
             <p>
-              If you’re worried someone might be monitoring your devices, exit
-              this website and visit from a device only you have access to.{' '}
+              If you&rsquo;re worried someone might be monitoring your devices,
+              exit this website and visit from a device only you have access to.{' '}
             </p>
             <p>
               Learn more about{' '}
@@ -49,7 +49,7 @@ const Modal = () => {
             className="btn bg-green-600 mt-4 text-white"
             onClick={handleDontShowAgain}
           >
-            Don't show again
+            Don&apos;t show again
           </button>
         </div>
       </dialog>

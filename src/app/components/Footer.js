@@ -8,7 +8,7 @@ const Footer = () => {
         </a>
       </p>
       <p>
-        Service isn't listed?{' '}
+        Service isn&apos;t listed?{' '}
         <a
           className="underline"
           href="https://airtable.com/appksbQlVr07Kxadu/pagEkSrTVCs0yk2OS/form"

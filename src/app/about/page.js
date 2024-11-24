@@ -16,7 +16,8 @@ const About = () => {
             </a>
           </p>
           <p>
-            If your service isn't listed please submit the details using this{' '}
+            If your service isn&apos;t listed please submit the details using
+            this{' '}
             <a
               className="underline"
               href="https://airtable.com/appksbQlVr07Kxadu/pagEkSrTVCs0yk2OS/form"
@@ -35,7 +36,7 @@ const About = () => {
           </p>
           <p>
             Please note that addresses of services may be approximate. Please
-            contact any service before visiting them
+            contact any service before visiting them.
           </p>
           <p>
             The information on this site is for reference only. If there are no
