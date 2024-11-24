@@ -11,6 +11,7 @@ import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import PaginatedList from './components/PaginatedList';
 import { useSearch } from './contexts/SearchContext';
+import { filterByServiceType, filterBySpecialisms } from './/utils';
 
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
@@ -98,29 +99,13 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
   useEffect(() => {
     let result = serverAirtableData.features;
 
-    if (selectedServiceType) {
-      result = result.filter(item => {
-        const serviceType = item.properties?.serviceType || item['Service type'];
-        return Array.isArray(serviceType) ? serviceType.includes(selectedServiceType) : serviceType === selectedServiceType;
-      });
-    }
-
-    if (selectedSpecialisms.length > 0) {
-      result = result.filter(item => {
-        const itemSpecialisms = item.properties?.serviceSpecialism || item['Specialist services for'];
-        return selectedSpecialisms.some(specialism => {
-          if (Array.isArray(itemSpecialisms)) {
-            return itemSpecialisms.includes(specialism);
-          } else {
-            return itemSpecialisms === specialism;
-          }
-        });
-      });
-    }
+    // Use utility functions for filtering
+    result = filterByServiceType(result, selectedServiceType);
+    result = filterBySpecialisms(result, selectedSpecialisms);
 
     if (searchSubmitted && !isPostcode(submittedSearchQuery)) {
       const searchQueryLower = submittedSearchQuery.toLowerCase();
-      result = result.filter(item => {
+      result = result.filter((item) => {
         const name = item.properties?.name || item['Name'];
         return name && name.toLowerCase().includes(searchQueryLower);
       });
@@ -129,7 +114,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setFilteredData(result);
     setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
   }, [selectedServiceType, selectedSpecialisms, searchSubmitted, submittedSearchQuery, serverAirtableData]);
-
 
   useEffect(() => {
     const updateAirtableDataWithDistance = () => {
@@ -144,14 +128,13 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
         return null;
       });
 
-      servicesWithDistance = servicesWithDistance.filter(item => item !== null && item.distance <= 10);
+      servicesWithDistance = servicesWithDistance.filter((item) => item !== null && item.distance <= 10);
       servicesWithDistance.sort((a, b) => a.distance - b.distance);
       setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
     };
 
     updateAirtableDataWithDistance();
   }, [searchLat, searchLng, filteredData]);
-
 
   return (
     <>

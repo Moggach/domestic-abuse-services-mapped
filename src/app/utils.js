@@ -53,3 +53,22 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
       return 4; 
     }
   };
+
+
+export const filterByServiceType = (data, serviceType) => {
+  if (!serviceType) return data;
+  return data.filter(item => {
+    const type = item.properties?.serviceType || item['Service type'];
+    return Array.isArray(type) ? type.includes(serviceType) : type === serviceType;
+  });
+};
+
+export const filterBySpecialisms = (data, specialisms) => {
+  if (!specialisms.length) return data;
+  return data.filter(item => {
+    const itemSpecialisms = item.properties?.serviceSpecialism || item['Specialist services for'];
+    return specialisms.some(specialism =>
+      Array.isArray(itemSpecialisms) ? itemSpecialisms.includes(specialism) : itemSpecialisms === specialism
+    );
+  });
+};
