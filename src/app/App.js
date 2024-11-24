@@ -11,7 +11,7 @@ import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import PaginatedList from './components/PaginatedList';
 import { useSearch } from './contexts/SearchContext';
 import { useSearchFilters } from './hooks/useSearchFilters';
-import { useURLParams } from './hooks/useURLParams';
+import { useURLParams } from './hooks/useUrlParams';
 import { useMapData } from './hooks/useMapData';
 
 
