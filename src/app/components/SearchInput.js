@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 
-export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onClear }) {
+export default function SearchInput({
+  searchQuery,
+  setSearchQuery,
+  onSubmit,
+  onClear,
+}) {
   const [error, setError] = useState('');
 
   const handleClear = () => {
@@ -33,7 +38,7 @@ export default function SearchInput({ searchQuery, setSearchQuery, onSubmit, onC
           id="searchInput"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleKeyDown} 
+          onKeyDown={handleKeyDown}
         />
         <button onClick={handleSubmit} aria-label="Search">
           <svg

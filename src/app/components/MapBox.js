@@ -18,7 +18,6 @@ export default function MapBox({
   const map = useRef(null);
   const [popupInfo, setPopupInfo] = useState(null);
 
-
   useEffect(() => {
     if (map.current) return; // Prevent re-initialization
 
@@ -35,7 +34,6 @@ export default function MapBox({
       setLng(map.current.getCenter().lng.toFixed(4));
       setLat(map.current.getCenter().lat.toFixed(4));
     });
-
   }, [lng, lat, zoom, setLng, setLat]);
 
   useEffect(() => {
@@ -67,8 +65,11 @@ export default function MapBox({
   }, [setPopupInfo]);
 
   const handlePointSelect = useCallback((e) => {
-    while (Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180) {
-      e.features[0].geometry.coordinates[0] += e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
+    while (
+      Math.abs(e.lngLat.lng - e.features[0].geometry.coordinates[0]) > 180
+    ) {
+      e.features[0].geometry.coordinates[0] +=
+        e.lngLat.lng > e.features[0].geometry.coordinates[0] ? 360 : -360;
     }
 
     const coordinates = e.features[0].geometry.coordinates;
@@ -149,11 +150,17 @@ export default function MapBox({
             paint: {
               'circle-color': '#11b4da',
               'circle-radius': [
-                'interpolate', ['linear'], ['zoom'],
-                5, 4,   
-                10, 8,    
-                15, 12,  
-                20, 16   
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                5,
+                4,
+                10,
+                8,
+                15,
+                12,
+                20,
+                16,
               ],
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
@@ -194,7 +201,10 @@ export default function MapBox({
   }, [data, handlePointSelect]);
 
   return (
-    <div className='h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2'ref={mapContainer}>
+    <div
+      className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2"
+      ref={mapContainer}
+    >
       {popupInfo && <PopUp map={map} {...popupInfo} />}
     </div>
   );

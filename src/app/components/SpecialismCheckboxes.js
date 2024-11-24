@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 
-export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms, setSelectedSpecialisms }) {
+export default function SpecialismCheckboxes({
+  specialisms,
+  selectedSpecialisms,
+  setSelectedSpecialisms,
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCheckboxChange = (specialism) => {
     const updatedSpecialisms = selectedSpecialisms.includes(specialism)
-      ? selectedSpecialisms.filter(s => s !== specialism)
+      ? selectedSpecialisms.filter((s) => s !== specialism)
       : [...selectedSpecialisms, specialism];
     setSelectedSpecialisms(updatedSpecialisms);
   };
@@ -25,7 +29,10 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
                 {selectedSpecialisms.length}
               </span>
             )}
-            <span className='font-headings text-xl'>Select a specialism <br></br><small>(select all that apply)</small></span>
+            <span className="font-headings text-xl">
+              Select a specialism <br></br>
+              <small>(select all that apply)</small>
+            </span>
           </div>
         </div>
         {isOpen && (
@@ -39,7 +46,12 @@ export default function SpecialismCheckboxes({ specialisms, selectedSpecialisms,
                   checked={selectedSpecialisms.includes(specialism)}
                   onChange={() => handleCheckboxChange(specialism)}
                 />
-                <label className="label cursor-pointer" htmlFor={`specialism-${specialism}`}>{specialism}</label>
+                <label
+                  className="label cursor-pointer"
+                  htmlFor={`specialism-${specialism}`}
+                >
+                  {specialism}
+                </label>
               </li>
             ))}
           </ul>

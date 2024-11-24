@@ -24,12 +24,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier"
     ]
   },
   "browserslist": {
@@ -48,6 +51,10 @@
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.12.10",
     "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.6"
+    "tailwindcss": "^3.4.6",
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0"
   }
 }

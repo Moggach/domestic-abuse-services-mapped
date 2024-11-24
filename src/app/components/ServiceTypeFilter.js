@@ -1,8 +1,15 @@
-export default function ServiceTypeFilter({ selectedServiceType, setSelectedServiceType, serviceTypes }) {
+export default function ServiceTypeFilter({
+  selectedServiceType,
+  setSelectedServiceType,
+  serviceTypes,
+}) {
   return (
     <div>
-      <label className="mr-4 font-headings text-xl" htmlFor="serviceFilter">Filter by service type</label>
-      <select className="select select-bordered w-full max-w-xs mt-2"
+      <label className="mr-4 font-headings text-xl" htmlFor="serviceFilter">
+        Filter by service type
+      </label>
+      <select
+        className="select select-bordered w-full max-w-xs mt-2"
         id="serviceFilter"
         value={selectedServiceType}
         onChange={(e) => setSelectedServiceType(e.target.value)}

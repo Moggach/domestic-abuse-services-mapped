@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import { filterByServiceType, filterBySpecialisms } from '../utils';
 
-export const useSearchFilters = (serverAirtableData, isPostcode, submittedSearchQuery, searchSubmitted) => {
+export const useSearchFilters = (
+  serverAirtableData,
+  isPostcode,
+  submittedSearchQuery,
+  searchSubmitted
+) => {
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
-  
+
   useEffect(() => {
     let result = serverAirtableData.features;
 
@@ -22,7 +27,13 @@ export const useSearchFilters = (serverAirtableData, isPostcode, submittedSearch
     }
 
     setFilteredData(result);
-  }, [selectedServiceType, selectedSpecialisms, searchSubmitted, submittedSearchQuery, serverAirtableData]);
+  }, [
+    selectedServiceType,
+    selectedSpecialisms,
+    searchSubmitted,
+    submittedSearchQuery,
+    serverAirtableData,
+  ]);
 
   return {
     selectedServiceType,
@@ -32,6 +43,6 @@ export const useSearchFilters = (serverAirtableData, isPostcode, submittedSearch
     filteredData,
     setFilteredData,
     filteredDataWithDistance,
-    setFilteredDataWithDistance
+    setFilteredDataWithDistance,
   };
 };

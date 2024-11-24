@@ -3,9 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Home from '../App';
 
 export async function generateStaticParams() {
-  const slugs = [
-    { slug: [] },
-  ];
+  const slugs = [{ slug: [] }];
 
   return slugs;
 }
@@ -39,7 +37,7 @@ const flattenAndUnique = (data) => {
     if (Array.isArray(serviceTypes)) {
       acc.push(...serviceTypes);
     } else if (typeof serviceTypes === 'string') {
-      acc.push(...serviceTypes.split(',').map(type => type.trim()));
+      acc.push(...serviceTypes.split(',').map((type) => type.trim()));
     } else if (serviceTypes) {
       acc.push(serviceTypes);
     }
@@ -50,11 +48,14 @@ const flattenAndUnique = (data) => {
 
 const flattenAndUniqueSpecialisms = (data) => {
   const allSpecialisms = data.reduce((acc, item) => {
-    const specialisms = item.properties?.serviceSpecialism || item['Service specialism'];
+    const specialisms =
+      item.properties?.serviceSpecialism || item['Service specialism'];
     if (Array.isArray(specialisms)) {
       acc.push(...specialisms);
     } else if (typeof specialisms === 'string') {
-      acc.push(...specialisms.split(',').map(specialism => specialism.trim()));
+      acc.push(
+        ...specialisms.split(',').map((specialism) => specialism.trim())
+      );
     } else if (specialisms) {
       acc.push(specialisms);
     }
@@ -68,8 +69,8 @@ const Page = async () => {
   const initialServiceTypes = flattenAndUnique(serverAirtableData);
   const initialSpecialisms = flattenAndUniqueSpecialisms(serverAirtableData);
   const featureCollection = {
-    type: "FeatureCollection",
-    features: serverAirtableData
+    type: 'FeatureCollection',
+    features: serverAirtableData,
   };
 
   return (

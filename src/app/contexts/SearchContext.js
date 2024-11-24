@@ -1,6 +1,10 @@
-"use client"
+'use client';
 import React, { createContext, useState, useContext } from 'react';
-import { calculateDistance, fetchCoordinates, determineZoomLevel } from '../utils';
+import {
+  calculateDistance,
+  fetchCoordinates,
+  determineZoomLevel,
+} from '../utils';
 
 const SearchContext = createContext();
 
@@ -25,7 +29,7 @@ export const SearchProvider = ({ children }) => {
     const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
     return postcodeRegex.test(input.trim());
   };
- 
+
   const handleSearchSubmit = async (searchQuery) => {
     if (!searchQuery) return;
 
@@ -40,7 +44,6 @@ export const SearchProvider = ({ children }) => {
         setSubmittedSearchQuery(trimmedQuery);
         setSearchSubmitted(true);
         setIsSearchCleared(false);
-
       }
     } else {
       setSubmittedSearchQuery(trimmedQuery);
@@ -85,9 +88,10 @@ export const SearchProvider = ({ children }) => {
     setLng,
     lng,
     setLat,
-    lat
-
+    lat,
   };
 
-  return <SearchContext.Provider value={value}>{children}</SearchContext.Provider>;
+  return (
+    <SearchContext.Provider value={value}>{children}</SearchContext.Provider>
+  );
 };

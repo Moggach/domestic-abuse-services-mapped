@@ -14,8 +14,11 @@ import { useSearchFilters } from './hooks/useSearchFilters';
 import { useURLParams } from './hooks/useUrlParams';
 import { useMapData } from './hooks/useMapData';
 
-
-const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
+const Home = ({
+  serverAirtableData,
+  initialServiceTypes,
+  initialSpecialisms,
+}) => {
   const {
     searchInput,
     setSearchInput,
@@ -35,24 +38,40 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     lng,
     lat,
     setLng,
-    setLat
+    setLat,
   } = useSearch();
 
-  const { 
-    selectedServiceType, 
-    setSelectedServiceType, 
-    selectedSpecialisms, 
-    setSelectedSpecialisms, 
-    filteredData, 
-    filteredDataWithDistance 
-  } = useSearchFilters(serverAirtableData, isPostcode, submittedSearchQuery, searchSubmitted);
- 
-  const [serviceTypes] = useState(initialServiceTypes); 
-  const [specialisms] = useState(initialSpecialisms);  
-  const { filteredMapBoxData } = useMapData(filteredData, searchLat, searchLng, isSearchCleared, calculateDistance);
+  const {
+    selectedServiceType,
+    setSelectedServiceType,
+    selectedSpecialisms,
+    setSelectedSpecialisms,
+    filteredData,
+    filteredDataWithDistance,
+  } = useSearchFilters(
+    serverAirtableData,
+    isPostcode,
+    submittedSearchQuery,
+    searchSubmitted
+  );
+
+  const [serviceTypes] = useState(initialServiceTypes);
+  const [specialisms] = useState(initialSpecialisms);
+  const { filteredMapBoxData } = useMapData(
+    filteredData,
+    searchLat,
+    searchLng,
+    isSearchCleared,
+    calculateDistance
+  );
   const [currentPage, setCurrentPage] = useState(1);
 
-  useURLParams(selectedServiceType, selectedSpecialisms, submittedSearchQuery, currentPage);
+  useURLParams(
+    selectedServiceType,
+    selectedSpecialisms,
+    submittedSearchQuery,
+    currentPage
+  );
 
   return (
     <>
@@ -70,10 +89,9 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
           setSearchLat={setSearchLat}
           searchLng={searchLng}
           searchLat={searchLat}
-
         />
 
-        <div className='flex flex-col gap-5 basis-1/2'>
+        <div className="flex flex-col gap-5 basis-1/2">
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
@@ -94,21 +112,31 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
             <div className="mt-2">
               {isPostcode(submittedSearchQuery) ? (
                 filteredDataWithDistance.length > 0 ? (
-                  <h2>Showing services within 10 miles of {submittedSearchQuery}:</h2>
+                  <h2>
+                    Showing services within 10 miles of {submittedSearchQuery}:
+                  </h2>
                 ) : (
-                  <h2>No search results within 10 miles of {submittedSearchQuery}. Try another search?</h2>
+                  <h2>
+                    No search results within 10 miles of {submittedSearchQuery}.
+                    Try another search?
+                  </h2>
                 )
+              ) : filteredData.length > 0 ? (
+                <h2>Showing services matching "{submittedSearchQuery}":</h2>
               ) : (
-                filteredData.length > 0 ? (
-                  <h2>Showing services matching "{submittedSearchQuery}":</h2>
-                ) : (
-                  <h2>No services found matching "{submittedSearchQuery}". Try another search?</h2>
-                )
+                <h2>
+                  No services found matching "{submittedSearchQuery}". Try
+                  another search?
+                </h2>
               )}
             </div>
           )}
           <PaginatedList
-            data={isPostcode(submittedSearchQuery) ? filteredDataWithDistance : filteredData}
+            data={
+              isPostcode(submittedSearchQuery)
+                ? filteredDataWithDistance
+                : filteredData
+            }
             itemsPerPage={10}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}

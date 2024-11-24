@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export const useURLParams = (selectedServiceType, selectedSpecialisms, submittedSearchQuery, currentPage) => {
+export const useURLParams = (
+  selectedServiceType,
+  selectedSpecialisms,
+  submittedSearchQuery,
+  currentPage
+) => {
   const router = useRouter();
 
   const updateURLParams = () => {
@@ -28,7 +33,12 @@ export const useURLParams = (selectedServiceType, selectedSpecialisms, submitted
 
   useEffect(() => {
     updateURLParams();
-  }, [selectedServiceType, selectedSpecialisms, submittedSearchQuery, currentPage]);
+  }, [
+    selectedServiceType,
+    selectedSpecialisms,
+    submittedSearchQuery,
+    currentPage,
+  ]);
 
   return {};
 };
