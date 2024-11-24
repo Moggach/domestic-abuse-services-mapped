@@ -1,19 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
-
-import Footer from './components/Footer';
+import React, { useState, useEffect } from 'react';
 import MapBox from './components/MapBox';
-import Modal from './components/Modal';
-import PaginatedList from './components/PaginatedList';
-import QuickExit from './components/QuickExit';
 import SearchInput from './components/SearchInput';
+import QuickExit from './components/QuickExit';
+import Modal from './components/Modal';
+import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
+import PaginatedList from './components/PaginatedList';
 import { useSearch } from './contexts/SearchContext';
-import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
-import { useURLParams } from './hooks/useUrlParams';
+import { useURLParams } from './hooks/useURLParams';
+import { useMapData } from './hooks/useMapData';
 
 const Home = ({
   serverAirtableData,
@@ -48,7 +47,6 @@ const Home = ({
     selectedSpecialisms,
     setSelectedSpecialisms,
     filteredData,
-    filteredDataWithDistance,
   } = useSearchFilters(
     serverAirtableData,
     isPostcode,
@@ -58,14 +56,15 @@ const Home = ({
 
   const [serviceTypes] = useState(initialServiceTypes);
   const [specialisms] = useState(initialSpecialisms);
-  const { filteredMapBoxData } = useMapData(
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { filteredMapBoxData, filteredDataWithDistance } = useMapData(
     filteredData,
     searchLat,
     searchLng,
     isSearchCleared,
     calculateDistance
   );
-  const [currentPage, setCurrentPage] = useState(1);
 
   useURLParams(
     selectedServiceType,
@@ -91,7 +90,6 @@ const Home = ({
           searchLng={searchLng}
           searchLat={searchLat}
         />
-
         <div className="flex flex-col gap-5 basis-1/2">
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
@@ -123,13 +121,11 @@ const Home = ({
                   </h2>
                 )
               ) : filteredData.length > 0 ? (
-                <h2>
-                  Showing services matching &quot;{submittedSearchQuery}&quot;:
-                </h2>
+                <h2>Showing services matching "{submittedSearchQuery}":</h2>
               ) : (
                 <h2>
-                  No services found matching &quot;{submittedSearchQuery}&quot;.
-                  Try another search?
+                  No services found matching "{submittedSearchQuery}". Try
+                  another search?
                 </h2>
               )}
             </div>
