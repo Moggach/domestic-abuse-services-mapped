@@ -1,18 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import MapBox from './components/MapBox';
-import SearchInput from './components/SearchInput';
-import QuickExit from './components/QuickExit';
-import Modal from './components/Modal';
+import React, { useState } from 'react';
+
 import Footer from './components/Footer';
+import MapBox from './components/MapBox';
+import Modal from './components/Modal';
+import PaginatedList from './components/PaginatedList';
+import QuickExit from './components/QuickExit';
+import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
-import PaginatedList from './components/PaginatedList';
 import { useSearch } from './contexts/SearchContext';
-import { useSearchFilters } from './hooks/useSearchFilters';
-import { useURLParams } from './hooks/useURLParams';
 import { useMapData } from './hooks/useMapData';
+import { useSearchFilters } from './hooks/useSearchFilters';
+import { useURLParams } from './hooks/useUrlParams';
 
 const Home = ({
   serverAirtableData,
@@ -121,11 +122,13 @@ const Home = ({
                   </h2>
                 )
               ) : filteredData.length > 0 ? (
-                <h2>Showing services matching "{submittedSearchQuery}":</h2>
+                <h2>
+                  Showing services matching &quot;{submittedSearchQuery}&quot;:
+                </h2>
               ) : (
                 <h2>
-                  No services found matching "{submittedSearchQuery}". Try
-                  another search?
+                  No services found matching &quot;{submittedSearchQuery}&quot;.
+                  Try another search?
                 </h2>
               )}
             </div>
