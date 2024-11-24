@@ -10,33 +10,43 @@ import Footer from './components/Footer';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import PaginatedList from './components/PaginatedList';
-import { calculateDistance, fetchCoordinates, determineZoomLevel } from './utils';
+import { useSearch } from './contexts/SearchContext';
 
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
   const router = useRouter();
+  const {
+    searchInput,
+    setSearchInput,
+    submittedSearchQuery,
+    handleSearchSubmit,
+    handleSearchClear,
+    filteredData,
+    setFilteredData,
+    filteredDataWithDistance,
+    setFilteredDataWithDistance,
+    searchLng,
+    setSearchLng,
+    searchLat,
+    setSearchLat,
+    searchSubmitted,
+    isSearchCleared,
+    zoom,
+    setZoom,
+    isPostcode,
+    calculateDistance,
+    lng,
+    lat,
+    setLng,
+    setLat
+  } = useSearch();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
   const [serviceTypes] = useState(initialServiceTypes);
   const [specialisms] = useState(initialSpecialisms);
-  const [lng, setLng] = useState(-3.5);
-  const [lat, setLat] = useState(54.5);
-  const [searchLng, setSearchlng] = useState('');
-  const [searchLat, setSearchLat] = useState('');
-  const [zoom, setZoom] = useState(determineZoomLevel());
-  const [searchInput, setSearchInput] = useState('');
-  const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
-  const [searchSubmitted, setSearchSubmitted] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
-  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
-  const [isSearchCleared, setIsSearchCleared] = useState(false);
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
-
-  const isPostcode = (input) => {
-    const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
-    return postcodeRegex.test(input.trim());
-  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -120,39 +130,6 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
   }, [selectedServiceType, selectedSpecialisms, searchSubmitted, submittedSearchQuery, serverAirtableData]);
 
-  const handleSearchSubmit = async (searchQuery) => {
-    if (!searchQuery) return;
-
-    const trimmedQuery = searchQuery.trim();
-
-    if (isPostcode(trimmedQuery)) {
-      const coordinates = await fetchCoordinates(trimmedQuery);
-      if (coordinates) {
-        setSearchlng(coordinates.longitude);
-        setSearchLat(coordinates.latitude);
-        setZoom(10);
-        setSubmittedSearchQuery(trimmedQuery);
-        setSearchSubmitted(true);
-        updateURLParams(trimmedQuery);
-        setIsSearchCleared(false);
-      }
-    } else {
-      setSubmittedSearchQuery(trimmedQuery);
-      setSearchSubmitted(true);
-      updateURLParams(trimmedQuery);
-    }
-  };
-
-  const handleSearchClear = () => {
-    setLng(-3.5);
-    setLat(54.5);
-    setZoom(determineZoomLevel());
-    setSearchInput('');
-    setSubmittedSearchQuery('');
-    setSearchSubmitted(false);
-    setFilteredDataWithDistance([]);
-    setIsSearchCleared(true);
-  };
 
   useEffect(() => {
     const updateAirtableDataWithDistance = () => {
@@ -188,10 +165,11 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
           setLng={setLng}
           setLat={setLat}
           setZoom={setZoom}
-          setSearchLng={setSearchlng}
+          setSearchLng={setSearchLng}
           setSearchLat={setSearchLat}
           searchLng={searchLng}
           searchLat={searchLat}
+
         />
 
         <div className='flex flex-col gap-5 basis-1/2'>

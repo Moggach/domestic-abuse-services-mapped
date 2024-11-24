@@ -1,5 +1,6 @@
 import Navbar from "./components/NavBar";
 import localFont from '@next/font/local';
+import { SearchProvider } from './contexts/SearchContext';
 
 export const metadata = {
   title: 'Domestic abuse services mapping',
@@ -12,7 +13,7 @@ export const metadata = {
     description: 'A tool for mapping domestic abuse services across the UK.',
     images: [
       {
-        url: '/og_image.png', 
+        url: '/og_image.png',
         width: 1200,
         height: 630,
         alt: 'Domestic abuse services mapping',
@@ -67,12 +68,15 @@ export default function RootLayout({ children }) {
         <meta property="og:type" content={metadata.openGraph.type} />
         <script async defer src="https://scripts.withcabin.com/hello.js"></script>
       </head>
-      <body className={`${poppins.variable} ${opensans.variable} font-body h-screen`}>
-        <Navbar />
-        <div id="root" className="font-body">
-          {children}
-        </div>
-      </body>
+      <SearchProvider>
+        <body className={`${poppins.variable} ${opensans.variable} font-body h-screen`}>
+          <Navbar />
+          <div id="root" className="font-body">
+            {children}
+          </div>
+        </body>
+      </SearchProvider>
+
     </html>
   );
 }
