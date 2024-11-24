@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link'; 
 import React, { useState } from 'react';
 
 import ThemeSwitcher from './ThemeSwitcher';
@@ -7,7 +8,7 @@ const NavBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
+    setDrawerOpen((prev) => !prev);
   };
 
   const menuItems = ['About', 'Privacy'];
@@ -17,23 +18,24 @@ const NavBar = () => {
       <nav className="p-4">
         <div className="container min-w-full flex justify-between items-center">
           <h1 className="font-headings text-3xl font-bold text-accent">
-            <a href="/">Domestic Abuse Services Mapped</a>
+            <Link href="/">Domestic Abuse Services Mapped</Link>
           </h1>
 
           <div className="hidden md:flex space-x-4 items-center">
             {menuItems.map((item) => (
-              <a
+              <Link
                 href={`/${item.toLowerCase()}`}
                 key={item}
                 className="font-headings text-2xl font-bold text-accent"
               >
                 {item}
-              </a>
+              </Link>
             ))}
             <ThemeSwitcher />
           </div>
+
           <div className="md:hidden text-accent">
-            <button onClick={toggleDrawer}>
+            <button onClick={toggleDrawer} aria-label="Toggle menu">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -52,11 +54,21 @@ const NavBar = () => {
         </div>
       </nav>
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        role="button"
+        tabIndex={0}
+        aria-label="Close drawer overlay"
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${
+          drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
         onClick={toggleDrawer}
+        onKeyDown={(e) => e.key === 'Enter' && toggleDrawer()}
       ></div>
+
+      {/* Drawer */}
       <div
-        className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${drawerOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform`}
+        className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${
+          drawerOpen ? 'translate-x-0' : 'translate-x-full'
+        } transition-transform`}
       >
         <div className="p-4 flex flex-col gap-4 text-accent">
           <div className="self-end">
@@ -77,14 +89,14 @@ const NavBar = () => {
             </button>
           </div>
           {menuItems.map((item) => (
-            <a
+            <Link
               href={`/${item.toLowerCase()}`}
               key={item}
               className="block text-2xl font-headings font-bold text-accent"
               onClick={toggleDrawer}
             >
               {item}
-            </a>
+            </Link>
           ))}
           <ThemeSwitcher />
         </div>
