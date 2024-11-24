@@ -31,14 +31,18 @@ export const useURLParams = (
     router.replace(`/?${params.toString()}`, { shallow: true });
   };
 
-  useEffect(() => {
-    updateURLParams();
-  }, [
-    selectedServiceType,
-    selectedSpecialisms,
-    submittedSearchQuery,
-    currentPage,
-  ]);
+  useEffect(
+    () => {
+      updateURLParams();
+    },
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    [
+      selectedServiceType,
+      selectedSpecialisms,
+      submittedSearchQuery,
+      currentPage,
+    ]
+  );
 
   return {};
 };
