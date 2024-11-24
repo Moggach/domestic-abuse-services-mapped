@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import MapBox from './components/MapBox';
 import SearchInput from './components/SearchInput';
 import QuickExit from './components/QuickExit';
@@ -11,21 +10,18 @@ import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
 import PaginatedList from './components/PaginatedList';
 import { useSearch } from './contexts/SearchContext';
-import { filterByServiceType, filterBySpecialisms } from './/utils';
+import { useSearchFilters } from './hooks/useSearchFilters';
+import { useURLParams } from './hooks/useURLParams';
+import { useMapData } from './hooks/useMapData';
 
 
 const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) => {
-  const router = useRouter();
   const {
     searchInput,
     setSearchInput,
     submittedSearchQuery,
     handleSearchSubmit,
     handleSearchClear,
-    filteredData,
-    setFilteredData,
-    filteredDataWithDistance,
-    setFilteredDataWithDistance,
     searchLng,
     setSearchLng,
     searchLat,
@@ -42,99 +38,21 @@ const Home = ({ serverAirtableData, initialServiceTypes, initialSpecialisms }) =
     setLat
   } = useSearch();
 
+  const { 
+    selectedServiceType, 
+    setSelectedServiceType, 
+    selectedSpecialisms, 
+    setSelectedSpecialisms, 
+    filteredData, 
+    filteredDataWithDistance 
+  } = useSearchFilters(serverAirtableData, isPostcode, submittedSearchQuery, searchSubmitted);
+ 
+  const [serviceTypes] = useState(initialServiceTypes); 
+  const [specialisms] = useState(initialSpecialisms);  
+  const { filteredMapBoxData } = useMapData(filteredData, searchLat, searchLng, isSearchCleared, calculateDistance);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedServiceType, setSelectedServiceType] = useState('');
-  const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
-  const [serviceTypes] = useState(initialServiceTypes);
-  const [specialisms] = useState(initialSpecialisms);
-  const [filteredMapBoxData, setFilteredMapBoxData] = useState(serverAirtableData);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const serviceType = params.get('serviceType');
-    const specialisms = params.get('specialisms');
-    const searchQuery = params.get('search');
-
-    if (serviceType) {
-      setSelectedServiceType(serviceType);
-    }
-
-    if (specialisms) {
-      setSelectedSpecialisms(specialisms.split(','));
-    }
-
-    if (searchQuery) {
-      setSearchInput(searchQuery);
-      handleSearchSubmit(searchQuery);
-    }
-  }, []);
-
-  const updateURLParams = (searchQuery) => {
-    const params = new URLSearchParams();
-
-    if (selectedServiceType) {
-      params.set('serviceType', selectedServiceType);
-    }
-
-    if (selectedSpecialisms.length > 0) {
-      params.set('specialisms', selectedSpecialisms.join(','));
-    }
-
-    if (searchQuery) {
-      params.set('search', searchQuery);
-    }
-
-    if (currentPage) {
-      params.set('page', currentPage);
-    }
-
-    router.replace(`/?${params.toString()}`, { shallow: true });
-  };
-
-  useEffect(() => {
-    updateURLParams(submittedSearchQuery);
-  }, [selectedServiceType, selectedSpecialisms, submittedSearchQuery, currentPage]);
-
-  useEffect(() => {
-    let result = serverAirtableData.features;
-
-    // Use utility functions for filtering
-    result = filterByServiceType(result, selectedServiceType);
-    result = filterBySpecialisms(result, selectedSpecialisms);
-
-    if (searchSubmitted && !isPostcode(submittedSearchQuery)) {
-      const searchQueryLower = submittedSearchQuery.toLowerCase();
-      result = result.filter((item) => {
-        const name = item.properties?.name || item['Name'];
-        return name && name.toLowerCase().includes(searchQueryLower);
-      });
-    }
-
-    setFilteredData(result);
-    setFilteredMapBoxData({ type: 'FeatureCollection', features: result });
-  }, [selectedServiceType, selectedSpecialisms, searchSubmitted, submittedSearchQuery, serverAirtableData]);
-
-  useEffect(() => {
-    const updateAirtableDataWithDistance = () => {
-      if (isSearchCleared) return;
-
-      let servicesWithDistance = filteredData.map((item) => {
-        const { coordinates } = item.geometry;
-        if (coordinates && coordinates.length === 2) {
-          const distance = calculateDistance(searchLat, searchLng, coordinates[1], coordinates[0]);
-          return { ...item, distance };
-        }
-        return null;
-      });
-
-      servicesWithDistance = servicesWithDistance.filter((item) => item !== null && item.distance <= 10);
-      servicesWithDistance.sort((a, b) => a.distance - b.distance);
-      setFilteredDataWithDistance(servicesWithDistance.slice(0, 10));
-    };
-
-    updateAirtableDataWithDistance();
-  }, [searchLat, searchLng, filteredData]);
+  useURLParams(selectedServiceType, selectedSpecialisms, submittedSearchQuery, currentPage);
 
   return (
     <>
