@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Home from '../App';
+import App from '../App';
 
 export async function generateStaticParams() {
   const slugs = [{ slug: [] }];
@@ -74,7 +74,7 @@ const Page = async () => {
   };
 
   return (
-    <Home
+    <App
       serverAirtableData={featureCollection}
       initialServiceTypes={initialServiceTypes}
       initialSpecialisms={initialSpecialisms}

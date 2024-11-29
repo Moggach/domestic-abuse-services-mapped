@@ -51,7 +51,7 @@ interface HomePageProps {
   initialSpecialisms: string[];
 }
 
-const Home: React.FC<HomePageProps> = ({
+const App: React.FC<HomePageProps> = ({
   serverAirtableData,
   initialServiceTypes,
   initialSpecialisms,
@@ -187,4 +187,4 @@ const Home: React.FC<HomePageProps> = ({
   );
 };
 
-export default Home;
+export default App;
