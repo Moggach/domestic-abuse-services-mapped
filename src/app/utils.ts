@@ -1,4 +1,9 @@
-export function calculateDistance(lat1, lon1, lat2, lon2) {
+export function calculateDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
   const R = 6371; // Earth radius in kilometers
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -13,7 +18,14 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
   return distance * 0.621371; // Convert to miles
 }
 
-export const fetchCoordinates = async (postcode) => {
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+export const fetchCoordinates = async (
+  postcode: string
+): Promise<Coordinates | null> => {
   try {
     const response = await fetch(
       `https://api.postcodes.io/postcodes/${postcode}`
@@ -32,7 +44,7 @@ export const fetchCoordinates = async (postcode) => {
   }
 };
 
-export const colorMapping = {
+export const colorMapping: Record<string, string> = {
   'Domestic abuse support': 'bg-pink-400',
   'Legal advice': 'bg-yellow-400',
   'Immigration advice': 'bg-purple-400',
@@ -50,7 +62,7 @@ export const colorMapping = {
   'Deaf survivors': 'border-teal-400 border-2 text-teal-400 font-bold',
 };
 
-export const determineZoomLevel = () => {
+export const determineZoomLevel = (): number => {
   const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 768;
   if (screenWidth >= 768) {
     return 5;
@@ -59,7 +71,18 @@ export const determineZoomLevel = () => {
   }
 };
 
-export const filterByServiceType = (data, serviceType) => {
+interface DataItem {
+  properties?: {
+    serviceType?: string | string[];
+    serviceSpecialism?: string | string[];
+  };
+  [key: string]: any;
+}
+
+export const filterByServiceType = (
+  data: DataItem[],
+  serviceType: string
+): DataItem[] => {
   if (!serviceType) return data;
   return data.filter((item) => {
     const type = item.properties?.serviceType || item['Service type'];
@@ -69,7 +92,10 @@ export const filterByServiceType = (data, serviceType) => {
   });
 };
 
-export const filterBySpecialisms = (data, specialisms) => {
+export const filterBySpecialisms = (
+  data: DataItem[],
+  specialisms: string[]
+): DataItem[] => {
   if (!specialisms.length) return data;
   return data.filter((item) => {
     const itemSpecialisms =
