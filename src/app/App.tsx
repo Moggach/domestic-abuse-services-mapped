@@ -121,9 +121,6 @@ const App: React.FC<HomePageProps> = ({
           data={filteredMapBoxData}
           setLng={setLng}
           setLat={setLat}
-          setZoom={setZoom}
-          setSearchLng={setSearchLng}
-          setSearchLat={setSearchLat}
           searchLng={searchLng}
           searchLat={searchLat}
         />
