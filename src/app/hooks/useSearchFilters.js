@@ -13,32 +13,29 @@ export const useSearchFilters = (
   const [filteredData, setFilteredData] = useState([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
 
-  useEffect(
-    () => {
-      let result = serverAirtableData.features;
+  useEffect(() => {
+    let result = serverAirtableData.features;
 
-      result = filterByServiceType(result, selectedServiceType);
-      result = filterBySpecialisms(result, selectedSpecialisms);
+    result = filterByServiceType(result, selectedServiceType);
+    result = filterBySpecialisms(result, selectedSpecialisms);
 
-      if (searchSubmitted && !isPostcode(submittedSearchQuery)) {
-        const searchQueryLower = submittedSearchQuery.toLowerCase();
-        result = result.filter((item) => {
-          const name = item.properties?.name || item['Name'];
-          return name && name.toLowerCase().includes(searchQueryLower);
-        });
-      }
+    if (searchSubmitted && !isPostcode(submittedSearchQuery)) {
+      const searchQueryLower = submittedSearchQuery.toLowerCase();
+      result = result.filter((item) => {
+        const name = item.properties?.name || item['Name'];
+        return name && name.toLowerCase().includes(searchQueryLower);
+      });
+    }
 
-      setFilteredData(result);
-    },
-    [
-      selectedServiceType,
-      selectedSpecialisms,
-      searchSubmitted,
-      submittedSearchQuery,
-      serverAirtableData,
-      isPostcode
-    ]
-  );
+    setFilteredData(result);
+  }, [
+    selectedServiceType,
+    selectedSpecialisms,
+    searchSubmitted,
+    submittedSearchQuery,
+    serverAirtableData,
+    isPostcode,
+  ]);
 
   return {
     selectedServiceType,
