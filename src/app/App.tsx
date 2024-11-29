@@ -15,7 +15,43 @@ import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
 import { useURLParams } from './hooks/useUrlParams';
 
-const Home = ({
+interface Geometry {
+  type: 'Point';
+  coordinates: [number, number];
+}
+
+interface Properties {
+  name: string;
+  description: string;
+  address: string;
+  postcode: string;
+  email: string;
+  website: string;
+  phone: string;
+  donate?: string;
+  serviceType: string[];
+  serviceSpecialism: string[];
+  approved: boolean;
+}
+
+interface Feature {
+  type: 'Feature';
+  properties: Properties;
+  geometry: Geometry;
+}
+
+interface FeatureCollection {
+  type: 'FeatureCollection';
+  features: Feature[];
+}
+
+interface HomePageProps {
+  serverAirtableData: FeatureCollection;
+  initialServiceTypes: string[];
+  initialSpecialisms: string[];
+}
+
+const Home: React.FC<HomePageProps> = ({
   serverAirtableData,
   initialServiceTypes,
   initialSpecialisms,
@@ -55,9 +91,9 @@ const Home = ({
     searchSubmitted
   );
 
-  const [serviceTypes] = useState(initialServiceTypes);
-  const [specialisms] = useState(initialSpecialisms);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [serviceTypes] = useState<string[]>(initialServiceTypes);
+  const [specialisms] = useState<string[]>(initialSpecialisms);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { filteredMapBoxData, filteredDataWithDistance } = useMapData(
     filteredData,
