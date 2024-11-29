@@ -8,6 +8,7 @@ export const useMapData = (
   calculateDistance
 ) => {
   const [filteredMapBoxData, setFilteredMapBoxData] = useState(null);
+
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
 
   useEffect(() => {

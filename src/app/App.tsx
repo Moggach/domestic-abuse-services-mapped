@@ -63,13 +63,10 @@ const App: React.FC<HomePageProps> = ({
     handleSearchSubmit,
     handleSearchClear,
     searchLng,
-    setSearchLng,
     searchLat,
-    setSearchLat,
     searchSubmitted,
     isSearchCleared,
     zoom,
-    setZoom,
     isPostcode,
     calculateDistance,
     lng,
@@ -118,7 +115,9 @@ const App: React.FC<HomePageProps> = ({
           lng={lng}
           lat={lat}
           zoom={zoom}
-          data={filteredMapBoxData}
+          data={
+            filteredMapBoxData || { type: 'FeatureCollection', features: [] }
+          }
           setLng={setLng}
           setLat={setLat}
           searchLng={searchLng}
