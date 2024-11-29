@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
 export const useURLParams = (
   selectedServiceType,
@@ -9,7 +9,7 @@ export const useURLParams = (
 ) => {
   const router = useRouter();
 
-  const updateURLParams = () => {
+  const updateURLParams = useCallback(() => {
     const params = new URLSearchParams();
 
     if (selectedServiceType) {
@@ -29,20 +29,17 @@ export const useURLParams = (
     }
 
     router.replace(`/?${params.toString()}`, { shallow: true });
-  };
+  }, [
+    router,
+    selectedServiceType,
+    selectedSpecialisms,
+    submittedSearchQuery,
+    currentPage,
+  ]);
 
-  useEffect(
-    () => {
-      updateURLParams();
-    },
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    [
-      selectedServiceType,
-      selectedSpecialisms,
-      submittedSearchQuery,
-      currentPage,
-    ]
-  );
+  useEffect(() => {
+    updateURLParams();
+  }, [updateURLParams]);
 
   return {};
 };
