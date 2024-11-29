@@ -1,17 +1,23 @@
 'use client';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent } from 'react';
 
 import ThemeSwitcher from './ThemeSwitcher';
 
-const NavBar = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const NavBar: React.FC = () => {
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
-  const toggleDrawer = () => {
+  const toggleDrawer = (): void => {
     setDrawerOpen((prev) => !prev);
   };
 
-  const menuItems = ['About', 'Privacy'];
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
+    if (e.key === 'Enter') {
+      toggleDrawer();
+    }
+  };
+
+  const menuItems: string[] = ['About', 'Privacy'];
 
   return (
     <>
@@ -61,7 +67,7 @@ const NavBar = () => {
           drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={toggleDrawer}
-        onKeyDown={(e) => e.key === 'Enter' && toggleDrawer()}
+        onKeyDown={handleKeyDown}
       ></div>
 
       {/* Drawer */}
