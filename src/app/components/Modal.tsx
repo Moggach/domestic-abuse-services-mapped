@@ -1,16 +1,22 @@
 import React, { useEffect } from 'react';
 
-const Modal = () => {
+const Modal: React.FC = () => {
   useEffect(() => {
     const shouldShowModal = localStorage.getItem('showModal') !== 'false';
-    if (shouldShowModal) {
-      document.getElementById('my_modal_3').showModal();
+    const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
+
+    if (shouldShowModal && modal) {
+      modal.showModal();
     }
   }, []);
 
   const handleDontShowAgain = () => {
     localStorage.setItem('showModal', 'false');
-    document.getElementById('my_modal_3').close();
+    const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
+
+    if (modal) {
+      modal.close();
+    }
   };
 
   return (

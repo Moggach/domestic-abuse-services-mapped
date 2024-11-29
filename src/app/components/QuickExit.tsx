@@ -1,7 +1,7 @@
 import React from 'react';
 
-const QuickExit = () => {
-  const handleClick = () => {
+const QuickExit: React.FC = () => {
+  const handleClick = (): void => {
     window.location.href = 'https://www.bbc.com';
   };
 
