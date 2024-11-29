@@ -30,13 +30,13 @@ export const useSearchFilters = (
 
       setFilteredData(result);
     },
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     [
       selectedServiceType,
       selectedSpecialisms,
       searchSubmitted,
       submittedSearchQuery,
       serverAirtableData,
+      isPostcode
     ]
   );
 
