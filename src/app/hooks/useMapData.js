@@ -63,8 +63,7 @@ export const useMapData = (
 
       updateAirtableDataWithDistance();
     },
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    [searchLat, searchLng, filteredData, isSearchCleared]
+    [searchLat, searchLng, filteredData, isSearchCleared, calculateDistance]
   );
 
   return { filteredMapBoxData, filteredDataWithDistance };
