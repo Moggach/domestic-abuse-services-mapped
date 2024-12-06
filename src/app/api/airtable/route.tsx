@@ -1,7 +1,44 @@
-import Airtable from 'airtable';
+import Airtable, { FieldSet, Records } from 'airtable';
 import { NextResponse } from 'next/server';
 
-function transformServiceData(serviceData) {
+interface ServiceDataFields {
+  'Service name'?: string;
+  'Service description'?: string;
+  'Service address'?: string;
+  'Service postcode'?: string;
+  'Service email address'?: string;
+  'Service website'?: string;
+  'Service phone number'?: string;
+  'Service donation link'?: string;
+  'Service type'?: string[];
+  'Specialist services for'?: string[];
+  Approved?: boolean;
+  Lng?: string;
+  Lat?: string;
+}
+
+interface GeoJSONFeature {
+  type: 'Feature';
+  properties: {
+    name: string;
+    description: string;
+    address: string;
+    postcode: string;
+    email: string;
+    website: string;
+    phone: string;
+    donate: string;
+    serviceType: string[];
+    serviceSpecialism: string[];
+    approved: boolean | undefined;
+  };
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
+}
+
+function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
   return {
     type: 'Feature',
     properties: {
@@ -20,20 +57,29 @@ function transformServiceData(serviceData) {
     geometry: {
       type: 'Point',
       coordinates: [
-        parseFloat(serviceData['Lng'] || 0),
-        parseFloat(serviceData['Lat'] || 0),
+        parseFloat(serviceData['Lng'] || '0'),
+        parseFloat(serviceData['Lat'] || '0'),
       ],
     },
   };
 }
 
 export async function GET() {
-  let base = new Airtable({
-    apiKey: process.env.NEXT_PUBLIC_AIRTABLE_API_KEY,
-  }).base(process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID);
-  let allRecords = [];
+  const apiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
+  const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
 
-  const fetchAllRecords = async () => {
+  if (!apiKey || !baseId) {
+    return NextResponse.json(
+      { error: 'Airtable API key or Base ID is missing' },
+      { status: 500 }
+    );
+  }
+
+  const base = new Airtable({ apiKey }).base(baseId);
+
+  let allRecords: Records<FieldSet> = [];
+
+  const fetchAllRecords = async (): Promise<void> => {
     return new Promise((resolve, reject) => {
       base('services')
         .select()
@@ -68,7 +114,7 @@ export async function GET() {
   );
 
   const data = approvedRecords.map((record) =>
-    transformServiceData(record.fields)
+    transformServiceData(record.fields as ServiceDataFields)
   );
 
   return NextResponse.json(data);
