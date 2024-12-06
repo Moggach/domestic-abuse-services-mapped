@@ -49,7 +49,9 @@ function flattenAndUniqueSpecialisms(data: Feature[]): string[] {
     if (Array.isArray(specialisms)) {
       acc.push(...specialisms);
     } else if (typeof specialisms === 'string') {
-      acc.push(...specialisms.split(',').map((specialism) => specialism.trim()));
+      acc.push(
+        ...specialisms.split(',').map((specialism) => specialism.trim())
+      );
     }
     return acc;
   }, []);

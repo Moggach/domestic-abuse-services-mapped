@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import React from 'react';
 
-import type { HomePageProps } from '../App'; 
+import type { HomePageProps } from '../App';
 
 const App = dynamic(() => import('../App'), { ssr: false });
 

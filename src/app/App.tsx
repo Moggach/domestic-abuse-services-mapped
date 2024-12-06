@@ -29,8 +29,8 @@ interface Properties {
   website: string;
   phone: string;
   donate?: string;
-  serviceType: string[] | string; 
-  serviceSpecialism: string[] | string; 
+  serviceType: string[] | string;
+  serviceSpecialism: string[] | string;
   approved: boolean;
 }
 

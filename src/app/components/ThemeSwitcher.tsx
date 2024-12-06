@@ -5,14 +5,15 @@ const ThemeSwitcher: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedTheme = (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+      const storedTheme =
+        (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
       setTheme(storedTheme);
       document.documentElement.setAttribute('data-theme', storedTheme);
     }
   }, []);
 
   const toggleTheme = () => {
-    if (!theme) return; 
+    if (!theme) return;
     const newTheme: 'light' | 'dark' = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
@@ -20,7 +21,7 @@ const ThemeSwitcher: React.FC = () => {
   };
 
   if (theme === null) {
-    return null; 
+    return null;
   }
 
   return (
