@@ -1,9 +1,29 @@
 import localFont from '@next/font/local';
+import React, { ReactNode } from 'react';
 
 import Navbar from './components/NavBar';
 import { SearchProvider } from './contexts/SearchContext';
 
-export const metadata = {
+interface Metadata {
+  title: string;
+  description: string;
+  icons: {
+    icon: string;
+  };
+  openGraph: {
+    title: string;
+    description: string;
+    images: {
+      url: string;
+      width: number;
+      height: number;
+      alt: string;
+    }[];
+    type: string;
+  };
+}
+
+export const metadata: Metadata = {
   title: 'Domestic abuse services mapping',
   description: 'A tool for mapping domestic abuse services across the UK.',
   icons: {
@@ -48,7 +68,11 @@ const opensans = localFont({
   variable: '--font-opensans',
 });
 
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: ReactNode; // Ensures `children` is typed correctly
+}
+
+export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <html suppressHydrationWarning lang="en">
       <head>
@@ -70,11 +94,11 @@ export default function RootLayout({ children }) {
         <meta property="og:image" content={metadata.openGraph.images[0].url} />
         <meta
           property="og:image:width"
-          content={metadata.openGraph.images[0].width}
+          content={metadata.openGraph.images[0].width.toString()}
         />
         <meta
           property="og:image:height"
-          content={metadata.openGraph.images[0].height}
+          content={metadata.openGraph.images[0].height.toString()}
         />
         <meta
           property="og:image:alt"
