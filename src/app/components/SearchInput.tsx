@@ -1,28 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent, ChangeEvent, FormEvent } from 'react';
+
+interface SearchInputProps {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  onSubmit: (query: string) => void;
+  onClear: () => void;
+}
 
 export default function SearchInput({
   searchQuery,
   setSearchQuery,
   onSubmit,
   onClear,
-}) {
-  const [error, setError] = useState('');
+}: SearchInputProps): JSX.Element {
+  const [error, setError] = useState<string>('');
 
-  const handleClear = () => {
+  const handleClear = (): void => {
     setSearchQuery('');
     onClear();
     setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent): void => {
     e.preventDefault();
+    if (searchQuery.trim() === '') {
+      setError('Please enter a search query.');
+      return;
+    }
+    setError('');
     onSubmit(searchQuery);
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {
       handleSubmit(e);
     }
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -37,7 +53,7 @@ export default function SearchInput({
           placeholder="Search by name or postcode"
           id="searchInput"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
         <button onClick={handleSubmit} aria-label="Search">
