@@ -1,3 +1,6 @@
+
+import { Feature } from '../app/App'
+
 export function calculateDistance(
   lat1: number,
   lon1: number,
@@ -80,12 +83,12 @@ interface DataItem {
 }
 
 export const filterByServiceType = (
-  data: DataItem[],
+  data: Feature[],
   serviceType: string
-): DataItem[] => {
+): Feature[] => {
   if (!serviceType) return data;
   return data.filter((item) => {
-    const type = item.properties?.serviceType || item['Service type'];
+    const type = item.properties?.serviceType;
     return Array.isArray(type)
       ? type.includes(serviceType)
       : type === serviceType;
@@ -93,13 +96,13 @@ export const filterByServiceType = (
 };
 
 export const filterBySpecialisms = (
-  data: DataItem[],
+  data: Feature[],
   specialisms: string[]
-): DataItem[] => {
+): Feature[] => {
   if (!specialisms.length) return data;
   return data.filter((item) => {
     const itemSpecialisms =
-      item.properties?.serviceSpecialism || item['Specialist services for'];
+      item.properties?.serviceSpecialism;
     return specialisms.some((specialism) =>
       Array.isArray(itemSpecialisms)
         ? itemSpecialisms.includes(specialism)

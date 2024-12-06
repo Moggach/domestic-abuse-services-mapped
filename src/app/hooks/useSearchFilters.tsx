@@ -28,17 +28,14 @@ export const useSearchFilters = (
   useEffect(() => {
     let result = serverAirtableData.features;
 
-    // Filter by service type
     result = filterByServiceType(result, selectedServiceType);
 
-    // Filter by specialisms
     result = filterBySpecialisms(result, selectedSpecialisms);
 
-    // Search filtering
     if (searchSubmitted && !isPostcode(submittedSearchQuery)) {
       const searchQueryLower = submittedSearchQuery.toLowerCase();
       result = result.filter((item) => {
-        const name = item.properties?.name || item['Name'];
+        const name = item.properties?.name;
         return name && name.toLowerCase().includes(searchQueryLower);
       });
     }
