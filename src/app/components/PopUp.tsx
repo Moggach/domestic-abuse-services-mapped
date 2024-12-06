@@ -1,5 +1,6 @@
 import mapboxgl from 'mapbox-gl';
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
 
 import donateIconUrl from '../images/svgs/donate.svg';
 import emailIconUrl from '../images/svgs/email.svg';

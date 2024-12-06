@@ -1,4 +1,5 @@
-import Airtable, { FieldSet, Records } from 'airtable';
+import type { FieldSet, Records } from 'airtable';
+import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
 
 interface ServiceDataFields {

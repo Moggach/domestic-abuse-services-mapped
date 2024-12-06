@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
-import React, { useState, KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
+import React, { useState } from 'react';
 
 import ThemeSwitcher from './ThemeSwitcher';
 

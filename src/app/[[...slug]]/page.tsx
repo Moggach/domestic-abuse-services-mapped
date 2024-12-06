@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import App, { Feature, FeatureCollection } from '../App';
+import type { Feature, FeatureCollection } from '../App';
+import App from '../App';
 
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   return [{ slug: [] }];
