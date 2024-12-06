@@ -3,7 +3,7 @@
 import '../styles/globals.css';
 import QuickExit from '../components/QuickExit';
 
-const About = () => {
+const About: React.FC = () => {
   return (
     <>
       <main className="p-4">
