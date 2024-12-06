@@ -1,24 +1,40 @@
 import { useState, useEffect } from 'react';
-
 import { filterByServiceType, filterBySpecialisms } from '../utils';
 
+import { FeatureCollection, Feature } from '../App';
+
+interface UseSearchFiltersReturn {
+  selectedServiceType: string;
+  setSelectedServiceType: (type: string) => void;
+  selectedSpecialisms: string[];
+  setSelectedSpecialisms: (specialisms: string[]) => void;
+  filteredData: Feature[];
+  setFilteredData: (data: Feature[]) => void;
+  filteredDataWithDistance: Feature[];
+  setFilteredDataWithDistance: (data: Feature[]) => void;
+}
+
 export const useSearchFilters = (
-  serverAirtableData,
-  isPostcode,
-  submittedSearchQuery,
-  searchSubmitted
-) => {
-  const [selectedServiceType, setSelectedServiceType] = useState('');
-  const [selectedSpecialisms, setSelectedSpecialisms] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState([]);
+  serverAirtableData: FeatureCollection,
+  isPostcode: (query: string) => boolean,
+  submittedSearchQuery: string,
+  searchSubmitted: boolean
+): UseSearchFiltersReturn => {
+  const [selectedServiceType, setSelectedServiceType] = useState<string>('');
+  const [selectedSpecialisms, setSelectedSpecialisms] = useState<string[]>([]);
+  const [filteredData, setFilteredData] = useState<Feature[]>([]);
+  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<Feature[]>([]);
 
   useEffect(() => {
     let result = serverAirtableData.features;
 
+    // Filter by service type
     result = filterByServiceType(result, selectedServiceType);
+
+    // Filter by specialisms
     result = filterBySpecialisms(result, selectedSpecialisms);
 
+    // Search filtering
     if (searchSubmitted && !isPostcode(submittedSearchQuery)) {
       const searchQueryLower = submittedSearchQuery.toLowerCase();
       result = result.filter((item) => {
