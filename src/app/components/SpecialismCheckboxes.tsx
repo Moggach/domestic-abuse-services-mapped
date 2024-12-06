@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
 
+interface SpecialismCheckboxesProps {
+  specialisms: string[]; 
+  selectedSpecialisms: string[]; 
+  setSelectedSpecialisms: (specialisms: string[]) => void;
+}
+
 export default function SpecialismCheckboxes({
   specialisms,
   selectedSpecialisms,
   setSelectedSpecialisms,
-}) {
-  const [isOpen, setIsOpen] = useState(false);
+}: SpecialismCheckboxesProps): JSX.Element {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const handleCheckboxChange = (specialism) => {
+  const handleCheckboxChange = (specialism: string): void => {
     const updatedSpecialisms = selectedSpecialisms.includes(specialism)
       ? selectedSpecialisms.filter((s) => s !== specialism)
       : [...selectedSpecialisms, specialism];
     setSelectedSpecialisms(updatedSpecialisms);
   };
 
-  const toggleCollapse = () => {
+  const toggleCollapse = (): void => {
     setIsOpen(!isOpen);
   };
 
@@ -30,7 +36,7 @@ export default function SpecialismCheckboxes({
               </span>
             )}
             <span className="font-headings text-xl">
-              Select a specialism <br></br>
+              Select a specialism <br />
               <small>(select all that apply)</small>
             </span>
           </div>
