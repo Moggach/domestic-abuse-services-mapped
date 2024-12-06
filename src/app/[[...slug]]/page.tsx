@@ -1,14 +1,12 @@
 import '../styles/globals.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import App from '../App';
+import App, { Feature, FeatureCollection } from '../App';
 
-export async function generateStaticParams() {
-  const slugs = [{ slug: [] }];
-
-  return slugs;
+export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
+  return [{ slug: [] }];
 }
 
-async function fetchAirtableData() {
+async function fetchAirtableData(): Promise<Feature[]> {
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/airtable`;
 
   try {
@@ -20,55 +18,49 @@ async function fetchAirtableData() {
     const text = await response.text();
 
     try {
-      const data = JSON.parse(text);
+      const data: Feature[] = JSON.parse(text);
       return data;
     } catch (jsonError) {
-      throw new Error(`Failed to parse JSON: ${jsonError.message}`);
+      throw new Error(`Failed to parse JSON: ${(jsonError as Error).message}`);
     }
   } catch (error) {
-    console.error(`Error fetching Airtable data: ${error.message}`);
+    console.error(`Error fetching Airtable data: ${(error as Error).message}`);
     return [];
   }
 }
 
-const flattenAndUnique = (data) => {
-  const allServiceTypes = data.reduce((acc, item) => {
-    const serviceTypes = item.properties?.serviceType || item['Service type'];
+function flattenAndUnique(data: Feature[]): string[] {
+  const allServiceTypes: string[] = data.reduce<string[]>((acc, item) => {
+    const serviceTypes = item.properties.serviceType;
+
     if (Array.isArray(serviceTypes)) {
       acc.push(...serviceTypes);
     } else if (typeof serviceTypes === 'string') {
       acc.push(...serviceTypes.split(',').map((type) => type.trim()));
-    } else if (serviceTypes) {
-      acc.push(serviceTypes);
     }
     return acc;
   }, []);
   return [...new Set(allServiceTypes)].filter(Boolean);
-};
-
-const flattenAndUniqueSpecialisms = (data) => {
-  const allSpecialisms = data.reduce((acc, item) => {
-    const specialisms =
-      item.properties?.serviceSpecialism || item['Service specialism'];
+}
+function flattenAndUniqueSpecialisms(data: Feature[]): string[] {
+  const allSpecialisms: string[] = data.reduce<string[]>((acc, item) => {
+    const specialisms = item.properties.serviceSpecialism;
     if (Array.isArray(specialisms)) {
       acc.push(...specialisms);
     } else if (typeof specialisms === 'string') {
-      acc.push(
-        ...specialisms.split(',').map((specialism) => specialism.trim())
-      );
-    } else if (specialisms) {
-      acc.push(specialisms);
+      acc.push(...specialisms.split(',').map((specialism) => specialism.trim()));
     }
     return acc;
   }, []);
   return [...new Set(allSpecialisms)].filter(Boolean);
-};
+}
 
-const Page = async () => {
+const Page: React.FC = async () => {
   const serverAirtableData = await fetchAirtableData();
   const initialServiceTypes = flattenAndUnique(serverAirtableData);
   const initialSpecialisms = flattenAndUniqueSpecialisms(serverAirtableData);
-  const featureCollection = {
+
+  const featureCollection: FeatureCollection = {
     type: 'FeatureCollection',
     features: serverAirtableData,
   };

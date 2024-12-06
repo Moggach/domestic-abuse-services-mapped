@@ -29,23 +29,23 @@ interface Properties {
   website: string;
   phone: string;
   donate?: string;
-  serviceType: string[];
-  serviceSpecialism: string[];
+  serviceType: string[] | string; 
+  serviceSpecialism: string[] | string; 
   approved: boolean;
 }
 
-interface Feature {
+export interface Feature {
   type: 'Feature';
   properties: Properties;
   geometry: Geometry;
 }
 
-interface FeatureCollection {
+export interface FeatureCollection {
   type: 'FeatureCollection';
   features: Feature[];
 }
 
-interface HomePageProps {
+export interface HomePageProps {
   serverAirtableData: FeatureCollection;
   initialServiceTypes: string[];
   initialSpecialisms: string[];
