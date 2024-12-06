@@ -2,11 +2,11 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useCallback } from 'react';
 
 export const useURLParams = (
-  selectedServiceType,
-  selectedSpecialisms,
-  submittedSearchQuery,
-  currentPage
-) => {
+  selectedServiceType: string,
+  selectedSpecialisms: string[],
+  submittedSearchQuery: string,
+  currentPage: number
+): void => {
   const router = useRouter();
 
   const updateURLParams = useCallback(() => {
@@ -25,10 +25,10 @@ export const useURLParams = (
     }
 
     if (currentPage) {
-      params.set('page', currentPage);
+      params.set('page', currentPage.toString());
     }
 
-    router.replace(`/?${params.toString()}`, { shallow: true });
+    router.replace(`/?${params.toString()}`);
   }, [
     router,
     selectedServiceType,
@@ -41,5 +41,5 @@ export const useURLParams = (
     updateURLParams();
   }, [updateURLParams]);
 
-  return {};
+  return;
 };
