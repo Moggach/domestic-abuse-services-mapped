@@ -23,7 +23,9 @@ export const useSearchFilters = (
   const [selectedServiceType, setSelectedServiceType] = useState<string>('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<Feature[]>([]);
-  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<Feature[]>([]);
+  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<
+    Feature[]
+  >([]);
 
   useEffect(() => {
     let result = serverAirtableData.features;

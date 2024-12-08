@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 interface SpecialismCheckboxesProps {
-  specialisms: string[]; 
-  selectedSpecialisms: string[]; 
+  specialisms: string[];
+  selectedSpecialisms: string[];
   setSelectedSpecialisms: (specialisms: string[]) => void;
 }
 

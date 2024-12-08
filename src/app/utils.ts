@@ -1,5 +1,4 @@
-
-import { Feature } from '../app/App'
+import { Feature } from '../app/App';
 
 export function calculateDistance(
   lat1: number,
@@ -101,8 +100,7 @@ export const filterBySpecialisms = (
 ): Feature[] => {
   if (!specialisms.length) return data;
   return data.filter((item) => {
-    const itemSpecialisms =
-      item.properties?.serviceSpecialism;
+    const itemSpecialisms = item.properties?.serviceSpecialism;
     return specialisms.some((specialism) =>
       Array.isArray(itemSpecialisms)
         ? itemSpecialisms.includes(specialism)
