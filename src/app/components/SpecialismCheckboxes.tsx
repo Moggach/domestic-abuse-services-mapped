@@ -35,10 +35,10 @@ export default function SpecialismCheckboxes({
                 {selectedSpecialisms.length}
               </span>
             )}
-            <span className="font-headings text-xl">
-              Select a specialism <br />
-              <small>(select all that apply)</small>
-            </span>
+            <div className="font-headings flex flex-col md:flex-row gap-2 md:items-center">
+              <div className=" text-xl">Select a specialism</div>
+              <div>(select all that apply)</div>
+            </div>
           </div>
         </div>
         {isOpen && (
