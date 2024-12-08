@@ -2,7 +2,27 @@ import React, { useEffect, useState } from 'react';
 
 import { colorMapping } from '../utils';
 
-const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
+interface Properties {
+  name: string;
+  website: string;
+  description: string;
+  address: string;
+  serviceType: string | string[];
+  serviceSpecialism?: string | string[];
+}
+
+interface Item {
+  properties: Properties;
+}
+
+interface PaginationProps {
+  data: Item[];
+  itemsPerPage: number;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const Pagination: React.FC<PaginationProps> = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   useEffect(() => {
@@ -34,8 +54,15 @@ const Pagination = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
   );
 };
 
-const PaginatedList = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
-  const [paginatedData, setPaginatedData] = useState([]);
+interface PaginatedListProps {
+  data: Item[];
+  itemsPerPage: number;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const PaginatedList: React.FC<PaginatedListProps> = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
+  const [paginatedData, setPaginatedData] = useState<Item[]>([]);
 
   useEffect(() => {
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -43,7 +70,7 @@ const PaginatedList = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
     setPaginatedData(data.slice(indexOfFirstItem, indexOfLastItem));
   }, [currentPage, data, itemsPerPage]);
 
-  const getColorForBadge = (text) => {
+  const getColorForBadge = (text: string): string => {
     return colorMapping[text] || 'bg-blue-400 text-white';
   };
 
