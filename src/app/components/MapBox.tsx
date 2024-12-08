@@ -4,14 +4,13 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import PopUp from './PopUp';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? '';
-
 interface MapBoxProps {
   lng: number;
   lat: number;
   zoom: number;
   data: GeoJSON.FeatureCollection;
-  setLng: (lng: string) => void;
-  setLat: (lat: string) => void;
+  setLng: React.Dispatch<React.SetStateAction<number>>;
+  setLat: React.Dispatch<React.SetStateAction<number>>;
   searchLng?: number;
   searchLat?: number;
 }
@@ -53,8 +52,8 @@ const MapBox: React.FC<MapBoxProps> = ({
     map.current.addControl(new NavigationControl(), 'top-right');
 
     map.current.on('move', () => {
-      setLng(map.current!.getCenter().lng.toFixed(4));
-      setLat(map.current!.getCenter().lat.toFixed(4));
+      setLng(parseFloat(map.current!.getCenter().lng.toFixed(4))); 
+      setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
     });
   }, [lng, lat, zoom, setLng, setLat]);
 
