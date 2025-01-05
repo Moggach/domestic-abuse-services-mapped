@@ -1,6 +1,5 @@
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-
 import PopUp from './PopUp';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? '';
@@ -196,17 +195,17 @@ const MapBox: React.FC<MapBoxProps> = ({
               'circle-stroke-color': '#fff',
             },
           });
-
-          map.current!.on('mouseenter', 'unclustered-point', () => {
-            map.current!.getCanvas().style.cursor = 'pointer';
-          });
-          map.current!.on('mouseleave', 'unclustered-point', () => {
-            map.current!.getCanvas().style.cursor = '';
-          });
-          map.current!.on('click', 'unclustered-point', handlePointSelect);
-          map.current!.on('touchstart', 'unclustered-point', handlePointSelect);
         }
       }
+
+      map.current!.on('mouseenter', 'unclustered-point', () => {
+        map.current!.getCanvas().style.cursor = 'pointer';
+      });
+      map.current!.on('mouseleave', 'unclustered-point', () => {
+        map.current!.getCanvas().style.cursor = '';
+      });
+      map.current!.on('click', 'unclustered-point', handlePointSelect);
+      map.current!.on('touchstart', 'unclustered-point', handlePointSelect);
     };
 
     const addBoundariesLayer = () => {
@@ -214,20 +213,49 @@ const MapBox: React.FC<MapBoxProps> = ({
 
       map.current!.addSource('local-authorities', {
         type: 'geojson',
-        data: '/data/Local_Authority_Districts_May_2024_Boundaries_UK.geojson',
+        data: '/data/local-authority-district.geojson',
       });
 
-      map.current!.addLayer({
-        id: 'local-authorities-layer',
-        type: 'line',
-        source: 'local-authorities',
-        paint: {
-          'line-color': '#C0C0C0',
-          'line-width': 0.5
+      map.current!.addLayer(
+        {
+          id: 'local-authorities-layer',
+          type: 'line',
+          source: 'local-authorities',
+          paint: {
+            'line-color': '#C0C0C0',
+            'line-width': 0.5,
+          },
         },
-      });
+        'clusters'
+      );
 
-    
+      if (!map.current!.getSource('local-authority-centroids')) {
+        map.current!.addSource('local-authority-centroids', {
+          type: 'geojson',
+          data: '/data/local-authority-centroids.geojson',
+        });
+
+        map.current!.addLayer(
+          {
+            id: 'local-authorities-label',
+            type: 'symbol',
+            source: 'local-authority-centroids',
+            layout: {
+              'text-field': ['get', 'LAD24NM'],
+              'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+              'text-size': 12,
+              'text-offset': [0, 0.6],
+              'text-anchor': 'top',
+            },
+            paint: {
+              'text-color': '#000000',
+              'text-halo-color': '#ffffff',
+              'text-halo-width': 1,
+            },
+          },
+          'clusters'
+        );
+      }
     };
 
     if (map.current.isStyleLoaded()) {
@@ -246,9 +274,13 @@ const MapBox: React.FC<MapBoxProps> = ({
           map.current.removeLayer('local-authorities-layer');
           map.current.removeSource('local-authorities');
         }
+        if (map.current.getLayer('local-authorities-label')) {
+          map.current.removeLayer('local-authorities-label');
+          map.current.removeSource('local-authority-centroids');
+        }
       }
     };
-  }, [data, handlePointSelect]);
+  }, [data]);
 
   return (
     <div
