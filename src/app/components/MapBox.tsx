@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import PopUp from './PopUp';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? '';
+
 interface MapBoxProps {
   lng: number;
   lat: number;
@@ -40,7 +41,7 @@ const MapBox: React.FC<MapBoxProps> = ({
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
 
   useEffect(() => {
-    if (map.current) return; // Prevent re-initialization
+    if (map.current) return;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLElement,
@@ -52,7 +53,7 @@ const MapBox: React.FC<MapBoxProps> = ({
     map.current.addControl(new NavigationControl(), 'top-right');
 
     map.current.on('move', () => {
-      setLng(parseFloat(map.current!.getCenter().lng.toFixed(4))); 
+      setLng(parseFloat(map.current!.getCenter().lng.toFixed(4)));
       setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
     });
   }, [lng, lat, zoom, setLng, setLat]);
@@ -116,9 +117,7 @@ const MapBox: React.FC<MapBoxProps> = ({
 
     const loadPoints = () => {
       if (data) {
-        const source = map.current!.getSource(
-          'points'
-        ) as mapboxgl.GeoJSONSource;
+        const source = map.current!.getSource('points') as mapboxgl.GeoJSONSource;
 
         if (source) {
           source.setData(data);
@@ -210,15 +209,43 @@ const MapBox: React.FC<MapBoxProps> = ({
       }
     };
 
+    const addBoundariesLayer = () => {
+      if (map.current!.getSource('local-authorities')) return;
+
+      map.current!.addSource('local-authorities', {
+        type: 'geojson',
+        data: '/data/Local_Authority_Districts_May_2024_Boundaries_UK.geojson',
+      });
+
+      map.current!.addLayer({
+        id: 'local-authorities-layer',
+        type: 'line',
+        source: 'local-authorities',
+        paint: {
+          'line-color': '#C0C0C0',
+          'line-width': 0.5
+        },
+      });
+
+    
+    };
+
     if (map.current.isStyleLoaded()) {
       loadPoints();
+      addBoundariesLayer();
     } else {
-      map.current.on('load', loadPoints);
+      map.current.on('load', () => {
+        loadPoints();
+        addBoundariesLayer();
+      });
     }
 
     return () => {
       if (map.current) {
-        map.current.off('load', loadPoints);
+        if (map.current.getLayer('local-authorities-layer')) {
+          map.current.removeLayer('local-authorities-layer');
+          map.current.removeSource('local-authorities');
+        }
       }
     };
   }, [data, handlePointSelect]);
