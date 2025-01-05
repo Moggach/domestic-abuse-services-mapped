@@ -1,5 +1,6 @@
 import localFont from '@next/font/local';
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React from 'react';
 
 import Navbar from './components/NavBar';
 import { SearchProvider } from './contexts/SearchContext';

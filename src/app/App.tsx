@@ -38,7 +38,7 @@ export interface Feature {
   type: 'Feature';
   properties: Properties;
   geometry: Geometry;
-  distance?: Number;
+  distance?: number;
 }
 
 export interface FeatureCollection {

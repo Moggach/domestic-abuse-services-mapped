@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+
+import type { FeatureCollection, Feature } from '../App';
 import { filterByServiceType, filterBySpecialisms } from '../utils';
 
-import { FeatureCollection, Feature } from '../App';
 
 interface UseSearchFiltersReturn {
   selectedServiceType: string;

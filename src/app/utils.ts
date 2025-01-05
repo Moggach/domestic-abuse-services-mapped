@@ -1,4 +1,4 @@
-import { Feature } from '../app/App';
+import type { Feature } from '../app/App';
 
 export function calculateDistance(
   lat1: number,

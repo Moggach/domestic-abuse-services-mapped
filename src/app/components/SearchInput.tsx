@@ -1,4 +1,5 @@
-import React, { useState, KeyboardEvent, ChangeEvent, FormEvent } from 'react';
+import type { KeyboardEvent, ChangeEvent, FormEvent } from 'react';
+import React, { useState } from 'react';
 
 interface SearchInputProps {
   searchQuery: string;

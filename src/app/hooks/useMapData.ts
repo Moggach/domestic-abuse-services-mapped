@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Properties, Geometry, Feature, FeatureCollection } from '../App'
+
+import type { Properties, Geometry, Feature, FeatureCollection } from '../App'
 
 interface FilteredDataItem {
   geometry: Geometry;

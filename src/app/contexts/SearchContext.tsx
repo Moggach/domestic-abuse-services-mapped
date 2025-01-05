@@ -1,13 +1,14 @@
 'use client';
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
+import type { Feature } from '../App';
 import {
   calculateDistance,
   fetchCoordinates,
   determineZoomLevel,
 } from '../utils';
 
-import { Feature } from '../App';
 
 interface SearchContextType {
   searchInput: string;
