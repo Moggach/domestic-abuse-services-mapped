@@ -15,12 +15,12 @@ import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
 import { useURLParams } from './hooks/useUrlParams';
 
-interface Geometry {
+export interface Geometry {
   type: 'Point';
   coordinates: [number, number];
 }
 
-interface Properties {
+export interface Properties {
   name: string;
   description: string;
   address: string;
@@ -38,6 +38,7 @@ export interface Feature {
   type: 'Feature';
   properties: Properties;
   geometry: Geometry;
+  distance?: Number;
 }
 
 export interface FeatureCollection {
