@@ -73,13 +73,6 @@ export const determineZoomLevel = (): number => {
   }
 };
 
-interface DataItem {
-  properties?: {
-    serviceType?: string | string[];
-    serviceSpecialism?: string | string[];
-  };
-  [key: string]: any;
-}
 
 export const filterByServiceType = (
   data: Feature[],
