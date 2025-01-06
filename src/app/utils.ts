@@ -73,7 +73,6 @@ export const determineZoomLevel = (): number => {
   }
 };
 
-
 export const filterByServiceType = (
   data: Feature[],
   serviceType: string

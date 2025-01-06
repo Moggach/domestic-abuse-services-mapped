@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type { Properties, Geometry, Feature, FeatureCollection } from '../App'
+import type { Properties, Geometry, Feature, FeatureCollection } from '../App';
 
 interface FilteredDataItem {
   geometry: Geometry;
@@ -12,11 +12,19 @@ export const useMapData = (
   searchLat: number | null,
   searchLng: number | null,
   isSearchCleared: boolean,
-  calculateDistance: (lat1: number, lng1: number, lat2: number, lng2: number) => number
+  calculateDistance: (
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number
+  ) => number
 ) => {
-  const [filteredMapBoxData, setFilteredMapBoxData] = useState<FeatureCollection | null>(null);
+  const [filteredMapBoxData, setFilteredMapBoxData] =
+    useState<FeatureCollection | null>(null);
 
-  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<Feature[]>([]);
+  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<
+    Feature[]
+  >([]);
 
   useEffect(() => {
     const updateAirtableDataWithDistance = () => {

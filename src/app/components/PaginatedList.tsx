@@ -22,7 +22,12 @@ interface PaginationProps {
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
+const Pagination: React.FC<PaginationProps> = ({
+  data,
+  itemsPerPage,
+  currentPage,
+  setCurrentPage,
+}) => {
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   useEffect(() => {
@@ -61,7 +66,12 @@ interface PaginatedListProps {
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const PaginatedList: React.FC<PaginatedListProps> = ({ data, itemsPerPage, currentPage, setCurrentPage }) => {
+const PaginatedList: React.FC<PaginatedListProps> = ({
+  data,
+  itemsPerPage,
+  currentPage,
+  setCurrentPage,
+}) => {
   const [paginatedData, setPaginatedData] = useState<Item[]>([]);
 
   useEffect(() => {

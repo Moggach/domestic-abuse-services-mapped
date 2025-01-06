@@ -9,7 +9,6 @@ import {
   determineZoomLevel,
 } from '../utils';
 
-
 interface SearchContextType {
   searchInput: string;
   setSearchInput: React.Dispatch<React.SetStateAction<string>>;

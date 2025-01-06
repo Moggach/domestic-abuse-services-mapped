@@ -116,7 +116,9 @@ const MapBox: React.FC<MapBoxProps> = ({
 
     const loadPoints = () => {
       if (data) {
-        const source = map.current!.getSource('points') as mapboxgl.GeoJSONSource;
+        const source = map.current!.getSource(
+          'points'
+        ) as mapboxgl.GeoJSONSource;
 
         if (source) {
           source.setData(data);
@@ -224,7 +226,6 @@ const MapBox: React.FC<MapBoxProps> = ({
           paint: {
             'line-color': '#C0C0C0',
             'line-width': 1,
-            
           },
           filter: ['>', ['zoom'], 8],
         },
@@ -251,7 +252,6 @@ const MapBox: React.FC<MapBoxProps> = ({
             },
             paint: {
               'text-color': '#C0C0C0',
-             
             },
             filter: ['>', ['zoom'], 8],
           },

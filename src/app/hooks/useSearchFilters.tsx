@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import type { FeatureCollection, Feature } from '../App';
 import { filterByServiceType, filterBySpecialisms } from '../utils';
 
-
 interface UseSearchFiltersReturn {
   selectedServiceType: string;
   setSelectedServiceType: (type: string) => void;
