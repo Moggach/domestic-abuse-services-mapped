@@ -27,7 +27,7 @@ const ClearBrowser: React.FC = () => {
           <span>
             The safest way to completely hide your online activity from someone
             who has access to your computer, laptop, or mobile device is to
-            visit websites on a separate device. You may wish to use a device belonging to a
+            use a different device. You may wish to use a device belonging to a
             friend or relative, or use devices at work or in a library.
           </span>
         </div>
