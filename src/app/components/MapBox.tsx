@@ -244,15 +244,14 @@ const MapBox: React.FC<MapBoxProps> = ({
             source: 'local-authority-centroids',
             layout: {
               'text-field': ['get', 'LAD24NM'],
-              'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-              'text-size': 12,
+              'text-font': ['Poppins Regular'],
+              'text-size': 16,
               'text-offset': [0, 0.6],
               'text-anchor': 'top',
             },
             paint: {
-              'text-color': '#000000',
-              'text-halo-color': '#ffffff',
-              'text-halo-width': 1,
+              'text-color': '#C0C0C0',
+             
             },
             filter: ['>', ['zoom'], 8],
           },
