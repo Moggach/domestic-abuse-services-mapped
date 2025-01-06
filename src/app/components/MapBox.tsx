@@ -14,6 +14,7 @@ interface MapBoxProps {
   setLat: React.Dispatch<React.SetStateAction<number>>;
   searchLng?: number;
   searchLat?: number;
+  selectedLocalAuthority?: string;
 }
 
 interface PopupInfo {
@@ -35,6 +36,7 @@ const MapBox: React.FC<MapBoxProps> = ({
   setLat,
   searchLng,
   searchLat,
+  selectedLocalAuthority,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -284,6 +286,29 @@ const MapBox: React.FC<MapBoxProps> = ({
       }
     };
   }, [data]);
+
+  useEffect(() => {
+    console.log('selectedLocalAuthority', selectedLocalAuthority);
+    if (!selectedLocalAuthority || !map.current) return;
+
+    fetch('/data/local-authority-centroids.geojson')
+      .then((res) => res.json())
+      .then((geojson) => {
+        const authority = geojson.features.find(
+          (feature: any) =>
+            feature.properties.LAD24NM === selectedLocalAuthority
+        );
+
+        if (authority) {
+          const [lng, lat] = authority.geometry.coordinates;
+          map.current!.flyTo({
+            center: [lng, lat],
+            zoom: 10,
+          });
+        }
+      })
+      .catch((err) => console.error('Error fetching authority data:', err));
+  }, [selectedLocalAuthority]);
 
   return (
     <div

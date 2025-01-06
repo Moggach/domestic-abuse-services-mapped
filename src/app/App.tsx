@@ -130,6 +130,7 @@ const App: React.FC<HomePageProps> = ({
           setLat={setLat}
           searchLng={searchLng}
           searchLat={searchLat}
+          selectedLocalAuthority={selectedLocalAuthority}
         />
         <div className="flex flex-col gap-5 basis-1/2">
           <ServiceTypeFilter
