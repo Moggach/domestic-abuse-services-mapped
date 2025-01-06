@@ -58,10 +58,24 @@ function flattenAndUniqueSpecialisms(data: Feature[]): string[] {
   return [...new Set(allSpecialisms)].filter(Boolean);
 }
 
+function extractUniqueLocalAuthorities(data: Feature[]): string[] {
+  const allLocalAuthorities: string[] = data.reduce<string[]>((acc, item) => {
+    const localAuthority = item.properties.localAuthority;
+
+    if (localAuthority && typeof localAuthority === 'string') {
+      acc.push(localAuthority.trim());
+    }
+    return acc;
+  }, []);
+
+  return [...new Set(allLocalAuthorities)].filter(Boolean);
+}
+
 const Page: React.FC = async () => {
   const serverAirtableData = await fetchAirtableData();
   const initialServiceTypes = flattenAndUnique(serverAirtableData);
   const initialSpecialisms = flattenAndUniqueSpecialisms(serverAirtableData);
+  const localAuthorities = extractUniqueLocalAuthorities(serverAirtableData);
 
   const featureCollection: FeatureCollection = {
     type: 'FeatureCollection',
@@ -73,6 +87,7 @@ const Page: React.FC = async () => {
       serverAirtableData={featureCollection}
       initialServiceTypes={initialServiceTypes}
       initialSpecialisms={initialSpecialisms}
+      localAuthorities={localAuthorities}
     />
   );
 };

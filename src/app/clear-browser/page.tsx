@@ -26,8 +26,8 @@ const ClearBrowser: React.FC = () => {
           </svg>
           <span>
             The safest way to completely hide your online activity from someone
-            who has access to your computer, laptop, or mobile device is to
-            use a different device. You may wish to use a device belonging to a
+            who has access to your computer, laptop, or mobile device is to use
+            a different device. You may wish to use a device belonging to a
             friend or relative, or use devices at work or in a library.
           </span>
         </div>
@@ -82,8 +82,8 @@ const ClearBrowser: React.FC = () => {
                 </li>
                 <li>Use the search bar to find the website.</li>
                 <li>
-                  Right-click the site &gt; &quot;Delete Page&quot; or &quot;Forget About This
-                  Site.&quot;
+                  Right-click the site &gt; &quot;Delete Page&quot; or
+                  &quot;Forget About This Site.&quot;
                 </li>
               </ol>
               <h3 className="mb-1 text-lg">Mobile:</h3>
@@ -108,7 +108,9 @@ const ClearBrowser: React.FC = () => {
                   Press <code>Ctrl + H</code> to open history.
                 </li>
                 <li>Search for the site using the search bar at the top.</li>
-                <li>Hover over entries and click the &quot;X&quot; to delete them.</li>
+                <li>
+                  Hover over entries and click the &quot;X&quot; to delete them.
+                </li>
               </ol>
               <h3 className="mb-1 text-lg">Mobile:</h3>
               <ol className="list-decimal ml-6 mb-3 text-base">
@@ -127,7 +129,8 @@ const ClearBrowser: React.FC = () => {
               <ol className="list-decimal ml-6 mb-3 text-base">
                 <li>Open Safari.</li>
                 <li>
-                  Click &quot;History&quot; in the menu bar &gt; &quot;Show All History.&quot;
+                  Click &quot;History&quot; in the menu bar &gt; &quot;Show All
+                  History.&quot;
                 </li>
                 <li>Search for the website.</li>
                 <li>Right-click the entry &gt; &quot;Delete.&quot;</li>
@@ -136,8 +139,8 @@ const ClearBrowser: React.FC = () => {
               <ol className="list-decimal ml-6 mb-3 text-base">
                 <li>Open the Safari app.</li>
                 <li>
-                  Tap the book icon (bottom toolbar) &gt; &quot;History&quot; (clock
-                  icon).
+                  Tap the book icon (bottom toolbar) &gt; &quot;History&quot;
+                  (clock icon).
                 </li>
                 <li>Swipe left on the entry &gt; &quot;Delete.&quot;</li>
               </ol>

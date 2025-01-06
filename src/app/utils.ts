@@ -86,6 +86,19 @@ export const filterByServiceType = (
   });
 };
 
+export const filterByLocalAuthority = (
+  data: Feature[],
+  localAuthority: string
+): Feature[] => {
+  if (!localAuthority) return data;
+  return data.filter((item) => {
+    const type = item.properties?.localAuthority;
+    return Array.isArray(type)
+      ? type.includes(localAuthority)
+      : type === localAuthority;
+  });
+};
+
 export const filterBySpecialisms = (
   data: Feature[],
   specialisms: string[]

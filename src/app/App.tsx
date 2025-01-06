@@ -10,6 +10,7 @@ import QuickExit from './components/QuickExit';
 import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
+import LocalAuthorityFilter from './components/LocalAuthorityFilter';
 import { useSearch } from './contexts/SearchContext';
 import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
@@ -31,6 +32,7 @@ export interface Properties {
   donate?: string;
   serviceType: string[] | string;
   serviceSpecialism: string[] | string;
+  localAuthority: string;
   approved: boolean;
 }
 
@@ -50,12 +52,14 @@ export interface HomePageProps {
   serverAirtableData: FeatureCollection;
   initialServiceTypes: string[];
   initialSpecialisms: string[];
+  localAuthorities: string[];
 }
 
 const App: React.FC<HomePageProps> = ({
   serverAirtableData,
   initialServiceTypes,
   initialSpecialisms,
+  localAuthorities,
 }) => {
   const {
     searchInput,
@@ -79,6 +83,8 @@ const App: React.FC<HomePageProps> = ({
   const {
     selectedServiceType,
     setSelectedServiceType,
+    selectedLocalAuthority,
+    setSelectedLocalAuthority,
     selectedSpecialisms,
     setSelectedSpecialisms,
     filteredData,
@@ -130,6 +136,11 @@ const App: React.FC<HomePageProps> = ({
             setSelectedServiceType={setSelectedServiceType}
             serviceTypes={serviceTypes}
           />
+          <LocalAuthorityFilter
+            selectedLocalAuthority={selectedLocalAuthority}
+            setSelectedLocalAuthority={setSelectedLocalAuthority}
+            localAuthorities={localAuthorities}
+          />
           <SpecialismCheckboxes
             specialisms={specialisms}
             selectedSpecialisms={selectedSpecialisms}
@@ -161,7 +172,7 @@ const App: React.FC<HomePageProps> = ({
               ) : (
                 <h2>
                   No services found matching &quot;{submittedSearchQuery}&quot;.
-                  Try another search?
+                  Try another search or remove any filters?
                 </h2>
               )}
             </div>

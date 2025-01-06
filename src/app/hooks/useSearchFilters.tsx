@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 
 import type { FeatureCollection, Feature } from '../App';
-import { filterByServiceType, filterBySpecialisms } from '../utils';
+import {
+  filterByServiceType,
+  filterBySpecialisms,
+  filterByLocalAuthority,
+} from '../utils';
 
 interface UseSearchFiltersReturn {
   selectedServiceType: string;
   setSelectedServiceType: (type: string) => void;
+  selectedLocalAuthority: string;
+  setSelectedLocalAuthority: (type: string) => void;
   selectedSpecialisms: string[];
   setSelectedSpecialisms: (specialisms: string[]) => void;
   filteredData: Feature[];
@@ -21,6 +27,8 @@ export const useSearchFilters = (
   searchSubmitted: boolean
 ): UseSearchFiltersReturn => {
   const [selectedServiceType, setSelectedServiceType] = useState<string>('');
+  const [selectedLocalAuthority, setSelectedLocalAuthority] =
+    useState<string>('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<Feature[]>([]);
   const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<
@@ -29,6 +37,7 @@ export const useSearchFilters = (
 
   useEffect(() => {
     let result = serverAirtableData.features;
+    result = filterByLocalAuthority(result, selectedLocalAuthority);
 
     result = filterByServiceType(result, selectedServiceType);
 
@@ -45,6 +54,7 @@ export const useSearchFilters = (
     setFilteredData(result);
   }, [
     selectedServiceType,
+    selectedLocalAuthority,
     selectedSpecialisms,
     searchSubmitted,
     submittedSearchQuery,
@@ -55,6 +65,8 @@ export const useSearchFilters = (
   return {
     selectedServiceType,
     setSelectedServiceType,
+    selectedLocalAuthority,
+    setSelectedLocalAuthority,
     selectedSpecialisms,
     setSelectedSpecialisms,
     filteredData,
