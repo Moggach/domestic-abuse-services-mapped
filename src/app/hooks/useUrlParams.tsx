@@ -3,6 +3,7 @@ import { useEffect, useCallback } from 'react';
 
 export const useURLParams = (
   selectedServiceType: string,
+  selectedLocalAuthority: string,
   selectedSpecialisms: string[],
   submittedSearchQuery: string,
   currentPage: number
@@ -14,6 +15,10 @@ export const useURLParams = (
 
     if (selectedServiceType) {
       params.set('serviceType', selectedServiceType);
+    }
+
+    if (selectedLocalAuthority) {
+      params.set('localAuthority', selectedLocalAuthority);
     }
 
     if (selectedSpecialisms.length > 0) {
@@ -32,6 +37,7 @@ export const useURLParams = (
   }, [
     router,
     selectedServiceType,
+    selectedLocalAuthority,
     selectedSpecialisms,
     submittedSearchQuery,
     currentPage,

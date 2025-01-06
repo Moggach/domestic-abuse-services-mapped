@@ -109,6 +109,7 @@ const App: React.FC<HomePageProps> = ({
 
   useURLParams(
     selectedServiceType,
+    selectedLocalAuthority,
     selectedSpecialisms,
     submittedSearchQuery,
     currentPage
