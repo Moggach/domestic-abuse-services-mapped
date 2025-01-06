@@ -223,8 +223,10 @@ const MapBox: React.FC<MapBoxProps> = ({
           source: 'local-authorities',
           paint: {
             'line-color': '#C0C0C0',
-            'line-width': 0.5,
+            'line-width': 1,
+            
           },
+          filter: ['>', ['zoom'], 8],
         },
         'clusters'
       );
@@ -252,6 +254,7 @@ const MapBox: React.FC<MapBoxProps> = ({
               'text-halo-color': '#ffffff',
               'text-halo-width': 1,
             },
+            filter: ['>', ['zoom'], 8],
           },
           'clusters'
         );
