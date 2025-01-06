@@ -10,6 +10,190 @@ const ClearBrowser: React.FC = () => {
         <h1 className="font-headings text-3xl mb-4">
           How to clear this site from your browser history
         </h1>
+        <div role="alert" className="alert alert-warning mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <span>
+            The safest way to completely hide your online activity from someone
+            who has access to your computer, laptop, or mobile device is to
+            visit websites on someone else’s devices. You may wish to ask a
+            friend or relative, or use devices at work or in a library.
+          </span>
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="collapse bg-base-200">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">
+              Google Chrome
+            </div>
+            <div className="collapse-content">
+              <h3 className="mb-1 text-lg">Desktop (Windows, macOS, Linux):</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Chrome.</li>
+                <li>
+                  Press <code>Ctrl + H</code> (Windows/Linux) or{' '}
+                  <code>Cmd + Y</code> (macOS) to open history.
+                </li>
+                <li>
+                  In the search bar at the top, type the website you want to
+                  delete (e.g., "example.com").
+                </li>
+                <li>
+                  Select the checkbox or hover over entries and click the three
+                  dots &gt; "Remove from history."
+                </li>
+                <li>Confirm the deletion.</li>
+              </ol>
+              <h3 className="mb-1 text-lg">Mobile (Android, iOS):</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open the Chrome app.</li>
+                <li>Tap the three-dot menu &gt; "History."</li>
+                <li>Use the search bar to find the website.</li>
+                <li>
+                  Tap the three-dot menu next to each result and select
+                  "Delete."
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div className="collapse bg-base-200">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">
+              Mozilla Firefox
+            </div>
+            <div className="collapse-content">
+              <h3 className="mb-1 text-lg">Desktop:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Firefox.</li>
+                <li>
+                  Press <code>Ctrl + Shift + H</code> (Windows/Linux) or{' '}
+                  <code>Cmd + Shift + H</code> (macOS) to open the library.
+                </li>
+                <li>Use the search bar to find the website.</li>
+                <li>
+                  Right-click the site &gt; "Delete Page" or "Forget About This
+                  Site."
+                </li>
+              </ol>
+              <h3 className="mb-1 text-lg">Mobile:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open the Firefox app.</li>
+                <li>Tap the three-line menu &gt; "History."</li>
+                <li>Search for the website.</li>
+                <li>Tap and hold the entry &gt; "Remove."</li>
+              </ol>
+            </div>
+          </div>
+          <div className="collapse bg-base-200">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">
+              Microsoft Edge
+            </div>
+            <div className="collapse-content">
+              <h3 className="mb-1 text-lg">Desktop:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Edge.</li>
+                <li>
+                  Press <code>Ctrl + H</code> to open history.
+                </li>
+                <li>Search for the site using the search bar at the top.</li>
+                <li>Hover over entries and click the "X" to delete them.</li>
+              </ol>
+              <h3 className="mb-1 text-lg">Mobile:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open the Edge app.</li>
+                <li>Tap the three-dot menu &gt; "History."</li>
+                <li>Search for the website.</li>
+                <li>Swipe left or tap the "X" to remove entries.</li>
+              </ol>
+            </div>
+          </div>
+          <div className="collapse bg-base-200">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">Safari</div>
+            <div className="collapse-content">
+              <h3 className="mb-1 text-lg">macOS:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Safari.</li>
+                <li>
+                  Click "History" in the menu bar &gt; "Show All History."
+                </li>
+                <li>Search for the website.</li>
+                <li>Right-click the entry &gt; "Delete."</li>
+              </ol>
+              <h3 className="mb-1 text-lg">iOS:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open the Safari app.</li>
+                <li>
+                  Tap the book icon (bottom toolbar) &gt; "History" (clock
+                  icon).
+                </li>
+                <li>Swipe left on the entry &gt; "Delete."</li>
+              </ol>
+            </div>
+          </div>
+          <div className="collapse bg-base-200">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">
+              How to Browse in Incognito Mode
+            </div>
+            <div className="collapse-content">
+              <p className="text-base mb-3">
+                Browsing in incognito or private mode does not save history.
+                Once you close the incognito window, the browser history and
+                data from that session are automatically cleared.
+              </p>
+              <h3 className="mb-1 text-lg">Google Chrome:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Chrome.</li>
+                <li>
+                  Press <code>Ctrl + Shift + N</code> (Windows/Linux) or{' '}
+                  <code>Cmd + Shift + N</code> (macOS).
+                </li>
+                <li>A new incognito window will open.</li>
+              </ol>
+              <h3 className="mb-1 text-lg">Mozilla Firefox:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Firefox.</li>
+                <li>
+                  Press <code>Ctrl + Shift + P</code> (Windows/Linux) or{' '}
+                  <code>Cmd + Shift + P</code> (macOS).
+                </li>
+                <li>A new private browsing window will open.</li>
+              </ol>
+              <h3 className="mb-1 text-lg">Microsoft Edge:</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Edge.</li>
+                <li>
+                  Press <code>Ctrl + Shift + N</code> (Windows/Linux).
+                </li>
+                <li>A new InPrivate browsing window will open.</li>
+              </ol>
+              <h3 className="mb-1 text-lg">Safari (macOS):</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Safari.</li>
+                <li>Click "File" &gt; "New Private Window."</li>
+              </ol>
+              <h3 className="mb-1 text-lg">Safari (iOS):</h3>
+              <ol className="list-decimal ml-6 mb-3 text-base">
+                <li>Open Safari.</li>
+                <li>Tap the tabs icon (bottom right) &gt; "Private."</li>
+                <li>Tap "Done" to start browsing in private mode.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
       </main>
       <QuickExit />
     </>
