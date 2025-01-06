@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 
 import Footer from './components/Footer';
+import LocalAuthorityFilter from './components/LocalAuthorityFilter';
 import MapBox from './components/MapBox';
 import Modal from './components/Modal';
 import PaginatedList from './components/PaginatedList';
@@ -10,7 +11,6 @@ import QuickExit from './components/QuickExit';
 import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
-import LocalAuthorityFilter from './components/LocalAuthorityFilter';
 import { useSearch } from './contexts/SearchContext';
 import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
