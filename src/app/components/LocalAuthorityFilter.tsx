@@ -13,7 +13,7 @@ export default function LocalAuthorityFilter({
   setSelectedLocalAuthority,
 }: LocalAuthorityFilterProps): JSX.Element {
   return (
-    <div className="flex flex-col gap-3" >
+    <div className="flex flex-col gap-3">
       <label
         className="mr-4 font-headings text-xl"
         htmlFor="localAuthorityFilter"
@@ -22,7 +22,13 @@ export default function LocalAuthorityFilter({
       </label>
 
       <div>
-        <Link className="text-sm underline" href="https://www.gov.uk/find-local-council">What is my local authority?</Link></div>
+        <Link
+          className="text-sm underline"
+          href="https://www.gov.uk/find-local-council"
+        >
+          What is my local authority?
+        </Link>
+      </div>
       <select
         className="select select-bordered w-full max-w-xs"
         id="localAuthorityFilter"
