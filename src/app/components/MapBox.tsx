@@ -221,26 +221,35 @@ const MapBox: React.FC<MapBoxProps> = ({
         data: '/data/local-authority-district.geojson',
       });
 
-      map.current!.addLayer(
-        {
-          id: 'local-authorities-layer',
-          type: 'line',
-          source: 'local-authorities',
-          paint: {
-            'line-color': '#C0C0C0',
-            'line-width': 1,
+      if (!map.current!.getLayer('local-authorities-layer')) {
+        map.current!.addLayer(
+          {
+            id: 'local-authorities-layer',
+            type: 'line',
+            source: 'local-authorities',
+            paint: {
+              'line-color': '#C0C0C0',
+              'line-width': 2,
+            },
           },
-          filter: ['>', ['zoom'], 8],
-        },
-        'clusters'
-      );
+          'clusters'
+        );
+      }
+
+      map.current!.setFilter('local-authorities-layer', [
+        '==',
+        ['get', 'LAD24NM'],
+        selectedLocalAuthority || '',
+      ]);
 
       if (!map.current!.getSource('local-authority-centroids')) {
         map.current!.addSource('local-authority-centroids', {
           type: 'geojson',
           data: '/data/local-authority-centroids.geojson',
         });
+      }
 
+      if (!map.current!.getLayer('local-authorities-label')) {
         map.current!.addLayer(
           {
             id: 'local-authorities-label',
@@ -256,11 +265,16 @@ const MapBox: React.FC<MapBoxProps> = ({
             paint: {
               'text-color': '#C0C0C0',
             },
-            filter: ['>', ['zoom'], 8],
           },
           'clusters'
         );
       }
+
+      map.current!.setFilter('local-authorities-label', [
+        '==',
+        ['get', 'LAD24NM'],
+        selectedLocalAuthority || '',
+      ]);
     };
 
     if (map.current.isStyleLoaded()) {
