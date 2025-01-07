@@ -302,9 +302,15 @@ const MapBox: React.FC<MapBoxProps> = ({
   }, [data]);
 
   useEffect(() => {
-    console.log('selectedLocalAuthority', selectedLocalAuthority);
-    if (!selectedLocalAuthority || !map.current) return;
+    if (!map.current) return;
 
+    if (!selectedLocalAuthority) {
+      map.current.flyTo({
+        center: [lng, lat],
+        zoom: zoom,
+      });
+      return;
+    }
     fetch('/data/local-authority-centroids.geojson')
       .then((res) => res.json())
       .then((geojson) => {
