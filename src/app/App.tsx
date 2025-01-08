@@ -164,7 +164,7 @@ const App: React.FC<HomePageProps> = ({
                 ) : (
                   <h2>
                     No search results within 10 miles of {submittedSearchQuery}.
-                    Try another search?
+                    Try another search or remove any filters?
                   </h2>
                 )
               ) : filteredData.length > 0 ? (
