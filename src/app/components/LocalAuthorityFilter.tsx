@@ -35,11 +35,14 @@ export default function LocalAuthorityFilter({
         value={selectedLocalAuthority}
         onChange={(e) => setSelectedLocalAuthority(e.target.value)}
       >
-        <option value="">All local authorities</option>
-        {localAuthorities.map((item, index) => (
-          <option key={index} value={item}>
-            {item}
-          </option>
+      <option value="">All local authorities</option>
+        {localAuthorities
+          .slice()
+          .sort((a, b) => a.localeCompare(b))
+          .map((item, index) => (
+            <option key={index} value={item}>
+              {item}
+            </option>
         ))}
       </select>
     </div>
