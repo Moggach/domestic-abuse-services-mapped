@@ -57,11 +57,17 @@ const MapBox: React.FC<MapBoxProps> = ({
     map.current.on('move', () => {
       setLng(parseFloat(map.current!.getCenter().lng.toFixed(4)));
       setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
+      setPopupInfo(null);
+    });
+
+    map.current.on('zoomend', () => {
+      setPopupInfo(null);
     });
   }, [lng, lat, zoom, setLng, setLat]);
 
   useEffect(() => {
     if (map.current && searchLat && searchLng) {
+      setPopupInfo(null);
       map.current.flyTo({
         center: [searchLng, searchLat],
         zoom: zoom,
@@ -72,21 +78,19 @@ const MapBox: React.FC<MapBoxProps> = ({
   useEffect(() => {
     if (!map.current) return;
 
-    const handleZoomEnd = () => {
-      const currentZoom = map.current!.getZoom();
-      if (currentZoom < 10) {
-        setPopupInfo(null);
-      }
-    };
+    const handleZoomEnd = () => setPopupInfo(null);
+    const handleMove = () => setPopupInfo(null);
 
     map.current.on('zoomend', handleZoomEnd);
+    map.current.on('move', handleMove);
 
     return () => {
       if (map.current) {
         map.current.off('zoomend', handleZoomEnd);
+        map.current.off('move', handleMove);
       }
     };
-  }, [setPopupInfo]);
+  }, []);
 
   const handlePointSelect = useCallback(
     (
@@ -183,19 +187,7 @@ const MapBox: React.FC<MapBoxProps> = ({
             filter: ['!', ['has', 'point_count']],
             paint: {
               'circle-color': '#11b4da',
-              'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                5,
-                4,
-                10,
-                8,
-                15,
-                12,
-                20,
-                16,
-              ],
+              'circle-radius': 8,
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
             },
@@ -203,26 +195,19 @@ const MapBox: React.FC<MapBoxProps> = ({
         }
       }
 
-      map.current!.on('mouseenter', 'unclustered-point', () => {
-        map.current!.getCanvas().style.cursor = 'pointer';
-      });
-      map.current!.on('mouseleave', 'unclustered-point', () => {
-        map.current!.getCanvas().style.cursor = '';
-      });
       map.current!.on('click', 'unclustered-point', handlePointSelect);
-      map.current!.on('touchstart', 'unclustered-point', handlePointSelect);
     };
 
     const addBoundariesLayer = () => {
       if (!map.current) return;
-    
+
       if (!map.current.getSource('local-authorities')) {
         map.current.addSource('local-authorities', {
           type: 'geojson',
           data: '/data/local-authority-district.geojson',
         });
       }
-    
+
       if (!map.current.getLayer('local-authorities-fill')) {
         map.current.addLayer(
           {
@@ -230,14 +215,14 @@ const MapBox: React.FC<MapBoxProps> = ({
             type: 'fill',
             source: 'local-authorities',
             paint: {
-              'fill-color': '#C0C0C0', 
-              'fill-opacity': 0.3,   
+              'fill-color': '#C0C0C0',
+              'fill-opacity': 0.3,
             },
           },
           'clusters'
         );
       }
-    
+
       if (selectedLocalAuthority) {
         map.current.setFilter('local-authorities-fill', [
           '==',
@@ -258,31 +243,20 @@ const MapBox: React.FC<MapBoxProps> = ({
         addBoundariesLayer();
       });
     }
-
-    return () => {
-      if (map.current) {
-        if (map.current.getLayer('local-authorities-layer')) {
-          map.current.removeLayer('local-authorities-layer');
-          map.current.removeSource('local-authorities');
-        }
-        if (map.current.getLayer('local-authorities-label')) {
-          map.current.removeLayer('local-authorities-label');
-          map.current.removeSource('local-authority-centroids');
-        }
-      }
-    };
-  }, [data]);
+  }, [data, selectedLocalAuthority]);
 
   useEffect(() => {
     if (!map.current) return;
 
     if (!selectedLocalAuthority) {
+      setPopupInfo(null);
       map.current.flyTo({
         center: [lng, lat],
         zoom: zoom,
       });
       return;
     }
+
     fetch('/data/local-authority-centroids.geojson')
       .then((res) => res.json())
       .then((geojson) => {
@@ -292,6 +266,7 @@ const MapBox: React.FC<MapBoxProps> = ({
         );
 
         if (authority) {
+          setPopupInfo(null);
           const [lng, lat] = authority.geometry.coordinates;
           map.current!.flyTo({
             center: [lng, lat],
@@ -303,10 +278,7 @@ const MapBox: React.FC<MapBoxProps> = ({
   }, [selectedLocalAuthority]);
 
   return (
-    <div
-      className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2"
-      ref={mapContainer}
-    >
+    <div className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2" ref={mapContainer}>
       {popupInfo && <PopUp map={map} {...popupInfo} />}
     </div>
   );
