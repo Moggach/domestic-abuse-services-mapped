@@ -32,7 +32,7 @@ export interface Properties {
   donate?: string;
   serviceType: string[] | string;
   serviceSpecialism: string[] | string;
-  localAuthority: string;
+  localAuthorities: string[];
   approved: boolean;
 }
 

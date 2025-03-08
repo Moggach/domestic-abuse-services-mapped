@@ -13,7 +13,7 @@ interface ServiceDataFields {
   'Service donation link'?: string;
   'Service type'?: string[];
   'Specialist services for'?: string[];
-  'Local authority'?: string;
+  'Local authority'?: string | string[];
   Approved?: boolean;
   Lng?: string;
   Lat?: string;
@@ -33,7 +33,7 @@ interface GeoJSONFeature {
     serviceType: string[];
     serviceSpecialism: string[];
     approved: boolean | undefined;
-    localAuthority: string;
+    localAuthorities: string[];
   };
   geometry: {
     type: 'Point';
@@ -42,6 +42,12 @@ interface GeoJSONFeature {
 }
 
 function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
+  const localAuthorities = Array.isArray(serviceData['Local authority'])
+    ? serviceData['Local authority']
+    : serviceData['Local authority']
+      ? [serviceData['Local authority']]
+      : [];
+
   return {
     type: 'Feature',
     properties: {
@@ -56,7 +62,7 @@ function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
       serviceType: serviceData['Service type'] || [],
       serviceSpecialism: serviceData['Specialist services for'] || [],
       approved: serviceData['Approved'],
-      localAuthority: serviceData['Local authority'] || '',
+      localAuthorities
     },
     geometry: {
       type: 'Point',

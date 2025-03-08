@@ -88,14 +88,18 @@ export const filterByServiceType = (
 
 export const filterByLocalAuthority = (
   data: Feature[],
-  localAuthority: string
+  localAuthorities: string[]
 ): Feature[] => {
-  if (!localAuthority) return data;
+  if (!localAuthorities || localAuthorities.length === 0) return data;
+
   return data.filter((item) => {
-    const type = item.properties?.localAuthority;
-    return Array.isArray(type)
-      ? type.includes(localAuthority)
-      : type === localAuthority;
+    const authorities = item.properties?.localAuthorities; 
+
+    if (Array.isArray(authorities)) {
+      return authorities.some((authority) => localAuthorities.includes(authority));
+    }
+
+    return false;
   });
 };
 

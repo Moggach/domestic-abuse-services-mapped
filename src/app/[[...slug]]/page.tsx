@@ -60,13 +60,18 @@ function flattenAndUniqueSpecialisms(data: Feature[]): string[] {
 
 function extractUniqueLocalAuthorities(data: Feature[]): string[] {
   const allLocalAuthorities: string[] = data.reduce<string[]>((acc, item) => {
-    const localAuthority = item.properties.localAuthority;
+    const localAuthorities = item.properties.localAuthorities; // Expecting an array now
 
-    if (localAuthority && typeof localAuthority === 'string') {
-      acc.push(localAuthority.trim());
+    if (Array.isArray(localAuthorities)) {
+      localAuthorities.forEach((la) => {
+        if (typeof la === 'string') {
+          acc.push(la.trim());
+        }
+      });
     }
     return acc;
   }, []);
+
 
   return [...new Set(allLocalAuthorities)].filter(Boolean);
 }
