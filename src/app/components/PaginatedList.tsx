@@ -86,7 +86,7 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
 
   return (
     <div>
-      {paginatedData.length > 0 && (
+      {paginatedData.length > 0 ? (
         <ul className="flex flex-col gap-4 mt-6">
           {paginatedData.map((item, index) => {
             const properties = item.properties;
@@ -161,6 +161,8 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
             );
           })}
         </ul>
+      ) : (
+        <p className="text-center text-gray-500 mt-4">No items to display. Try removing a filter?</p>
       )}
       {data.length > 0 && (
         <Pagination
