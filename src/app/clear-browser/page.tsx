@@ -6,7 +6,7 @@ import QuickExit from '../components/QuickExit';
 const ClearBrowser: React.FC = () => {
   return (
     <>
-      <main className="p-4 max-w-[974px] lg:mx-auto">
+      <main className="p-4 max-w-[974px] lg:mx-auto lg:mt-10">
         <h1 className="font-headings text-3xl mb-4">
           How to clear this site from your browser history
         </h1>
