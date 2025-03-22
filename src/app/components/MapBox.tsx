@@ -187,7 +187,7 @@ const MapBox: React.FC<MapBoxProps> = ({
             filter: ['!', ['has', 'point_count']],
             paint: {
               'circle-color': '#11b4da',
-              'circle-radius': 8,
+              'circle-radius': 4,
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
             },
@@ -278,7 +278,7 @@ const MapBox: React.FC<MapBoxProps> = ({
   }, [selectedLocalAuthority]);
 
   return (
-    <div className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2" ref={mapContainer}>
+    <div className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2 rounded-lg" ref={mapContainer}>
       {popupInfo && <PopUp map={map} {...popupInfo} />}
     </div>
   );
