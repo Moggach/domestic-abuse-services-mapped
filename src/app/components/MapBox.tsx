@@ -41,6 +41,7 @@ const MapBox: React.FC<MapBoxProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [isMapLoading, setIsMapLoading] = useState(true);
 
   useEffect(() => {
     if (map.current) return;
@@ -50,6 +51,9 @@ const MapBox: React.FC<MapBoxProps> = ({
       style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
       center: [lng, lat],
       zoom: zoom,
+    });
+    map.current.on('load', () => {
+      setIsMapLoading(false);
     });
 
     map.current.addControl(new NavigationControl(), 'top-right');
@@ -277,10 +281,19 @@ const MapBox: React.FC<MapBoxProps> = ({
       .catch((err) => console.error('Error fetching authority data:', err));
   }, [selectedLocalAuthority]);
 
+
+
   return (
-    <div className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2 rounded-2xl" ref={mapContainer}>
-      {popupInfo && <PopUp map={map} {...popupInfo} />}
-    </div>
+    <>
+      {isMapLoading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+      <div className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2 rounded-2xl" ref={mapContainer}>
+        {popupInfo && <PopUp map={map} {...popupInfo} />}
+      </div>
+    </>
   );
 };
 
