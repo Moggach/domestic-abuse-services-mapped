@@ -98,6 +98,7 @@ const App: React.FC<HomePageProps> = ({
   const [serviceTypes] = useState<string[]>(initialServiceTypes);
   const [specialisms] = useState<string[]>(initialSpecialisms);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isMapLoading, setIsMapLoading] = useState(true);
 
   const { filteredMapBoxData, filteredDataWithDistance } = useMapData(
     filteredData,
@@ -131,6 +132,7 @@ const App: React.FC<HomePageProps> = ({
           searchLng={searchLng}
           searchLat={searchLat}
           selectedLocalAuthority={selectedLocalAuthority}
+          setIsMapLoading={setIsMapLoading}
         />
         <div className="flex flex-col gap-5 basis-1/2">
           <ServiceTypeFilter
@@ -154,7 +156,7 @@ const App: React.FC<HomePageProps> = ({
             onSubmit={() => handleSearchSubmit(searchInput)}
             onClear={handleSearchClear}
           />
-          {searchSubmitted && (
+          {searchSubmitted && !isMapLoading && (
             <div className="mt-2">
               {isPostcode(submittedSearchQuery) ? (
                 filteredDataWithDistance.length > 0 ? (
@@ -188,6 +190,7 @@ const App: React.FC<HomePageProps> = ({
             itemsPerPage={10}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            isMapLoading={isMapLoading}
           />
         </div>
       </main>

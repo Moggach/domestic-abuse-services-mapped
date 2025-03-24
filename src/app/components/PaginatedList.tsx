@@ -64,6 +64,7 @@ interface PaginatedListProps {
   itemsPerPage: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  isMapLoading: boolean;
 }
 
 const PaginatedList: React.FC<PaginatedListProps> = ({
@@ -71,6 +72,8 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   itemsPerPage,
   currentPage,
   setCurrentPage,
+  isMapLoading,
+
 }) => {
   const [paginatedData, setPaginatedData] = useState<Item[]>([]);
 
@@ -161,8 +164,13 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
             );
           })}
         </ul>
-      ) : (
-        <p className="text-center text-gray-500 mt-4">No items to display. Try removing a filter?</p>
+      ) : isMapLoading ? (
+        <p className="text-center text-gray-500 mt-4">Loading services...</p>
+      ):
+      (
+        <p className="text-center text-gray-500 mt-4">
+          No items to display. Try removing a filter?
+        </p>
       )}
       {data.length > 0 && (
         <Pagination
