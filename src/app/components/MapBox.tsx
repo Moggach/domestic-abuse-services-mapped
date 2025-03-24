@@ -16,7 +16,6 @@ interface MapBoxProps {
   searchLat?: number;
   selectedLocalAuthority?: string;
   setIsMapLoading: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 
 interface PopupInfo {

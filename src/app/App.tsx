@@ -11,6 +11,7 @@ import QuickExit from './components/QuickExit';
 import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
+import ClearFiltersButton from './components/ClearFiltersButton';
 import { useSearch } from './contexts/SearchContext';
 import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
@@ -134,7 +135,9 @@ const App: React.FC<HomePageProps> = ({
           selectedLocalAuthority={selectedLocalAuthority}
           setIsMapLoading={setIsMapLoading}
         />
+
         <div className="flex flex-col gap-5 basis-1/2">
+        
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
@@ -155,6 +158,14 @@ const App: React.FC<HomePageProps> = ({
             setSearchQuery={setSearchInput}
             onSubmit={() => handleSearchSubmit(searchInput)}
             onClear={handleSearchClear}
+          />
+            <ClearFiltersButton
+            onClear={() => {
+              setSelectedServiceType('');
+              setSelectedLocalAuthority('');
+              setSelectedSpecialisms([]);
+              handleSearchClear();
+            }}
           />
           {searchSubmitted && !isMapLoading && (
             <div className="mt-2">
