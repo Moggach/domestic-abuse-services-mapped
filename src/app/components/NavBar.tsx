@@ -24,10 +24,12 @@ const NavBar: React.FC = () => {
     <>
       <nav className="p-4">
         <div className="container min-w-full flex justify-between items-center">
-          <h1 className="font-headings text-3xl font-bold text-accent">
-            <Link href="/">Domestic Abuse Services Mapped</Link>
-          </h1>
-
+          <div className="flex flex-col gap-2 text-accent font-bold">
+            <h1 className="font-headings text-3xl ">
+              <Link href="/">Domestic Abuse Services Mapped</Link>
+            </h1>
+            <p>Find the support you need, local to you</p>
+          </div>
           <div className="hidden md:flex space-x-4 items-center">
             {menuItems.map((item) => (
               <Link
@@ -84,18 +86,16 @@ const NavBar: React.FC = () => {
         role="button"
         tabIndex={0}
         aria-label="Close drawer overlay"
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${
-          drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
         onClick={toggleDrawer}
         onKeyDown={handleKeyDown}
       ></div>
 
       {/* Drawer */}
       <div
-        className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${
-          drawerOpen ? 'translate-x-0' : 'translate-x-full'
-        } transition-transform`}
+        className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${drawerOpen ? 'translate-x-0' : 'translate-x-full'
+          } transition-transform`}
       >
         <div className="p-4 flex flex-col gap-4 text-accent">
           <div className="self-end">
