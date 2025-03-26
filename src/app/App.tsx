@@ -134,10 +134,11 @@ const App: React.FC<HomePageProps> = ({
           searchLat={searchLat}
           selectedLocalAuthority={selectedLocalAuthority}
           setIsMapLoading={setIsMapLoading}
+          isMapLoading={isMapLoading}
         />
 
         <div className="flex flex-col gap-5 basis-1/2">
-        
+
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
@@ -159,7 +160,7 @@ const App: React.FC<HomePageProps> = ({
             onSubmit={() => handleSearchSubmit(searchInput)}
             onClear={handleSearchClear}
           />
-            <ClearFiltersButton
+          <ClearFiltersButton
             onClear={() => {
               setSelectedServiceType('');
               setSelectedLocalAuthority('');
@@ -167,41 +168,22 @@ const App: React.FC<HomePageProps> = ({
               handleSearchClear();
             }}
           />
-          {searchSubmitted && !isMapLoading && (
-            <div className="mt-2">
-              {isPostcode(submittedSearchQuery) ? (
-                filteredDataWithDistance.length > 0 ? (
-                  <h2>
-                    Showing services within 10 miles of {submittedSearchQuery}:
-                  </h2>
-                ) : (
-                  <h2>
-                    No search results within 10 miles of {submittedSearchQuery}.
-                    Try another search or remove any filters?
-                  </h2>
-                )
-              ) : filteredData.length > 0 ? (
-                <h2>
-                  Showing services matching &quot;{submittedSearchQuery}&quot;:
-                </h2>
-              ) : (
-                <h2>
-                  No services found matching &quot;{submittedSearchQuery}&quot;.
-                  Try another search or remove any filters?
-                </h2>
-              )}
-            </div>
-          )}
+
           <PaginatedList
             data={
               isPostcode(submittedSearchQuery)
                 ? filteredDataWithDistance
                 : filteredData
             }
+            filteredData={filteredData}
+            filteredDataWithDistance={filteredDataWithDistance}
             itemsPerPage={10}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             isMapLoading={isMapLoading}
+            searchSubmitted={searchSubmitted}
+            submittedSearchQuery={submittedSearchQuery}
+            isPostcode={isPostcode}
           />
         </div>
       </main>

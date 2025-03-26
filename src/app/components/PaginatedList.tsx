@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import { colorMapping } from '../utils';
 
 interface Properties {
@@ -28,8 +27,8 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   setCurrentPage,
 }) => {
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
+  const totalPages = Math.max(1, Math.ceil(data.length / itemsPerPage));
+  
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(1);
@@ -61,19 +60,29 @@ const Pagination: React.FC<PaginationProps> = ({
 
 interface PaginatedListProps {
   data: Item[];
+  filteredData: Item[];
+  filteredDataWithDistance: Item[];
   itemsPerPage: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   isMapLoading: boolean;
+  searchSubmitted: boolean;
+  submittedSearchQuery: string;
+  isPostcode: (input: string) => boolean;
+
 }
 
 const PaginatedList: React.FC<PaginatedListProps> = ({
   data,
+  filteredData,
+  filteredDataWithDistance,
   itemsPerPage,
   currentPage,
   setCurrentPage,
   isMapLoading,
-
+  searchSubmitted,
+  submittedSearchQuery,
+  isPostcode
 }) => {
   const [paginatedData, setPaginatedData] = useState<Item[]>([]);
 
@@ -86,18 +95,42 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   const getColorForBadge = (text: string): string => {
     return colorMapping[text] || 'bg-blue-400 text-white';
   };
-
   return (
     <div>
-      {paginatedData.length > 0 ? (
+      {isMapLoading ? (
+        <p className="text-center text-gray-500 mt-4">Loading services...</p>
+      ) : searchSubmitted ? (
+        <div className="mt-2">
+          {submittedSearchQuery ? (
+            isPostcode(submittedSearchQuery) ? (
+              filteredDataWithDistance.length > 0 ? (
+                <h2>
+                  Showing services within 10 miles of postcode "{submittedSearchQuery}":
+                </h2>
+              ) : (
+                <h2>
+                  No search results within 10 miles of postcode "{submittedSearchQuery}". Try another search or remove any filters?
+                </h2>
+              )
+            ) : filteredData.length > 0 ? (
+              <h2>Showing services matching "{submittedSearchQuery}":</h2>
+            ) : (
+              <h2>
+                No services found matching "{submittedSearchQuery}". Try another search or remove any filters?
+              </h2>
+            )
+          ) : (
+            <h2>Please enter a search query.</h2>
+          )}
+        </div>
+      ) : null}
+
+      {paginatedData.length > 0 && !isMapLoading && (
         <ul className="flex flex-col gap-4 mt-6">
           {paginatedData.map((item, index) => {
             const properties = item.properties;
             return (
-              <div
-                className="card bg-primary-content w-full shadow-xl"
-                key={index}
-              >
+              <div className="card bg-primary-content w-full shadow-xl" key={index}>
                 <div className="card-body">
                   <div className="flex justify-between items-center">
                     <h3 className="font-headings text-xl max-w-[80%]">
@@ -117,46 +150,34 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                       </svg>
                     </a>
                   </div>
-                  <p className="text-base max-w-[75%]">
-                    {properties.description}
-                  </p>
+                  <p className="text-base max-w-[75%]">{properties.description}</p>
                   <p className="text-base max-w-[75%]">{properties.address}</p>
                   <div className="flex flex-wrap gap-2 mt-3">
-                    {Array.isArray(properties.serviceType) ? (
-                      properties.serviceType.map((type, i) => (
-                        <div
-                          key={i}
-                          className={`badge ${getColorForBadge(type)} p-5 text-white text-sm`}
-                        >
-                          {type}
-                        </div>
-                      ))
-                    ) : (
+                    {(Array.isArray(properties.serviceType)
+                      ? properties.serviceType
+                      : [properties.serviceType]
+                    ).map((type, i) => (
                       <div
-                        className={`badge ${getColorForBadge(properties.serviceType)} p-5 text-white`}
+                        key={i}
+                        className={`badge ${getColorForBadge(type)} p-5 text-white text-sm`}
                       >
-                        {properties.serviceType}
+                        {type}
                       </div>
-                    )}
+                    ))}
                   </div>
                   {properties.serviceSpecialism && (
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {Array.isArray(properties.serviceSpecialism) ? (
-                        properties.serviceSpecialism.map((spec, i) => (
-                          <div
-                            key={i}
-                            className={`badge ${getColorForBadge(spec)} p-5 text-sm`}
-                          >
-                            {spec}
-                          </div>
-                        ))
-                      ) : (
+                      {(Array.isArray(properties.serviceSpecialism)
+                        ? properties.serviceSpecialism
+                        : [properties.serviceSpecialism]
+                      ).map((spec, i) => (
                         <div
-                          className={`badge ${getColorForBadge(properties.serviceSpecialism)} p-5 `}
+                          key={i}
+                          className={`badge ${getColorForBadge(spec)} p-5 text-sm`}
                         >
-                          {properties.serviceSpecialism}
+                          {spec}
                         </div>
-                      )}
+                      ))}
                     </div>
                   )}
                 </div>
@@ -164,23 +185,16 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
             );
           })}
         </ul>
-      ) : isMapLoading ? (
-        <p className="text-center text-gray-500 mt-4">Loading services...</p>
-      ):
-      (
-        <p className="text-center text-gray-500 mt-4">
-          No items to display. Try removing a filter?
-        </p>
       )}
-      {data.length > 0 && (
-        <Pagination
-          data={data}
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
-      )}
+
+      <Pagination
+        data={data}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
+
   );
 };
 

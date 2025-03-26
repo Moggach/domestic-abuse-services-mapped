@@ -16,6 +16,7 @@ interface MapBoxProps {
   searchLat?: number;
   selectedLocalAuthority?: string;
   setIsMapLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isMapLoading: boolean; 
 }
 
 interface PopupInfo {
@@ -38,11 +39,12 @@ const MapBox: React.FC<MapBoxProps> = ({
   searchLng,
   searchLat,
   selectedLocalAuthority,
+  setIsMapLoading,
+  isMapLoading
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
-  const [isMapLoading, setIsMapLoading] = useState(true);
 
   useEffect(() => {
     if (map.current) return;
@@ -68,7 +70,7 @@ const MapBox: React.FC<MapBoxProps> = ({
     map.current.on('zoomend', () => {
       setPopupInfo(null);
     });
-  }, [lng, lat, zoom, setLng, setLat]);
+  }, [lng, lat, zoom, setLng, setLat, setIsMapLoading]);
 
   useEffect(() => {
     if (map.current && searchLat && searchLng) {
