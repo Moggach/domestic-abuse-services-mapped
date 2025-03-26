@@ -79,24 +79,35 @@ const MapBox: React.FC<MapBoxProps> = ({
       });
     }
   }, [searchLat, searchLng, zoom]);
-
   useEffect(() => {
     if (!map.current) return;
-
-    const handleZoomEnd = () => setPopupInfo(null);
+  
+    const handleZoomEnd = () => {
+      setPopupInfo(null);
+      const source = map.current!.getSource('points') as mapboxgl.GeoJSONSource;
+      if (source) {
+        source.setData({
+          type: 'FeatureCollection',
+          features: [],
+        });
+  
+        setTimeout(() => source.setData(data), 0);
+      }
+    };
+  
     const handleMove = () => setPopupInfo(null);
-
+  
     map.current.on('zoomend', handleZoomEnd);
     map.current.on('move', handleMove);
-
+  
     return () => {
       if (map.current) {
         map.current.off('zoomend', handleZoomEnd);
         map.current.off('move', handleMove);
       }
     };
-  }, []);
-
+  }, [data]);
+  
   const handlePointSelect = useCallback(
     (
       e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) &
