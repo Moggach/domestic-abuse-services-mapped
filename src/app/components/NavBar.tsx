@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import type { KeyboardEvent } from 'react';
 import React, { useState } from 'react';
-
+import { useRouter } from "next/navigation";
 import ThemeSwitcher from './ThemeSwitcher';
 
 const NavBar: React.FC = () => {
@@ -19,15 +19,23 @@ const NavBar: React.FC = () => {
   };
 
   const menuItems: string[] = ['About', 'Privacy'];
-
+  const router = useRouter();
   return (
     <>
       <nav className="p-4">
         <div className="container min-w-full flex justify-between items-center">
           <div className="flex flex-col gap-2 text-accent font-bold">
             <h1 className="font-headings text-3xl ">
-              <Link href="/">Domestic Abuse Services Mapped</Link>
-            </h1>
+              <Link
+                href="/?page=1"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push('/?page=1');
+                  window.location.reload();
+                }}
+              >
+                Domestic Abuse Services Mapped
+              </Link>       </h1>
             <p>Find the support you need, local to you</p>
           </div>
           <div className="hidden md:flex space-x-4 items-center">
