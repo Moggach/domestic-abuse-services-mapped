@@ -23,7 +23,7 @@ const NavBar: React.FC = () => {
   return (
     <>
       <nav className="p-4">
-        <div className="container min-w-full flex justify-between items-center">
+        <div className="container min-w-full flex justify-between items-start">
           <div className="flex flex-col gap-2 text-accent font-bold">
             <h1 className="font-headings text-3xl ">
               <Link
