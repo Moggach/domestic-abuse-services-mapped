@@ -5,7 +5,12 @@ import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import ThemeSwitcher from './ThemeSwitcher';
 
-const NavBar: React.FC = () => {
+type NavBarProps = {
+  onClearFilters?: () => void;
+};
+
+const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
+
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const toggleDrawer = (): void => {
@@ -30,6 +35,7 @@ const NavBar: React.FC = () => {
                 href="/?page=1"
                 onClick={(e) => {
                   e.preventDefault();
+                  onClearFilters?.();
                   router.push('/?page=1');
                 }}
               >

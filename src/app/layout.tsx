@@ -1,8 +1,6 @@
 import localFont from '@next/font/local';
 import type { ReactNode } from 'react';
 import React from 'react';
-
-import Navbar from './components/NavBar';
 import { SearchProvider } from './contexts/SearchContext';
 
 interface Metadata {
@@ -74,6 +72,8 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
+
+
   return (
     <html suppressHydrationWarning lang="en">
       <head>
@@ -115,9 +115,7 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
       <SearchProvider>
         <body
           className={`${poppins.variable} ${opensans.variable} font-body h-screen`}
-        >
-          <Navbar />
-          <div id="root" className="font-body">
+        >          <div id="root" className="font-body">
             {children}
           </div>
         </body>

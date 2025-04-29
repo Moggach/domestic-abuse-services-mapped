@@ -2,10 +2,13 @@
 
 import '../styles/globals.css';
 import QuickExit from '../components/QuickExit';
+import NavBar from '../components/NavBar';
 
 const About: React.FC = () => {
   return (
     <>
+      <NavBar/>
+
       <main className="p-4 max-w-[974px] lg:mx-auto lg:mt-10">
         <h1 className="font-headings text-3xl mb-4">About</h1>
         <div className="flex flex-col gap-4 text-xl pb-[55px]">

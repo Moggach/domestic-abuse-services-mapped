@@ -16,6 +16,7 @@ import { useSearch } from './contexts/SearchContext';
 import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
 import { useURLParams } from './hooks/useUrlParams';
+import NavBar from './components/NavBar';
 
 export interface Geometry {
   type: 'Point';
@@ -117,8 +118,16 @@ const App: React.FC<HomePageProps> = ({
     currentPage
   );
 
+  const clearFilters = () => {
+    setSelectedServiceType('');
+    setSelectedLocalAuthority('');
+    setSelectedSpecialisms([]);
+    handleSearchClear();
+  };
+
   return (
     <>
+      <NavBar onClearFilters={clearFilters} />
       <main className="p-4 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal />
         <MapBox
