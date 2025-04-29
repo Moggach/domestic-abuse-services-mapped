@@ -31,7 +31,6 @@ const NavBar: React.FC = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   router.push('/?page=1');
-                  window.location.reload();
                 }}
               >
                 Domestic Abuse Services Mapped
