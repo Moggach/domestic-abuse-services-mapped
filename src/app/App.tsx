@@ -128,7 +128,7 @@ const App: React.FC<HomePageProps> = ({
   return (
     <>
       <NavBar onClearFilters={clearFilters} />
-      <main className="p-4 pt-8 lg:flex lg:flex-row-reverse lg:gap-6">
+      <main className="px-4 pt-8 pb-8 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal />
         <MapBox
           lng={lng}

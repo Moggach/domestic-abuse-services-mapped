@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 import { iconMapping } from '../utils';
-import emailIconUrl from '../images/svgs/email.svg';
-import phoneIconUrl from '../images/svgs/phone.svg';
 
 interface Properties {
   name: string;
