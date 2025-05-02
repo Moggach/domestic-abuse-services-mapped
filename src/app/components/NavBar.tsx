@@ -29,7 +29,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
     <>
       <nav className="p-4">
         <div className="container min-w-full flex justify-between items-start">
-          <div className="flex flex-col gap-2 text-accent font-bold">
+          <div className="flex flex-col gap-2 text-mutedAccent dark:text-mutedAccentOnDark font-bold">
             <h1 className="font-headings text-3xl ">
               <Link
                 href="/?page=1"
@@ -41,14 +41,14 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
               >
                 Domestic Abuse Services Mapped
               </Link>       </h1>
-            <p>Find the support you need, local to you</p>
+            <p>Find the support you need. Local to you.</p>
           </div>
           <div className="hidden md:flex space-x-4 items-center">
             {menuItems.map((item) => (
               <Link
                 href={`/${item.toLowerCase()}`}
                 key={item}
-                className="font-headings text-2xl font-bold text-accent"
+                className="font-headings text-2xl font-bold text-mutedAccent dark:text-mutedAccentOnDark "
               >
                 {item}
               </Link>
@@ -62,7 +62,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
                 <svg
                   fill="currentColor"
                   version="1.1"
-                  className="h-8 w-8 text-accent"
+                  className="h-8 w-8 text-mutedAccent dark:text-mutedAccentOnDark "
                   viewBox="0 0 408.483 408.483"
                 >
                   <g>
@@ -76,7 +76,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
             </div>
           </div>
 
-          <div className="md:hidden text-accent">
+          <div className="md:hidden text-mutedAccent dark:text-mutedAccentOnDark ">
             <button onClick={toggleDrawer} aria-label="Toggle menu">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +110,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
         className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${drawerOpen ? 'translate-x-0' : 'translate-x-full'
           } transition-transform`}
       >
-        <div className="p-4 flex flex-col gap-4 text-accent">
+        <div className="p-4 flex flex-col gap-4 text-mutedAccent dark:text-mutedAccentOnDark ">
           <div className="self-end">
             <button onClick={toggleDrawer} aria-label="Close menu">
               <svg
@@ -132,7 +132,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
             <Link
               href={`/${item.toLowerCase()}`}
               key={item}
-              className="block text-2xl font-headings font-bold text-accent"
+              className="block text-2xl font-headings font-bold text-mutedAccent dark:text-mutedAccentOnDark "
               onClick={toggleDrawer}
             >
               {item}
@@ -148,7 +148,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
               <svg
                 fill="currentColor"
                 version="1.1"
-                className="h-8 w-8 text-accent"
+                className="h-8 w-8 text-mutedAccent dark:text-mutedAccentOnDark "
                 viewBox="0 0 408.483 408.483"
               >
                 <g>

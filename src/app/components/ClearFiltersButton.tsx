@@ -4,10 +4,10 @@ interface ClearFiltersButtonProps {
   onClear: () => void;
 }
 
-export default function ClearFiltersButton({ onClear }: ClearFiltersButtonProps) {
+export default function ClearFiltersButton({ onClear }: ClearFiltersButtonProps): JSX.Element {
   return (
     <button
-      className="btn btn-outline btn-secondary mt-2 w-fit"
+      className="btn mt-2 w-fit btn btn-accent text-white font-semibold"
       onClick={onClear}
     >
       Clear Filters

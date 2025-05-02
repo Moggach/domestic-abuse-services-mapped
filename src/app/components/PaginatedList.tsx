@@ -135,7 +135,7 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
           {paginatedData.map((item, index) => {
             const properties = item.properties;
             return (
-              <div className="card bg-primary-content w-full shadow-xl" key={index}>
+              <div className="card bg-cardBg text-cardText w-full shadow-xl" key={index}>
                 <div className="card-body">
                   <div className="flex justify-between items-center">
                     <h3 className="font-headings text-xl max-w-[80%]">

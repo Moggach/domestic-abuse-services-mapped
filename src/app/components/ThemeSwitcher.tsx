@@ -29,7 +29,7 @@ const ThemeSwitcher: React.FC = () => {
       className="tooltip tooltip-left flex"
       data-tip="Switch site colour scheme"
     >
-      <label className="swap swap-rotate self-start text-accent">
+      <label className="swap swap-rotate self-start text-mutedAccent dark:text-mutedAccentOnDark ">
         <input
           type="checkbox"
           onChange={toggleTheme}

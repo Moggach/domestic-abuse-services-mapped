@@ -25,9 +25,9 @@ export default function SpecialismCheckboxes({
   };
 
   return (
-    <div className="border p-2 pl-0 rounded-md shadow-sm">
+    <div className="">
       <div
-        className="select flex justify-between items-center cursor-pointer"
+        className="select  select-bordered flex justify-between items-center cursor-pointer"
         onClick={toggleCollapse}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -39,7 +39,7 @@ export default function SpecialismCheckboxes({
         tabIndex={0}
         aria-expanded={isOpen}
       >
-        <h3 className="text-lg font-headings">Select a specialism</h3>
+        <h3 className="text-md font-headings">Select a specialism</h3>
         {selectedSpecialisms.length > 0 && (
           <span className="badge badge-secondary">
             {selectedSpecialisms.length} selected
