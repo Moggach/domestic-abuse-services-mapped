@@ -13,15 +13,15 @@ export default function LocalAuthorityFilter({
   setSelectedLocalAuthority,
 }: LocalAuthorityFilterProps): JSX.Element {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col">
       <label
-        className="mr-4 font-headings text-lg"
+        className="mr-4 font-headings text-lg mb-3"
         htmlFor="localAuthorityFilter"
       >
         Filter by local authority
       </label>
 
-      <div>
+      <div className="mb-3">
         <Link
           className="text-sm underline"
           href="https://www.gov.uk/find-local-council"
