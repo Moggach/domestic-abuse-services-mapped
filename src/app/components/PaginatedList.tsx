@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
 
 import { iconMapping } from '../utils';
-
+import emailIconUrl from '../images/svgs/email.svg';
+import phoneIconUrl from '../images/svgs/phone.svg';
 
 interface Properties {
   name: string;
   website: string;
   description: string;
   address: string;
+  phone: string;
+  email: string;
   serviceType: string | string[];
   serviceSpecialism?: string | string[];
 }
@@ -154,9 +157,29 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                       </svg>
                     </a>
                   </div>
-                  <p className="text-base max-w-[75%]">{properties.description}</p>
-                  <p className="text-base max-w-[75%]">{properties.address}</p>
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <p>{properties.description}</p>
+                  <p>{properties.address}</p>
+                  <div className="flex flex-col text-sm gap-2">
+                    <div className="flex flex-col gap-3 mt-2">
+                      {properties.phone && (
+                        <div className="pop-up-item flex items-center gap-2">
+                          <img src={phoneIconUrl.src} alt="Phone" style={{ height: '15px' }} />
+                          <a href={`tel:${properties.phone}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            {properties.phone}
+                          </a>
+                        </div>
+                      )}
+                      {properties.email && (
+                        <div className="pop-up-item flex items-center gap-2">
+                          <img src={emailIconUrl.src} alt="Email" style={{ height: '15px' }} />
+                          <a href={`mailto:${properties.email}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            Email
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-3 mt-3">
                     {(Array.isArray(properties.serviceType)
                       ? properties.serviceType
                       : [properties.serviceType]
@@ -165,7 +188,7 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                       return (
                         <div
                           key={i}
-                          className="flex items-center gap-2 p-2 text-base"
+                          className="flex items-center gap-2 text-base"
                         >
                           {Icon && <Icon className="text-lg" />}
                           {type}
@@ -173,7 +196,7 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                       );
                     })}
                   </div>
-        
+
                 </div>
               </div>
             );
