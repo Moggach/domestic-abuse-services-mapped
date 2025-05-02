@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
-
+import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 import { iconMapping } from '../utils';
 import emailIconUrl from '../images/svgs/email.svg';
 import phoneIconUrl from '../images/svgs/phone.svg';
@@ -162,17 +162,17 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                   <div className="flex flex-col text-sm gap-2">
                     <div className="flex flex-col gap-3 mt-2">
                       {properties.phone && (
-                        <div className="pop-up-item flex items-center gap-2">
-                          <img src={phoneIconUrl.src} alt="Phone" style={{ height: '15px' }} />
-                          <a href={`tel:${properties.phone}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <div className="flex items-center gap-2">
+                          <AiOutlinePhone className="text-base" />
+                          <a href={`tel:${properties.phone}`} className="no-underline text-inherit">
                             {properties.phone}
                           </a>
                         </div>
                       )}
                       {properties.email && (
-                        <div className="pop-up-item flex items-center gap-2">
-                          <img src={emailIconUrl.src} alt="Email" style={{ height: '15px' }} />
-                          <a href={`mailto:${properties.email}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <div className="flex items-center gap-2">
+                          <AiOutlineMail className="text-base" />
+                          <a href={`mailto:${properties.email}`} className="no-underline text-inherit">
                             Email
                           </a>
                         </div>
