@@ -7,7 +7,7 @@ const QuickExit: React.FC = () => {
 
   return (
     <button
-      className="btn fixed w-full bottom-0 md:max-h-24  md:absolute  md:right-2 md:max-w-fit md:top-1/2 z-10 bg-green-600 text-white"
+      className="btn fixed w-full bottom-0 md:max-h-24  md:absolute  md:right-2 md:max-w-fit md:top-1/2 z-10 bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 rounded-md shadow-md flex items-center justify-center p-2"
       onClick={handleClick}
     >
       Safe exit

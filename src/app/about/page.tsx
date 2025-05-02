@@ -9,8 +9,8 @@ const About: React.FC = () => {
     <>
       <NavBar/>
 
-      <main className="p-4 max-w-[974px] lg:mx-auto lg:mt-10">
-        <h1 className="font-headings text-3xl mb-4">About</h1>
+      <main className="p-4 pt-6 max-w-[974px] lg:mx-auto lg:mt-10">
+        <h1 className="font-headings text-3xl mb-6">About</h1>
         <div className="flex flex-col gap-4 text-xl pb-[55px]">
           <p>
             Domestic abuse services mapped is a project built and maintained by{' '}

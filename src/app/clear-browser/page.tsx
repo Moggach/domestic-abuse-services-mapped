@@ -8,8 +8,8 @@ const ClearBrowser: React.FC = () => {
   return (
     <>
     <NavBar/>
-      <main className="p-4 max-w-[974px] lg:mx-auto lg:mt-10">
-        <h1 className="font-headings text-3xl mb-4">
+      <main className="p-4 pt-6 max-w-[974px] lg:mx-auto lg:mt-10">
+        <h1 className="font-headings text-3xl mb-6">
           How to clear this site from your browser history
         </h1>
         <div role="alert" className="alert alert-warning mb-4">

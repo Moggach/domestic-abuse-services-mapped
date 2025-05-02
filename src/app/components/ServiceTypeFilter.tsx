@@ -12,8 +12,8 @@ export default function ServiceTypeFilter({
   serviceTypes,
 }: ServiceTypeFilterProps): JSX.Element {
   return (
-    <div>
-      <label className="mr-4 font-headings text-xl" htmlFor="serviceFilter">
+    <div className="flex flex-col gap-2">
+      <label className="mr-4 font-headings text-lg" htmlFor="serviceFilter">
         Filter by service type
       </label>
       <select

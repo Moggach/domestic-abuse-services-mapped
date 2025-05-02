@@ -2,21 +2,21 @@
 
 import React, { useState } from 'react';
 
+import ClearFiltersButton from './components/ClearFiltersButton';
 import Footer from './components/Footer';
 import LocalAuthorityFilter from './components/LocalAuthorityFilter';
 import MapBox from './components/MapBox';
 import Modal from './components/Modal';
+import NavBar from './components/NavBar';
 import PaginatedList from './components/PaginatedList';
 import QuickExit from './components/QuickExit';
 import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
-import ClearFiltersButton from './components/ClearFiltersButton';
 import { useSearch } from './contexts/SearchContext';
 import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
 import { useURLParams } from './hooks/useUrlParams';
-import NavBar from './components/NavBar';
 
 export interface Geometry {
   type: 'Point';
@@ -128,7 +128,7 @@ const App: React.FC<HomePageProps> = ({
   return (
     <>
       <NavBar onClearFilters={clearFilters} />
-      <main className="p-4 lg:flex lg:flex-row-reverse lg:gap-6">
+      <main className="p-4 pt-8 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal />
         <MapBox
           lng={lng}
@@ -146,7 +146,7 @@ const App: React.FC<HomePageProps> = ({
           isMapLoading={isMapLoading}
         />
 
-        <div className="flex flex-col gap-5 basis-1/2">
+        <div className="flex flex-col gap-7 basis-1/2">
 
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}

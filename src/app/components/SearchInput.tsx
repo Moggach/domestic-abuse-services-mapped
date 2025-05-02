@@ -44,7 +44,7 @@ export default function SearchInput({
 
   return (
     <div>
-      <label className="font-headings text-xl" htmlFor="searchInput">
+      <label className="font-headings text-lg" htmlFor="searchInput">
         Search by service name or location
       </label>
       <label className="input input-bordered flex items-center gap-2 mt-2">

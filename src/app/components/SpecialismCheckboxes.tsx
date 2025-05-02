@@ -25,44 +25,49 @@ export default function SpecialismCheckboxes({
   };
 
   return (
-    <>
-      <div className="collapse collapse-arrow">
-        <input type="checkbox" checked={isOpen} onChange={toggleCollapse} />
-        <div className="collapse-title pl-0 flex justify-between items-center">
-          <div className="indicator">
-            {selectedSpecialisms.length > 0 && (
-              <span className="indicator-item badge badge-secondary translate-x-5">
-                {selectedSpecialisms.length}
-              </span>
-            )}
-            <div className="font-headings flex flex-col md:flex-row gap-2 md:items-center">
-              <div className=" text-xl">Select a specialism</div>
-              <div>(select all that apply)</div>
-            </div>
-          </div>
-        </div>
-        {isOpen && (
-          <ul className="collapse-content flex flex-wrap gap-2 pl-0">
-            {specialisms.map((specialism, index) => (
-              <li className="flex items-center gap-1 text-sm" key={index}>
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  id={`specialism-${specialism}`}
-                  checked={selectedSpecialisms.includes(specialism)}
-                  onChange={() => handleCheckboxChange(specialism)}
-                />
-                <label
-                  className="label cursor-pointer"
-                  htmlFor={`specialism-${specialism}`}
-                >
-                  {specialism}
-                </label>
-              </li>
-            ))}
-          </ul>
+    <div className="border p-2 pl-0 rounded-md shadow-sm">
+      <div
+        className="select flex justify-between items-center cursor-pointer"
+        onClick={toggleCollapse}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleCollapse();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isOpen}
+      >
+        <h3 className="text-lg font-headings">Select a specialism</h3>
+        {selectedSpecialisms.length > 0 && (
+          <span className="badge badge-secondary">
+            {selectedSpecialisms.length} selected
+          </span>
         )}
       </div>
-    </>
+
+      {isOpen && (
+        <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 p-2">
+          {specialisms.map((specialism, index) => (
+            <li key={index} className="flex items-center space-x-2 text-sm">
+              <input
+                type="checkbox"
+                className="checkbox"
+                id={`specialism-${specialism}`}
+                checked={selectedSpecialisms.includes(specialism)}
+                onChange={() => handleCheckboxChange(specialism)}
+              />
+              <label
+                className="cursor-pointer"
+                htmlFor={`specialism-${specialism}`}
+              >
+                {specialism}
+              </label>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

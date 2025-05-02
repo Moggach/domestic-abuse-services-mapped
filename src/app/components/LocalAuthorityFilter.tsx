@@ -15,7 +15,7 @@ export default function LocalAuthorityFilter({
   return (
     <div className="flex flex-col gap-3">
       <label
-        className="mr-4 font-headings text-xl"
+        className="mr-4 font-headings text-lg"
         htmlFor="localAuthorityFilter"
       >
         Filter by local authority

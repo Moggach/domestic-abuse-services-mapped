@@ -42,7 +42,7 @@ const Pagination: React.FC<PaginationProps> = ({
   }, [totalPages, currentPage, setCurrentPage]);
 
   return (
-    <div className="flex justify-center items-center mt-4">
+    <div className="flex justify-center items-center mt-8">
       <button
         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
         disabled={currentPage === 1}
