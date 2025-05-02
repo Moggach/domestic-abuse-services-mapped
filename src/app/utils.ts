@@ -1,3 +1,18 @@
+import type { IconType } from 'react-icons';
+import {
+  AiOutlineHome,
+  AiOutlineSafety,
+  AiOutlineIdcard,
+} from 'react-icons/ai';
+import {
+  FaHandsHelping,
+  FaGavel,
+  FaDog,
+  FaEye
+ 
+} from 'react-icons/fa';
+import { RiPsychotherapyLine } from "react-icons/ri";
+
 import type { Feature } from '../app/App';
 
 export function calculateDistance(
@@ -46,23 +61,19 @@ export const fetchCoordinates = async (
   }
 };
 
-export const colorMapping: Record<string, string> = {
-  'Domestic abuse support': 'bg-pink-400',
-  'Legal advice': 'bg-yellow-400',
-  'Immigration advice': 'bg-purple-400',
-  'Pet fostering': 'bg-cyan-400',
-  'Honour based abuse': 'bg-indigo-400',
-  'Stalking support': 'bg-teal-400',
-  'Housing support': 'bg-amber-400',
-  'BAME women': 'border-amber-400 border-2 text-amber-400 font-bold',
-  'Jewish Women': 'border-cyan-400 border-2 text-cyan-400 font-bold',
-  'LGBTQ survivors': 'border-purple-400 border-2 text-purple-400 font-bold',
-  'Latin American Women': 'border-lime-400 border-2 text-lime-400 font-bold',
-  'Asian women': 'border-amber-400 border-2 text-amber-400 font-bold',
-  'Gypsy, Roma and Traveller women':
-    'border-indigo-400 border-2 text-indigo-400 font-bold',
-  'Deaf survivors': 'border-teal-400 border-2 text-teal-400 font-bold',
+
+
+export const iconMapping: Record<string, IconType> = {
+  'Domestic abuse support': FaHandsHelping,
+  'Legal advice': FaGavel,
+  'Immigration advice': AiOutlineIdcard,
+  'Pet fostering': FaDog,
+  'Honour based abuse': FaEye,
+  'Stalking support': AiOutlineSafety,
+  'Housing support': AiOutlineHome,
+  "Counselling service": RiPsychotherapyLine,
 };
+
 
 export const determineZoomLevel = (): number => {
   const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 768;

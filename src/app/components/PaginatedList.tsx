@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { colorMapping } from '../utils';
+import type { IconType } from 'react-icons';
+
+import { iconMapping } from '../utils';
+
 
 interface Properties {
   name: string;
@@ -28,7 +31,7 @@ const Pagination: React.FC<PaginationProps> = ({
   setCurrentPage,
 }) => {
   const totalPages = Math.max(1, Math.ceil(data.length / itemsPerPage));
-  
+
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(1);
@@ -92,9 +95,10 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
     setPaginatedData(data.slice(indexOfFirstItem, indexOfLastItem));
   }, [currentPage, data, itemsPerPage]);
 
-  const getColorForBadge = (text: string): string => {
-    return colorMapping[text] || 'bg-blue-400 text-white';
+  const getIconforBadge = (text: string): IconType | null => {
+    return iconMapping[text] || null;
   };
+
   return (
     <div>
       {isMapLoading ? (
@@ -156,30 +160,20 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                     {(Array.isArray(properties.serviceType)
                       ? properties.serviceType
                       : [properties.serviceType]
-                    ).map((type, i) => (
-                      <div
-                        key={i}
-                        className={`badge ${getColorForBadge(type)} p-5 text-white text-sm`}
-                      >
-                        {type}
-                      </div>
-                    ))}
-                  </div>
-                  {properties.serviceSpecialism && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {(Array.isArray(properties.serviceSpecialism)
-                        ? properties.serviceSpecialism
-                        : [properties.serviceSpecialism]
-                      ).map((spec, i) => (
+                    ).map((type, i) => {
+                      const Icon = getIconforBadge(type);
+                      return (
                         <div
                           key={i}
-                          className={`badge ${getColorForBadge(spec)} p-5 text-sm`}
+                          className="flex items-center gap-2 p-2 text-base"
                         >
-                          {spec}
+                          {Icon && <Icon className="text-lg" />}
+                          {type}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      );
+                    })}
+                  </div>
+        
                 </div>
               </div>
             );
