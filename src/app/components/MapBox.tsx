@@ -16,7 +16,7 @@ interface MapBoxProps {
   searchLat?: number;
   selectedLocalAuthority?: string;
   setIsMapLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  isMapLoading: boolean; 
+  isMapLoading: boolean;
 }
 
 interface PopupInfo {
@@ -83,7 +83,7 @@ const MapBox: React.FC<MapBoxProps> = ({
   }, [searchLat, searchLng, zoom]);
   useEffect(() => {
     if (!map.current) return;
-  
+
     const handleZoomEnd = () => {
       setPopupInfo(null);
       const source = map.current!.getSource('points') as mapboxgl.GeoJSONSource;
@@ -92,16 +92,16 @@ const MapBox: React.FC<MapBoxProps> = ({
           type: 'FeatureCollection',
           features: [],
         });
-  
+
         setTimeout(() => source.setData(data), 0);
       }
     };
-  
+
     const handleMove = () => setPopupInfo(null);
-  
+
     map.current.on('zoomend', handleZoomEnd);
     map.current.on('move', handleMove);
-  
+
     return () => {
       if (map.current) {
         map.current.off('zoomend', handleZoomEnd);
@@ -109,7 +109,7 @@ const MapBox: React.FC<MapBoxProps> = ({
       }
     };
   }, [data]);
-  
+
   const handlePointSelect = useCallback(
     (
       e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) &
@@ -304,7 +304,7 @@ const MapBox: React.FC<MapBoxProps> = ({
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
-      <div className="h-[400px] w-full mb-8 lg:h-[800px] lg:mb-0 lg:basis-1/2 rounded-2xl" ref={mapContainer}>
+      <div className="h-[400px] w-full lg:h-[800px] rounded-2xl" ref={mapContainer}>
         {popupInfo && <PopUp map={map} {...popupInfo} />}
       </div>
     </>

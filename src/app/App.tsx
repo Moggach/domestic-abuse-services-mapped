@@ -130,21 +130,21 @@ const App: React.FC<HomePageProps> = ({
       <NavBar onClearFilters={clearFilters} />
       <main className="px-4 pt-8 pb-8 lg:flex lg:flex-row-reverse lg:gap-6">
         <Modal />
-        <MapBox
-          lng={lng}
-          lat={lat}
-          zoom={zoom}
-          data={
-            filteredMapBoxData || { type: 'FeatureCollection', features: [] }
-          }
-          setLng={setLng}
-          setLat={setLat}
-          searchLng={searchLng}
-          searchLat={searchLat}
-          selectedLocalAuthority={selectedLocalAuthority}
-          setIsMapLoading={setIsMapLoading}
-          isMapLoading={isMapLoading}
-        />
+        <div className="lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit sm:mb-8">
+          <MapBox
+            lng={lng}
+            lat={lat}
+            zoom={zoom}
+            data={filteredMapBoxData || { type: 'FeatureCollection', features: [] }}
+            setLng={setLng}
+            setLat={setLat}
+            searchLng={searchLng}
+            searchLat={searchLat}
+            selectedLocalAuthority={selectedLocalAuthority}
+            setIsMapLoading={setIsMapLoading}
+            isMapLoading={isMapLoading}
+          />
+        </div>
 
         <div className="flex flex-col gap-7 basis-1/2">
 
