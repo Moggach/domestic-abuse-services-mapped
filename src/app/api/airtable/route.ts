@@ -68,6 +68,24 @@ function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
   };
 }
 
+
+/**
+ * @openapi
+ * /api/airtable:
+ *   get:
+ *     summary: Get approved UK domestic abuse services in GeoJSON format
+ *     tags:
+ *       - Services
+ *     responses:
+ *       200:
+ *         description: A list of services
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/GeoJSONFeature'
+ */
 export async function GET() {
   const apiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
   const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
