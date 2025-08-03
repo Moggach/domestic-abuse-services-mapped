@@ -5,7 +5,7 @@ const swaggerDefinition: SwaggerDefinition = {
   info: {
     title: 'UK domestic abuse services API',
     version: '1.0.0',
-    description: 'API that returns UK domestic abuse services in GeoJSON format',
+    description: 'API that returns and manages UK domestic abuse services in GeoJSON format',
   },
   servers: [
     {
@@ -13,6 +13,13 @@ const swaggerDefinition: SwaggerDefinition = {
     },
   ],
   components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+    },
     schemas: {
       GeoJSONFeature: {
         type: 'object',
@@ -65,5 +72,5 @@ const swaggerDefinition: SwaggerDefinition = {
 
 export const swaggerOptions = {
   swaggerDefinition,
-  apis: ['./src/app/api/**/*.ts'], // must include the path to airtable/route.ts
+  apis: ['./src/app/api/**/*.ts'],
 };

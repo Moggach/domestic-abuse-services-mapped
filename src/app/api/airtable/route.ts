@@ -166,6 +166,78 @@ export async function GET(req: Request) {
   return NextResponse.json(data);
 }
 
+/**
+ * @openapi
+ * /api/airtable:
+ *   post:
+ *     summary: Add a new domestic abuse service (contact hello@domesticabuseservices.uk for an authorization token)
+ *     tags:
+ *       - Services
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               Service name:
+ *                 type: string
+ *                 example: Test Service
+ *               Service address:
+ *                 type: string
+ *                 example: 123 Main St
+ *               Service postcode:
+ *                 type: string
+ *                 example: AB12 3CD
+ *               Service description:
+ *                 type: string
+ *                 example: This is a test service.
+ *               Service email address:
+ *                 type: string
+ *                 example: test@example.com
+ *               Service website:
+ *                 type: string
+ *                 example: https://example.com
+ *               Service phone number:
+ *                 type: string
+ *                 example: 0123456789
+ *               Service donation link:
+ *                 type: string
+ *                 example: https://donate.example.com
+ *               Service type:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Support"]
+ *               Specialist services for:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Women"]
+ *               Local authority:
+ *                 type: string
+ *                 example: London Borough
+ *     responses:
+ *       201:
+ *         description: Successfully created a new service
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 id:
+ *                   type: string
+ *       400:
+ *         description: Missing required fields
+ *       401:
+ *         description: Unauthorized (invalid Bearer token)
+ *       500:
+ *         description: Airtable error
+ */
 export async function POST(req: Request) {
   const adminToken = process.env.ADMIN_API_TOKEN; 
   const authHeader = req.headers.get('authorization');
