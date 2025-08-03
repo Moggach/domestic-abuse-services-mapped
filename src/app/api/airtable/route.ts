@@ -1,6 +1,8 @@
 import type { FieldSet, Records } from 'airtable';
 import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 interface ServiceDataFields {
   'Service name'?: string;
@@ -68,6 +70,16 @@ function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
   };
 }
 
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, '10 s'),
+  analytics: true,
+});
 
 /**
  * @openapi
@@ -86,7 +98,19 @@ function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
  *               items:
  *                 $ref: '#/components/schemas/GeoJSONFeature'
  */
-export async function GET() {
+export async function GET(req: Request) {
+
+  const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+
+  const { success, reset } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please slow down.' },
+      { status: 429, headers: { 'X-RateLimit-Reset': reset.toString() } }
+    );
+  }
+
   const apiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
   const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
 
