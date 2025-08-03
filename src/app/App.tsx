@@ -130,7 +130,7 @@ const App: React.FC<HomePageProps> = ({
       <NavBar onClearFilters={clearFilters} />
       <main className="px-4 pt-8 pb-8 lg:flex lg:gap-6">
         <Modal />
-        <div className="lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit sm:mb-8">
+        <div className="lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit mb-8 lg:mb-0">
           <MapBox
             lng={lng}
             lat={lat}
