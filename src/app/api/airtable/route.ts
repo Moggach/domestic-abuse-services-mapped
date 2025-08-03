@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+
 interface ServiceDataFields {
   'Service name'?: string;
   'Service description'?: string;
@@ -163,4 +164,57 @@ export async function GET(req: Request) {
     transformServiceData(record.fields as ServiceDataFields)
   );
   return NextResponse.json(data);
+}
+
+export async function POST(req: Request) {
+  const adminToken = process.env.ADMIN_API_TOKEN; 
+  const authHeader = req.headers.get('authorization');
+  
+
+  const apiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
+  const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
+
+  if (!apiKey || !baseId) {
+    return NextResponse.json({ error: 'Missing Airtable credentials' }, { status: 500 });
+  }
+
+  const base = new Airtable({ apiKey }).base(baseId); 
+  if (!authHeader || authHeader !== `Bearer ${adminToken}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await req.json();
+
+  const requiredFields = ['Service name', 'Service address', 'Service postcode'];
+  for (const field of requiredFields) {
+    if (!body[field]) {
+      return NextResponse.json({ error: `Missing field: ${field}` }, { status: 400 });
+    }
+  }
+
+  try {
+    const created = await base('services').create([
+      {
+        fields: {
+          'Service name': body['Service name'],
+          'Service description': body['Service description'],
+          'Service address': body['Service address'],
+          'Service postcode': body['Service postcode'],
+          'Service email address': body['Service email address'],
+          'Service website': body['Service website'],
+          'Service phone number': body['Service phone number'],
+          'Service donation link': body['Service donation link'],
+          'Service type': body['Service type'] || [],
+          'Specialist services for': body['Specialist services for'] || [],
+          'Local authority': body['Local authority'],
+          'Approved': false,
+        },
+      },
+    ]);
+
+    return NextResponse.json({ success: true, id: created[0].id });
+  } catch (error) {
+    console.error('Airtable error:', error);
+    return NextResponse.json({ error: 'Failed to create record' }, { status: 500 });
+  }
 }
