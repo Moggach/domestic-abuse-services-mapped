@@ -101,7 +101,9 @@ const ratelimit = new Ratelimit({
  */
 export async function GET(req: Request) {
 
-  const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+  const ip = req.headers.get('cf-connecting-ip') || 
+           req.headers.get('x-forwarded-for')?.split(',')[0] || 
+           'anonymous';
 
   const { success, limit, remaining, reset } = await ratelimit.limit(ip);
 
@@ -245,7 +247,9 @@ export async function GET(req: Request) {
  *         description: Airtable error
  */
 export async function POST(req: Request) {
-  const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+  const ip = req.headers.get('cf-connecting-ip') || 
+           req.headers.get('x-forwarded-for')?.split(',')[0] || 
+           'anonymous';
 
   const { success, limit, remaining, reset } = await ratelimit.limit(ip);
 
