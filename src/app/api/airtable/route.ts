@@ -103,12 +103,18 @@ export async function GET(req: Request) {
 
   const ip = req.headers.get('x-forwarded-for') || 'anonymous';
 
-  const { success, reset } = await ratelimit.limit(ip);
+  const { success, limit, remaining, reset } = await ratelimit.limit(ip);
+
+  const headers = {
+    'X-RateLimit-Limit': limit.toString(),
+    'X-RateLimit-Remaining': remaining.toString(),
+    'X-RateLimit-Reset': reset.toString(),
+  };
 
   if (!success) {
     return NextResponse.json(
       { error: 'Too many requests. Please slow down.' },
-      { status: 429, headers: { 'X-RateLimit-Reset': reset.toString() } }
+      { status: 429, headers }
     );
   }
 
@@ -163,7 +169,7 @@ export async function GET(req: Request) {
   const data = approvedRecords.map((record) =>
     transformServiceData(record.fields as ServiceDataFields)
   );
-  return NextResponse.json(data);
+  return NextResponse.json(data, { headers });
 }
 
 /**
@@ -239,20 +245,35 @@ export async function GET(req: Request) {
  *         description: Airtable error
  */
 export async function POST(req: Request) {
-  const adminToken = process.env.ADMIN_API_TOKEN; 
-  const authHeader = req.headers.get('authorization');
-  
+  const ip = req.headers.get('x-forwarded-for') || 'anonymous';
 
+  const { success, limit, remaining, reset } = await ratelimit.limit(ip);
+
+  const headers = {
+    'X-RateLimit-Limit': limit.toString(),
+    'X-RateLimit-Remaining': remaining.toString(),
+    'X-RateLimit-Reset': reset.toString(),
+  };
+
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please slow down.' },
+      { status: 429, headers }
+    );
+  }
+
+  const adminToken = process.env.ADMIN_API_TOKEN;
+  const authHeader = req.headers.get('authorization');
   const apiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
   const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
 
   if (!apiKey || !baseId) {
-    return NextResponse.json({ error: 'Missing Airtable credentials' }, { status: 500 });
+    return NextResponse.json({ error: 'Missing Airtable credentials' }, { status: 500, headers });
   }
 
-  const base = new Airtable({ apiKey }).base(baseId); 
+  const base = new Airtable({ apiKey }).base(baseId);
   if (!authHeader || authHeader !== `Bearer ${adminToken}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers });
   }
 
   const body = await req.json();
@@ -260,7 +281,7 @@ export async function POST(req: Request) {
   const requiredFields = ['Service name', 'Service address', 'Service postcode'];
   for (const field of requiredFields) {
     if (!body[field]) {
-      return NextResponse.json({ error: `Missing field: ${field}` }, { status: 400 });
+      return NextResponse.json({ error: `Missing field: ${field}` }, { status: 400, headers });
     }
   }
 
@@ -284,9 +305,9 @@ export async function POST(req: Request) {
       },
     ]);
 
-    return NextResponse.json({ success: true, id: created[0].id });
+    return NextResponse.json({ success: true, id: created[0].id }, { headers });
   } catch (error) {
     console.error('Airtable error:', error);
-    return NextResponse.json({ error: 'Failed to create record' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create record' }, { status: 500, headers });
   }
 }
