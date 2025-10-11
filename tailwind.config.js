@@ -12,7 +12,7 @@ module.exports = {
       colors: {
         cardBg: 'oklch(90% 0.07 342.55)',
         cardText: 'oklch(20% 0.02 342.55)',
-        mutedAccent: 'oklch(0.45 0.15 277.023)',       
+        mutedAccent: 'oklch(0.65 0.12 277.023)',
       },
     },
   },
