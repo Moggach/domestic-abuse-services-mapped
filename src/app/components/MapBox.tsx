@@ -54,7 +54,9 @@ const MapBox: React.FC<MapBoxProps> = ({
       style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
       center: [lng, lat],
       zoom: zoom,
+      minZoom: 5,
     });
+    
     map.current.on('load', () => {
       setIsMapLoading(false);
     });
