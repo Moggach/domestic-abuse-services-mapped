@@ -51,17 +51,41 @@ const MapBox: React.FC<MapBoxProps> = ({
 
     const isMobile = window.innerWidth < 768;
     const minZoom = isMobile ? 4 : 5;
+    const bounds = new mapboxgl.LngLatBounds(
+      [-7.5, 50.5],
+      [1.0, 58.5],
+    )
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLElement,
       style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
       center: [lng, lat],
       zoom: zoom,
       minZoom: minZoom,
+      maxBounds: bounds,
     });
     
     map.current.on('load', () => {
       setIsMapLoading(false);
     });
+
+    map.current.on('zoom', () => {
+      if (!map.current) return;
+      
+      const currentZoom = map.current.getZoom();
+      const minZoom = isMobile ? 4 : 5;
+      
+      if (currentZoom <= minZoom) {
+        map.current.dragPan.disable();
+      } else {
+        map.current.dragPan.enable();
+      }
+    });
+
+    const initialZoom = map.current.getZoom();
+    if (initialZoom <= minZoom) {
+      map.current.dragPan.disable();
+    }
 
     map.current.addControl(new NavigationControl(), 'top-right');
 
