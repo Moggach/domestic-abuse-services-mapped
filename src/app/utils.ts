@@ -12,6 +12,7 @@ import {
  
 } from 'react-icons/fa';
 import { RiPsychotherapyLine } from "react-icons/ri";
+
 import type { Feature } from '../app/App';
 
 export function calculateDistance(

@@ -1,8 +1,9 @@
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import type { FieldSet, Records } from 'airtable';
 import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+
 import { calculateDistance, fetchCoordinates, isPostcode } from '../../utils'; 
 
 interface GeoJSONFeature {

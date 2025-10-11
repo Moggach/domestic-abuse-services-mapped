@@ -1,4 +1,4 @@
-import { SwaggerDefinition } from 'swagger-jsdoc';
+import type { SwaggerDefinition } from 'swagger-jsdoc';
 
 const swaggerDefinition: SwaggerDefinition = {
   openapi: '3.0.0',

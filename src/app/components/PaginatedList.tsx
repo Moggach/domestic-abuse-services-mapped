@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
+
 import { iconMapping } from '../utils';
 
 interface Properties {

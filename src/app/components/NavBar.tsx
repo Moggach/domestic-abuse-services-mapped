@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
+import { useRouter } from "next/navigation";
 import type { KeyboardEvent } from 'react';
 import React, { useState } from 'react';
-import { useRouter } from "next/navigation";
 
 type NavBarProps = {
   onClearFilters?: () => void;

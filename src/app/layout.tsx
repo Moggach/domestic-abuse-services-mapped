@@ -1,6 +1,7 @@
 import localFont from '@next/font/local';
 import type { ReactNode } from 'react';
 import React from 'react';
+
 import { SearchProvider } from './contexts/SearchContext';
 
 interface Metadata {

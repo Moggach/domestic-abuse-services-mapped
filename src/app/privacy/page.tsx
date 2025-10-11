@@ -1,8 +1,8 @@
 'use client';
 
 import '../styles/globals.css';
-import QuickExit from '../components/QuickExit';
 import NavBar from '../components/NavBar';
+import QuickExit from '../components/QuickExit';
 
 const Privacy: React.FC = () => {
   return (
