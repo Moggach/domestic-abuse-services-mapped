@@ -52,7 +52,7 @@ const Modal: React.FC = () => {
             </p>
           </div>
           <button
-            className="btn bg-green-600 mt-4 text-white"
+            className="btn btn-accent mt-4 text-white"
             onClick={handleDontShowAgain}
           >
             Don&apos;t show again
