@@ -49,12 +49,14 @@ const MapBox: React.FC<MapBoxProps> = ({
   useEffect(() => {
     if (map.current) return;
 
+    const isMobile = window.innerWidth < 768;
+    const minZoom = isMobile ? 4 : 5;
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLElement,
       style: 'mapbox://styles/annacunnane/clrjjl9rf000101pg1r0z3vq7',
       center: [lng, lat],
       zoom: zoom,
-      minZoom: 5,
+      minZoom: minZoom,
     });
     
     map.current.on('load', () => {
