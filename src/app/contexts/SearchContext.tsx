@@ -7,6 +7,7 @@ import {
   calculateDistance,
   fetchCoordinates,
   determineZoomLevel,
+  isPostcode,
 } from '../utils';
 
 interface SearchContextType {
@@ -66,11 +67,6 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const [zoom, setZoom] = useState<number>(determineZoomLevel());
   const [lng, setLng] = useState<number>(-3.5);
   const [lat, setLat] = useState<number>(54.5);
-
-  const isPostcode = (input: string): boolean => {
-    const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
-    return postcodeRegex.test(input.trim());
-  };
 
   const handleSearchSubmit = async (searchQuery: string): Promise<void> => {
     if (!searchQuery) return;

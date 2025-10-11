@@ -3,24 +3,7 @@ import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
-
-
-interface ServiceDataFields {
-  'Service name'?: string;
-  'Service description'?: string;
-  'Service address'?: string;
-  'Service postcode'?: string;
-  'Service email address'?: string;
-  'Service website'?: string;
-  'Service phone number'?: string;
-  'Service donation link'?: string;
-  'Service type'?: string[];
-  'Specialist services for'?: string[];
-  'Local authority'?: string;
-  Approved?: boolean;
-  Lng?: string;
-  Lat?: string;
-}
+import { calculateDistance, fetchCoordinates, isPostcode } from '../../utils'; 
 
 interface GeoJSONFeature {
   type: 'Feature';
@@ -37,11 +20,29 @@ interface GeoJSONFeature {
     serviceSpecialism: string[];
     approved: boolean | undefined;
     localAuthority: string;
+    distance?: number; 
   };
   geometry: {
     type: 'Point';
     coordinates: [number, number];
   };
+}
+
+interface ServiceDataFields {
+  'Service name'?: string;
+  'Service description'?: string;
+  'Service address'?: string;
+  'Service postcode'?: string;
+  'Service email address'?: string;
+  'Service website'?: string;
+  'Service phone number'?: string;
+  'Service donation link'?: string;
+  'Service type'?: string[];
+  'Specialist services for'?: string[];
+  'Local authority'?: string;
+  Approved?: boolean;
+  Lng?: string;
+  Lat?: string;
 }
 
 function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
@@ -89,17 +90,34 @@ const ratelimit = new Ratelimit({
  *     summary: Get approved UK domestic abuse services in GeoJSON format
  *     tags:
  *       - Services
+ *     parameters:
+ *       - in: query
+ *         name: postcode
+ *         schema:
+ *           type: string
+ *         description: UK postcode to search near (e.g., "SW1A 1AA")
+ *       - in: query
+ *         name: radius
+ *         schema:
+ *           type: number
+ *           default: 10
+ *         description: Search radius in miles (default 10)
  *     responses:
  *       200:
- *         description: A list of services
+ *         description: A list of services, sorted by distance if postcode provided
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/GeoJSONFeature'
+ *       400:
+ *         description: Invalid postcode format
  */
 export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const postcode = url.searchParams.get('postcode');
+  const radius = parseFloat(url.searchParams.get('radius') || '10');
 
   const ip = req.headers.get('cf-connecting-ip') || 
            req.headers.get('x-forwarded-for')?.split(',')[0] || 
@@ -117,6 +135,13 @@ export async function GET(req: Request) {
     return NextResponse.json(
       { error: 'Too many requests. Please slow down.' },
       { status: 429, headers }
+    );
+  }
+
+  if (postcode && !isPostcode(postcode)) {
+    return NextResponse.json(
+      { error: 'Invalid postcode format' },
+      { status: 400, headers }
     );
   }
 
@@ -168,9 +193,41 @@ export async function GET(req: Request) {
     (record) => record.fields['Approved'] === true
   );
 
-  const data = approvedRecords.map((record) =>
+  let data = approvedRecords.map((record) =>
     transformServiceData(record.fields as ServiceDataFields)
   );
+
+  if (postcode) {
+    const coordinates = await fetchCoordinates(postcode);
+    
+    if (!coordinates) {
+      return NextResponse.json(
+        { error: 'Could not find coordinates for the provided postcode' },
+        { status: 400, headers }
+      );
+    }
+
+    data = data
+      .map((service) => {
+        const distance = calculateDistance(
+          coordinates.latitude,
+          coordinates.longitude,
+          service.geometry.coordinates[1],
+          service.geometry.coordinates[0]
+        );
+        
+        return {
+          ...service,
+          properties: {
+            ...service.properties,
+            distance: Math.round(distance * 100) / 100
+          }
+        };
+      })
+      .filter((service) => service.properties.distance! <= radius)
+      .sort((a, b) => a.properties.distance! - b.properties.distance!);
+  }
+
   return NextResponse.json(data, { headers });
 }
 

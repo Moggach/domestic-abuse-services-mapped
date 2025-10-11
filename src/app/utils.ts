@@ -12,7 +12,6 @@ import {
  
 } from 'react-icons/fa';
 import { RiPsychotherapyLine } from "react-icons/ri";
-
 import type { Feature } from '../app/App';
 
 export function calculateDistance(
@@ -61,7 +60,10 @@ export const fetchCoordinates = async (
   }
 };
 
-
+export function isPostcode(input: string): boolean {
+  const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
+  return postcodeRegex.test(input.trim());
+}
 
 export const iconMapping: Record<string, IconType> = {
   'Domestic abuse support': FaHandsHelping,
@@ -73,7 +75,6 @@ export const iconMapping: Record<string, IconType> = {
   'Housing support': AiOutlineHome,
   "Counselling service": RiPsychotherapyLine,
 };
-
 
 export const determineZoomLevel = (): number => {
   const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 768;
