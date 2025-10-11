@@ -3,7 +3,6 @@ import Link from 'next/link';
 import type { KeyboardEvent } from 'react';
 import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
-import ThemeSwitcher from './ThemeSwitcher';
 
 type NavBarProps = {
   onClearFilters?: () => void;
@@ -29,7 +28,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
     <>
       <nav className="p-4">
         <div className="container min-w-full flex justify-between items-start">
-          <div className="flex flex-col gap-2 text-mutedAccent dark:text-mutedAccentOnDark font-bold">
+          <div className="flex flex-col gap-2 text-mutedAccent font-bold">
             <h1 className="font-headings text-3xl ">
               <Link
                 href="/?page=1"
@@ -48,12 +47,11 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
               <Link
                 href={`/${item.toLowerCase()}`}
                 key={item}
-                className="font-headings text-2xl font-bold text-mutedAccent dark:text-mutedAccentOnDark "
+                className="font-headings text-2xl font-bold text-mutedAccent"
               >
                 {item}
               </Link>
             ))}
-            <ThemeSwitcher />
             <div
               className="tooltip tooltip-left"
               data-tip="Delete from browser history"
@@ -62,7 +60,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
                 <svg
                   fill="currentColor"
                   version="1.1"
-                  className="h-8 w-8 text-mutedAccent dark:text-mutedAccentOnDark "
+                  className="h-8 w-8 text-mutedAccent"
                   viewBox="0 0 408.483 408.483"
                 >
                   <g>
@@ -76,7 +74,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
             </div>
           </div>
 
-          <div className="md:hidden text-mutedAccent dark:text-mutedAccentOnDark ">
+          <div className="md:hidden text-mutedAccent">
             <button onClick={toggleDrawer} aria-label="Toggle menu">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +108,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
         className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${drawerOpen ? 'translate-x-0' : 'translate-x-full'
           } transition-transform`}
       >
-        <div className="p-4 flex flex-col gap-4 text-mutedAccent dark:text-mutedAccentOnDark ">
+        <div className="p-4 flex flex-col gap-4 text-mutedAccent">
           <div className="self-end">
             <button onClick={toggleDrawer} aria-label="Close menu">
               <svg
@@ -132,14 +130,12 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
             <Link
               href={`/${item.toLowerCase()}`}
               key={item}
-              className="block text-2xl font-headings font-bold text-mutedAccent dark:text-mutedAccentOnDark "
+              className="block text-2xl font-headings font-bold text-mutedAccent"
               onClick={toggleDrawer}
             >
               {item}
             </Link>
           ))}
-          <ThemeSwitcher />
-
           <div
             className="tooltip tooltip-left"
             data-tip="Delete from browser history"
@@ -148,7 +144,7 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
               <svg
                 fill="currentColor"
                 version="1.1"
-                className="h-8 w-8 text-mutedAccent dark:text-mutedAccentOnDark "
+                className="h-8 w-8 text-mutedAccent"
                 viewBox="0 0 408.483 408.483"
               >
                 <g>
