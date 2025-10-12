@@ -118,6 +118,12 @@ const App: React.FC<HomePageProps> = ({
     currentPage
   );
 
+  const hasFiltersApplied =
+    selectedServiceType !== '' ||
+    selectedLocalAuthority !== '' ||
+    selectedSpecialisms.length > 0 ||
+    submittedSearchQuery !== '';
+
   const clearFilters = () => {
     setSelectedServiceType('');
     setSelectedLocalAuthority('');
@@ -135,7 +141,9 @@ const App: React.FC<HomePageProps> = ({
             lng={lng}
             lat={lat}
             zoom={zoom}
-            data={filteredMapBoxData || { type: 'FeatureCollection', features: [] }}
+            data={
+              filteredMapBoxData || { type: 'FeatureCollection', features: [] }
+            }
             setLng={setLng}
             setLat={setLat}
             searchLng={searchLng}
@@ -147,7 +155,6 @@ const App: React.FC<HomePageProps> = ({
         </div>
 
         <div className="flex flex-col gap-7 basis-1/2">
-
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
@@ -169,14 +176,7 @@ const App: React.FC<HomePageProps> = ({
             onSubmit={() => handleSearchSubmit(searchInput)}
             onClear={handleSearchClear}
           />
-          <ClearFiltersButton
-            onClear={() => {
-              setSelectedServiceType('');
-              setSelectedLocalAuthority('');
-              setSelectedSpecialisms([]);
-              handleSearchClear();
-            }}
-          />
+          {hasFiltersApplied && <ClearFiltersButton onClear={clearFilters} />}
 
           <PaginatedList
             data={
