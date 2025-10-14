@@ -73,21 +73,9 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
-
-
   return (
-    <html suppressHydrationWarning lang="en">
+    <html lang="en">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            (function() {
-              const theme = localStorage.getItem('theme') || 'light';
-              document.documentElement.setAttribute('data-theme', theme);
-            })();
-          `,
-          }}
-        />
         <meta property="og:title" content={metadata.openGraph.title} />
         <meta
           property="og:description"
@@ -116,7 +104,9 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
       <SearchProvider>
         <body
           className={`${poppins.variable} ${opensans.variable} font-body h-screen`}
-        >          <div id="root" className="font-body">
+        >
+          {' '}
+          <div id="root" className="font-body">
             {children}
           </div>
         </body>
