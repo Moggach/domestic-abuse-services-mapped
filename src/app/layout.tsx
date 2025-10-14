@@ -69,7 +69,7 @@ const opensans = localFont({
 });
 
 interface RootLayoutProps {
-  children: ReactNode; // Ensures `children` is typed correctly
+  children: ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
