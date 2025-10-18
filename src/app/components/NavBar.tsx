@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 import type { KeyboardEvent } from 'react';
 import React, { useState } from 'react';
 
@@ -9,7 +9,6 @@ type NavBarProps = {
 };
 
 const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
-
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const toggleDrawer = (): void => {
@@ -39,7 +38,8 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
                 }}
               >
                 Domestic Abuse Services Mapped
-              </Link>       </h1>
+              </Link>{' '}
+            </h1>
             <p>Find the support you need. Local to you.</p>
           </div>
           <div className="hidden md:flex space-x-4 items-center">
@@ -97,16 +97,18 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
         role="button"
         tabIndex={0}
         aria-label="Close drawer overlay"
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          }`}
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${
+          drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
         onClick={toggleDrawer}
         onKeyDown={handleKeyDown}
       ></div>
 
       {/* Drawer */}
       <div
-        className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${drawerOpen ? 'translate-x-0' : 'translate-x-full'
-          } transition-transform`}
+        className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${
+          drawerOpen ? 'translate-x-0' : 'translate-x-full'
+        } transition-transform`}
       >
         <div className="p-4 flex flex-col gap-4 text-mutedAccent">
           <div className="self-end">

@@ -4,14 +4,8 @@ import {
   AiOutlineSafety,
   AiOutlineIdcard,
 } from 'react-icons/ai';
-import {
-  FaHandsHelping,
-  FaGavel,
-  FaDog,
-  FaEye
- 
-} from 'react-icons/fa';
-import { RiPsychotherapyLine } from "react-icons/ri";
+import { FaHandsHelping, FaGavel, FaDog, FaEye } from 'react-icons/fa';
+import { RiPsychotherapyLine } from 'react-icons/ri';
 
 import type { Feature } from '../app/App';
 
@@ -74,7 +68,7 @@ export const iconMapping: Record<string, IconType> = {
   'Honour based abuse': FaEye,
   'Stalking support': AiOutlineSafety,
   'Housing support': AiOutlineHome,
-  "Counselling service": RiPsychotherapyLine,
+  'Counselling service': RiPsychotherapyLine,
 };
 
 export const determineZoomLevel = (): number => {

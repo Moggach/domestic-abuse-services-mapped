@@ -5,7 +5,8 @@ const swaggerDefinition: SwaggerDefinition = {
   info: {
     title: 'UK domestic abuse services API',
     version: '1.0.1',
-    description: 'API that returns and manages UK domestic abuse services in GeoJSON format',
+    description:
+      'API that returns and manages UK domestic abuse services in GeoJSON format',
   },
   servers: [
     {
@@ -31,14 +32,29 @@ const swaggerDefinition: SwaggerDefinition = {
           properties: {
             type: 'object',
             properties: {
-              name: { type: 'string', example: 'Example Domestic Abuse Service' },
-              description: { type: 'string', example: 'Provides support for women and children' },
-              address: { type: 'string', example: '123 Example Street, London' },
+              name: {
+                type: 'string',
+                example: 'Example Domestic Abuse Service',
+              },
+              description: {
+                type: 'string',
+                example: 'Provides support for women and children',
+              },
+              address: {
+                type: 'string',
+                example: '123 Example Street, London',
+              },
               postcode: { type: 'string', example: 'SW1A 1AA' },
               email: { type: 'string', example: 'contact@example-service.org' },
-              website: { type: 'string', example: 'https://example-service.org' },
+              website: {
+                type: 'string',
+                example: 'https://example-service.org',
+              },
               phone: { type: 'string', example: '020 1234 5678' },
-              donate: { type: 'string', example: 'https://example-service.org/donate' },
+              donate: {
+                type: 'string',
+                example: 'https://example-service.org/donate',
+              },
               serviceType: {
                 type: 'array',
                 items: { type: 'string' },
@@ -51,10 +67,11 @@ const swaggerDefinition: SwaggerDefinition = {
               },
               approved: { type: 'boolean', example: true },
               localAuthority: { type: 'string', example: 'Westminster' },
-              distance: { 
-                type: 'number', 
-                description: 'Distance from search postcode in miles (only present when searching by postcode)',
-                example: 2.45 
+              distance: {
+                type: 'number',
+                description:
+                  'Distance from search postcode in miles (only present when searching by postcode)',
+                example: 2.45,
               },
             },
           },

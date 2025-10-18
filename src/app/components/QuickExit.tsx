@@ -7,7 +7,8 @@ const QuickExit: React.FC = () => {
 
   return (
     <button
-      className="btn fixed bottom-0 left-0 w-full z-50 md:top-1/2 md:bottom-auto md:right-4 md:left-auto md:w-fit md:transform md:-translate-y-1/2 btn-accent text-white rounded-md shadow-md flex items-center justify-center p-2" onClick={handleClick}
+      className="btn fixed bottom-0 left-0 w-full z-50 md:top-1/2 md:bottom-auto md:right-4 md:left-auto md:w-fit md:transform md:-translate-y-1/2 btn-accent text-white rounded-md shadow-md flex items-center justify-center p-2"
+      onClick={handleClick}
     >
       Safe exit
       <svg

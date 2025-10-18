@@ -7,7 +7,7 @@ import QuickExit from '../components/QuickExit';
 const About: React.FC = () => {
   return (
     <>
-      <NavBar/>
+      <NavBar />
 
       <main className="p-4 pt-6 max-w-[974px] lg:mx-auto lg:mt-10">
         <h1 className="font-headings text-3xl mb-6">About</h1>

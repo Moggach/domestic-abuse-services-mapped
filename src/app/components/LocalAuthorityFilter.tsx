@@ -35,7 +35,7 @@ export default function LocalAuthorityFilter({
         value={selectedLocalAuthority}
         onChange={(e) => setSelectedLocalAuthority(e.target.value)}
       >
-      <option value="">All local authorities</option>
+        <option value="">All local authorities</option>
         {localAuthorities
           .slice()
           .sort((a, b) => a.localeCompare(b))
@@ -43,7 +43,7 @@ export default function LocalAuthorityFilter({
             <option key={index} value={item}>
               {item}
             </option>
-        ))}
+          ))}
       </select>
     </div>
   );

@@ -40,7 +40,7 @@ const MapBox: React.FC<MapBoxProps> = ({
   searchLat,
   selectedLocalAuthority,
   setIsMapLoading,
-  isMapLoading
+  isMapLoading,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -51,10 +51,7 @@ const MapBox: React.FC<MapBoxProps> = ({
 
     const isMobile = window.innerWidth < 768;
     const minZoom = isMobile ? 4 : 5;
-    const bounds = new mapboxgl.LngLatBounds(
-      [-7.5, 50.5],
-      [1.0, 58.5],
-    )
+    const bounds = new mapboxgl.LngLatBounds([-7.5, 50.5], [1.0, 58.5]);
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLElement,
@@ -64,17 +61,17 @@ const MapBox: React.FC<MapBoxProps> = ({
       minZoom: minZoom,
       maxBounds: bounds,
     });
-    
+
     map.current.on('load', () => {
       setIsMapLoading(false);
     });
 
     map.current.on('zoom', () => {
       if (!map.current) return;
-      
+
       const currentZoom = map.current.getZoom();
       const minZoom = isMobile ? 4 : 5;
-      
+
       if (currentZoom <= minZoom) {
         map.current.dragPan.disable();
       } else {
@@ -323,8 +320,6 @@ const MapBox: React.FC<MapBoxProps> = ({
       .catch((err) => console.error('Error fetching authority data:', err));
   }, [selectedLocalAuthority]);
 
-
-
   return (
     <>
       {isMapLoading && (
@@ -332,7 +327,10 @@ const MapBox: React.FC<MapBoxProps> = ({
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
-      <div className="h-[400px] w-full lg:h-[800px] rounded-2xl" ref={mapContainer}>
+      <div
+        className="h-[400px] w-full lg:h-[800px] rounded-2xl"
+        ref={mapContainer}
+      >
         {popupInfo && <PopUp map={map} {...popupInfo} />}
       </div>
     </>

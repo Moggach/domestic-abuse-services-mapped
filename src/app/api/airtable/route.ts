@@ -4,7 +4,7 @@ import type { FieldSet, Records } from 'airtable';
 import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
 
-import { calculateDistance, fetchCoordinates, isPostcode } from '../../utils'; 
+import { calculateDistance, fetchCoordinates, isPostcode } from '../../utils';
 
 interface GeoJSONFeature {
   type: 'Feature';
@@ -21,7 +21,7 @@ interface GeoJSONFeature {
     serviceSpecialism: string[];
     approved: boolean | undefined;
     localAuthority: string;
-    distance?: number; 
+    distance?: number;
   };
   geometry: {
     type: 'Point';
@@ -120,9 +120,10 @@ export async function GET(req: Request) {
   const postcode = url.searchParams.get('postcode');
   const radius = parseFloat(url.searchParams.get('radius') || '10');
 
-  const ip = req.headers.get('cf-connecting-ip') || 
-           req.headers.get('x-forwarded-for')?.split(',')[0] || 
-           'anonymous';
+  const ip =
+    req.headers.get('cf-connecting-ip') ||
+    req.headers.get('x-forwarded-for')?.split(',')[0] ||
+    'anonymous';
 
   const { success, limit, remaining, reset } = await ratelimit.limit(ip);
 
@@ -200,7 +201,7 @@ export async function GET(req: Request) {
 
   if (postcode) {
     const coordinates = await fetchCoordinates(postcode);
-    
+
     if (!coordinates) {
       return NextResponse.json(
         { error: 'Could not find coordinates for the provided postcode' },
@@ -216,13 +217,13 @@ export async function GET(req: Request) {
           service.geometry.coordinates[1],
           service.geometry.coordinates[0]
         );
-        
+
         return {
           ...service,
           properties: {
             ...service.properties,
-            distance: Math.round(distance * 100) / 100
-          }
+            distance: Math.round(distance * 100) / 100,
+          },
         };
       })
       .filter((service) => service.properties.distance! <= radius)
@@ -305,9 +306,10 @@ export async function GET(req: Request) {
  *         description: Airtable error
  */
 export async function POST(req: Request) {
-  const ip = req.headers.get('cf-connecting-ip') || 
-           req.headers.get('x-forwarded-for')?.split(',')[0] || 
-           'anonymous';
+  const ip =
+    req.headers.get('cf-connecting-ip') ||
+    req.headers.get('x-forwarded-for')?.split(',')[0] ||
+    'anonymous';
 
   const { success, limit, remaining, reset } = await ratelimit.limit(ip);
 
@@ -330,20 +332,33 @@ export async function POST(req: Request) {
   const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
 
   if (!apiKey || !baseId) {
-    return NextResponse.json({ error: 'Missing Airtable credentials' }, { status: 500, headers });
+    return NextResponse.json(
+      { error: 'Missing Airtable credentials' },
+      { status: 500, headers }
+    );
   }
 
   const base = new Airtable({ apiKey }).base(baseId);
   if (!authHeader || authHeader !== `Bearer ${adminToken}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers });
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401, headers }
+    );
   }
 
   const body = await req.json();
 
-  const requiredFields = ['Service name', 'Service address', 'Service postcode'];
+  const requiredFields = [
+    'Service name',
+    'Service address',
+    'Service postcode',
+  ];
   for (const field of requiredFields) {
     if (!body[field]) {
-      return NextResponse.json({ error: `Missing field: ${field}` }, { status: 400, headers });
+      return NextResponse.json(
+        { error: `Missing field: ${field}` },
+        { status: 400, headers }
+      );
     }
   }
 
@@ -362,7 +377,7 @@ export async function POST(req: Request) {
           'Service type': body['Service type'] || [],
           'Specialist services for': body['Specialist services for'] || [],
           'Local authority': body['Local authority'],
-          'Approved': false,
+          Approved: false,
         },
       },
     ]);
@@ -370,6 +385,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, id: created[0].id }, { headers });
   } catch (error) {
     console.error('Airtable error:', error);
-    return NextResponse.json({ error: 'Failed to create record' }, { status: 500, headers });
+    return NextResponse.json(
+      { error: 'Failed to create record' },
+      { status: 500, headers }
+    );
   }
 }
