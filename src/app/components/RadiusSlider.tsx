@@ -13,7 +13,7 @@ const RadiusSlider: React.FC<RadiusSliderProps> = ({
   min = 1,
   max = 10,
 }) => (
-  <div className="flex flex-col gap-2 max-w-sm">
+  <div className="flex flex-col gap-2">
     <label htmlFor="radius-slider" className="font-headings text-lg">
       Search radius: {radius} miles
     </label>
