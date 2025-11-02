@@ -226,9 +226,11 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                         );
                       })}
                     </div>
-                    <span className="text-sm mt-1">
-                      {item.distance?.toFixed(2)} miles from postcode
-                    </span>
+                    {typeof item.distance === 'number' && (
+                      <span className="text-sm mt-1">
+                        {item.distance.toFixed(2)} miles from postcode
+                      </span>
+                    )}
                   </div>
                 </div>
               );
