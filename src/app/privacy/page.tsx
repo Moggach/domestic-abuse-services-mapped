@@ -34,11 +34,8 @@ const Privacy: React.FC = () => {
           </p>
           <p>
             If you have questions about this policy, please contact{' '}
-            <a
-              className="underline"
-              href="mailto:hello@domesticabuseservices.uk"
-            >
-              hello@domesticabuseservices.uk
+            <a className="underline" href="mailto:anna_cunnane@proton.me">
+              anna_cunnane@proton.me
             </a>
           </p>
         </div>

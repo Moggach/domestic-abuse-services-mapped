@@ -30,11 +30,8 @@ const About: React.FC = () => {
           </p>
           <p>
             Have a question or a comment about the site? Please email{' '}
-            <a
-              className="underline"
-              href="mailto:hello@domesticabuseservices.uk"
-            >
-              hello@domesticabuseservices.uk
+            <a className="underline" href="mailto:anna_cunnane@proton.me">
+              anna_cunnane@proton.me
             </a>
           </p>
           <p>
