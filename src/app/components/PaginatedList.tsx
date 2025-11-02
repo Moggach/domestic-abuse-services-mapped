@@ -75,6 +75,7 @@ interface PaginatedListProps {
   searchSubmitted: boolean;
   submittedSearchQuery: string;
   isPostcode: (input: string) => boolean;
+  radius: number;
 }
 
 const PaginatedList: React.FC<PaginatedListProps> = ({
@@ -88,6 +89,7 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   searchSubmitted,
   submittedSearchQuery,
   isPostcode,
+  radius,
 }) => {
   const [paginatedData, setPaginatedData] = useState<Item[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
@@ -126,12 +128,12 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
             isPostcode(submittedSearchQuery) ? (
               filteredDataWithDistance.length > 0 ? (
                 <h2>
-                  Showing services within 10 miles of postcode &quot;
+                  Showing services within {radius} miles of postcode &quot;
                   {submittedSearchQuery}&quot;:
                 </h2>
               ) : (
                 <h2>
-                  No search results within 10 miles of postcode &quot;
+                  No search results within {radius} miles of postcode &quot;
                   {submittedSearchQuery}&quot;. Try another search or remove any
                   filters?
                 </h2>
@@ -228,7 +230,8 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                     </div>
                     {typeof item.distance === 'number' && (
                       <span className="text-sm mt-1">
-                        {item.distance.toFixed(2)} miles from postcode
+                        {item.distance.toFixed(2)} miles from{' '}
+                        {submittedSearchQuery}
                       </span>
                     )}
                   </div>

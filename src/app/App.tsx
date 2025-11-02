@@ -10,6 +10,7 @@ import Modal from './components/Modal';
 import NavBar from './components/NavBar';
 import PaginatedList from './components/PaginatedList';
 import QuickExit from './components/QuickExit';
+import RadiusSlider from './components/RadiusSlider';
 import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
 import SpecialismCheckboxes from './components/SpecialismCheckboxes';
@@ -80,6 +81,8 @@ const App: React.FC<HomePageProps> = ({
     lat,
     setLng,
     setLat,
+    radius,
+    setRadius,
   } = useSearch();
 
   const {
@@ -107,7 +110,8 @@ const App: React.FC<HomePageProps> = ({
     searchLat,
     searchLng,
     isSearchCleared,
-    calculateDistance
+    calculateDistance,
+    radius
   );
 
   useURLParams(
@@ -176,8 +180,13 @@ const App: React.FC<HomePageProps> = ({
             onSubmit={() => handleSearchSubmit(searchInput)}
             onClear={handleSearchClear}
           />
+          <RadiusSlider
+            radius={radius}
+            setRadius={setRadius}
+            min={1}
+            max={10}
+          />
           {hasFiltersApplied && <ClearFiltersButton onClear={clearFilters} />}
-
           <PaginatedList
             data={
               isPostcode(submittedSearchQuery)
@@ -193,6 +202,7 @@ const App: React.FC<HomePageProps> = ({
             searchSubmitted={searchSubmitted}
             submittedSearchQuery={submittedSearchQuery}
             isPostcode={isPostcode}
+            radius={radius}
           />
         </div>
       </main>

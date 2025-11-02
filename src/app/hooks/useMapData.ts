@@ -17,7 +17,8 @@ export const useMapData = (
     lng1: number,
     lat2: number,
     lng2: number
-  ) => number
+  ) => number,
+  radius: number
 ) => {
   const [filteredMapBoxData, setFilteredMapBoxData] =
     useState<FeatureCollection | null>(null);
@@ -55,7 +56,9 @@ export const useMapData = (
         })
         .filter(
           (item): item is Feature & { distance: number } =>
-            item !== null && item.distance !== undefined && item.distance <= 10
+            item !== null &&
+            item.distance !== undefined &&
+            item.distance <= radius // <-- Use radius here
         )
         .sort((a, b) => a.distance! - b.distance!);
 
@@ -77,7 +80,14 @@ export const useMapData = (
     };
 
     updateAirtableDataWithDistance();
-  }, [searchLat, searchLng, filteredData, isSearchCleared, calculateDistance]);
+  }, [
+    searchLat,
+    searchLng,
+    filteredData,
+    isSearchCleared,
+    calculateDistance,
+    radius,
+  ]); // <-- Add radius to dependencies
 
   return { filteredMapBoxData, filteredDataWithDistance };
 };

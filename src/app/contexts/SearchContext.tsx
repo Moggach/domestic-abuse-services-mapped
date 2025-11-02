@@ -37,6 +37,8 @@ interface SearchContextType {
   lng: number;
   setLat: React.Dispatch<React.SetStateAction<number>>;
   lat: number;
+  radius: number;
+  setRadius: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface SearchProviderProps {
@@ -67,6 +69,7 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const [zoom, setZoom] = useState<number>(determineZoomLevel());
   const [lng, setLng] = useState<number>(-3.5);
   const [lat, setLat] = useState<number>(54.5);
+  const [radius, setRadius] = useState<number>(10);
 
   const handleSearchSubmit = async (searchQuery: string): Promise<void> => {
     if (!searchQuery) return;
@@ -98,6 +101,7 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     setSearchSubmitted(false);
     setFilteredDataWithDistance([]);
     setIsSearchCleared(true);
+    setRadius(10);
   };
 
   const value: SearchContextType = {
@@ -127,6 +131,8 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     lng,
     setLat,
     lat,
+    radius,
+    setRadius,
   };
 
   return (
