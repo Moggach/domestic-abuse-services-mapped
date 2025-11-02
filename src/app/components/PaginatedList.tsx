@@ -17,6 +17,7 @@ interface Properties {
 
 interface Item {
   properties: Properties;
+  distance?: number;
 }
 
 interface PaginationProps {
@@ -225,6 +226,9 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                         );
                       })}
                     </div>
+                    <span className="text-sm mt-1">
+                      {item.distance?.toFixed(2)} miles from postcode
+                    </span>
                   </div>
                 </div>
               );
