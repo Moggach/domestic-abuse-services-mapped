@@ -180,12 +180,14 @@ const App: React.FC<HomePageProps> = ({
             onSubmit={() => handleSearchSubmit(searchInput)}
             onClear={handleSearchClear}
           />
-          <RadiusSlider
-            radius={radius}
-            setRadius={setRadius}
-            min={1}
-            max={10}
-          />
+          {isPostcode(submittedSearchQuery) && (
+            <RadiusSlider
+              radius={radius}
+              setRadius={setRadius}
+              min={1}
+              max={10}
+            />
+          )}
           {hasFiltersApplied && <ClearFiltersButton onClear={clearFilters} />}
           <PaginatedList
             data={
