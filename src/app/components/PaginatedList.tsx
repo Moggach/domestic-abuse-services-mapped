@@ -128,7 +128,11 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
             isPostcode(submittedSearchQuery) ? (
               filteredDataWithDistance.length > 0 ? (
                 <h2>
-                  Showing services within {radius} miles of postcode &quot;
+                  Showing {filteredDataWithDistance.length}{' '}
+                  {filteredDataWithDistance.length === 1
+                    ? 'service'
+                    : 'services'}{' '}
+                  within {radius} miles of postcode &quot;
                   {submittedSearchQuery}&quot;:
                 </h2>
               ) : (
