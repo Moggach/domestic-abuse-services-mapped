@@ -1,8 +1,5 @@
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
-import type { FieldSet, Records } from 'airtable';
-import Airtable from 'airtable';
 import { NextResponse } from 'next/server';
+import { Client } from 'pg';
 
 import { calculateDistance, fetchCoordinates, isPostcode } from '../../utils';
 
@@ -73,17 +70,6 @@ function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
   };
 }
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
-
-const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(5, '10 s'),
-  analytics: true,
-});
-
 /**
  * @openapi
  * /api/airtable:
@@ -120,95 +106,51 @@ export async function GET(req: Request) {
   const postcode = url.searchParams.get('postcode');
   const radius = parseFloat(url.searchParams.get('radius') || '10');
 
-  const ip =
-    req.headers.get('cf-connecting-ip') ||
-    req.headers.get('x-forwarded-for')?.split(',')[0] ||
-    'anonymous';
-
-  const { success, limit, remaining, reset } = await ratelimit.limit(ip);
-
-  const headers = {
-    'X-RateLimit-Limit': limit.toString(),
-    'X-RateLimit-Remaining': remaining.toString(),
-    'X-RateLimit-Reset': reset.toString(),
-  };
-
-  if (!success) {
-    return NextResponse.json(
-      { error: 'Too many requests. Please slow down.' },
-      { status: 429, headers }
-    );
-  }
-
   if (postcode && !isPostcode(postcode)) {
     return NextResponse.json(
       { error: 'Invalid postcode format' },
-      { status: 400, headers }
+      { status: 400 }
     );
   }
 
-  const apiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
-  const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
-
-  if (!apiKey || !baseId) {
-    return NextResponse.json(
-      { error: 'Airtable API key or Base ID is missing' },
-      { status: 500 }
-    );
-  }
-
-  const base = new Airtable({ apiKey }).base(baseId);
-
-  let allRecords: Records<FieldSet> = [];
-
-  const fetchAllRecords = async (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      base('services')
-        .select()
-        .eachPage(
-          (records, fetchNextPage) => {
-            allRecords = allRecords.concat(records);
-            fetchNextPage();
-          },
-          (error) => {
-            if (error) {
-              console.error('Error fetching records:', error);
-              reject(error);
-            } else {
-              resolve();
-            }
-          }
-        );
-    });
-  };
-
-  try {
-    await fetchAllRecords();
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch records' },
-      { status: 500 }
-    );
-  }
-
-  const approvedRecords = allRecords.filter(
-    (record) => record.fields['Approved'] === true
+  // Connect to PostgreSQL and fetch approved services
+  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  await client.connect();
+  const result = await client.query(
+    'SELECT * FROM services WHERE approved = true'
   );
+  await client.end();
 
-  let data = approvedRecords.map((record) =>
-    transformServiceData(record.fields as ServiceDataFields)
-  );
+  let data = result.rows.map((row) => ({
+    type: 'Feature',
+    properties: {
+      name: row.name || '',
+      description: row.description || '',
+      address: row.address || '',
+      postcode: row.postcode || '',
+      email: row.email || '',
+      website: row.website || '',
+      phone: row.phone || '',
+      donate: row.donate || '',
+      serviceType: row.service_type || [],
+      serviceSpecialism: row.service_specialism || [],
+      approved: row.approved,
+      localAuthority: row.local_authority || '',
+    },
+    geometry: {
+      type: 'Point',
+      coordinates: [parseFloat(row.lng || '0'), parseFloat(row.lat || '0')],
+    },
+  }));
 
   if (postcode) {
     const coordinates = await fetchCoordinates(postcode);
-
     if (!coordinates) {
       return NextResponse.json(
         { error: 'Could not find coordinates for the provided postcode' },
-        { status: 400, headers }
+        { status: 400 }
       );
     }
-
     data = data
       .map((service) => {
         const distance = calculateDistance(
@@ -217,7 +159,6 @@ export async function GET(req: Request) {
           service.geometry.coordinates[1],
           service.geometry.coordinates[0]
         );
-
         return {
           ...service,
           properties: {
@@ -229,8 +170,7 @@ export async function GET(req: Request) {
       .filter((service) => service.properties.distance! <= radius)
       .sort((a, b) => a.properties.distance! - b.properties.distance!);
   }
-
-  return NextResponse.json(data, { headers });
+  return NextResponse.json(data);
 }
 
 /**
@@ -305,89 +245,6 @@ export async function GET(req: Request) {
  *       500:
  *         description: Airtable error
  */
-export async function POST(req: Request) {
-  const ip =
-    req.headers.get('cf-connecting-ip') ||
-    req.headers.get('x-forwarded-for')?.split(',')[0] ||
-    'anonymous';
-
-  const { success, limit, remaining, reset } = await ratelimit.limit(ip);
-
-  const headers = {
-    'X-RateLimit-Limit': limit.toString(),
-    'X-RateLimit-Remaining': remaining.toString(),
-    'X-RateLimit-Reset': reset.toString(),
-  };
-
-  if (!success) {
-    return NextResponse.json(
-      { error: 'Too many requests. Please slow down.' },
-      { status: 429, headers }
-    );
-  }
-
-  const adminToken = process.env.ADMIN_API_TOKEN;
-  const authHeader = req.headers.get('authorization');
-  const apiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY;
-  const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID;
-
-  if (!apiKey || !baseId) {
-    return NextResponse.json(
-      { error: 'Missing Airtable credentials' },
-      { status: 500, headers }
-    );
-  }
-
-  const base = new Airtable({ apiKey }).base(baseId);
-  if (!authHeader || authHeader !== `Bearer ${adminToken}`) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401, headers }
-    );
-  }
-
-  const body = await req.json();
-
-  const requiredFields = [
-    'Service name',
-    'Service address',
-    'Service postcode',
-  ];
-  for (const field of requiredFields) {
-    if (!body[field]) {
-      return NextResponse.json(
-        { error: `Missing field: ${field}` },
-        { status: 400, headers }
-      );
-    }
-  }
-
-  try {
-    const created = await base('services').create([
-      {
-        fields: {
-          'Service name': body['Service name'],
-          'Service description': body['Service description'],
-          'Service address': body['Service address'],
-          'Service postcode': body['Service postcode'],
-          'Service email address': body['Service email address'],
-          'Service website': body['Service website'],
-          'Service phone number': body['Service phone number'],
-          'Service donation link': body['Service donation link'],
-          'Service type': body['Service type'] || [],
-          'Specialist services for': body['Specialist services for'] || [],
-          'Local authority': body['Local authority'],
-          Approved: false,
-        },
-      },
-    ]);
-
-    return NextResponse.json({ success: true, id: created[0].id }, { headers });
-  } catch (error) {
-    console.error('Airtable error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create record' },
-      { status: 500, headers }
-    );
-  }
+export async function POST() {
+  return NextResponse.json({ error: 'Not implemented' }, { status: 501 });
 }
