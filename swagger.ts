@@ -10,7 +10,7 @@ const swaggerDefinition: SwaggerDefinition = {
   },
   servers: [
     {
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/airtable`,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/api`,
     },
   ],
   components: {

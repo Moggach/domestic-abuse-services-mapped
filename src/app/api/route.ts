@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Client } from 'pg';
 
-import { calculateDistance, fetchCoordinates, isPostcode } from '../../utils';
+import { calculateDistance, fetchCoordinates, isPostcode } from '../utils';
 
 interface GeoJSONFeature {
   type: 'Feature';
@@ -72,7 +72,7 @@ function transformServiceData(serviceData: ServiceDataFields): GeoJSONFeature {
 
 /**
  * @openapi
- * /api/airtable:
+ * /api:
  *   get:
  *     summary: Get approved UK domestic abuse services in GeoJSON format
  *     tags:
@@ -175,7 +175,7 @@ export async function GET(req: Request) {
 
 /**
  * @openapi
- * /api/airtable:
+ * /api:
  *   post:
  *     summary: Add a new domestic abuse service (contact anna_cunnane@proton.me for an authorization token)
  *     tags:
@@ -243,7 +243,7 @@ export async function GET(req: Request) {
  *       401:
  *         description: Unauthorized (invalid Bearer token)
  *       500:
- *         description: Airtable error
+ *         description: API error
  */
 export async function POST() {
   return NextResponse.json({ error: 'Not implemented' }, { status: 501 });
