@@ -120,3 +120,55 @@ export const filterBySpecialisms = (
     );
   });
 };
+
+interface FlattenAndUniqueResult {
+  (data: Feature[]): string[];
+}
+
+export const flattenAndUnique: FlattenAndUniqueResult = function (
+  data: Feature[]
+): string[] {
+  const allServiceTypes: string[] = data.reduce<string[]>(
+    (acc: string[], item: Feature) => {
+      const serviceTypes: string | string[] | undefined =
+        item.properties.serviceType;
+
+      if (Array.isArray(serviceTypes)) {
+        acc.push(...serviceTypes);
+      } else if (typeof serviceTypes === 'string') {
+        acc.push(...serviceTypes.split(',').map((type: string) => type.trim()));
+      }
+      return acc;
+    },
+    []
+  );
+  return [...new Set(allServiceTypes)].filter(Boolean);
+};
+
+export const flattenAndUniqueSpecialisms = (data: Feature[]): string[] => {
+  const allSpecialisms: string[] = data.reduce<string[]>((acc, item) => {
+    const specialisms = item.properties.serviceSpecialism;
+    if (Array.isArray(specialisms)) {
+      acc.push(...specialisms);
+    } else if (typeof specialisms === 'string') {
+      acc.push(
+        ...specialisms.split(',').map((specialism) => specialism.trim())
+      );
+    }
+    return acc;
+  }, []);
+  return [...new Set(allSpecialisms)].filter(Boolean);
+};
+
+export const extractUniqueLocalAuthorities = (data: Feature[]): string[] => {
+  const allLocalAuthorities: string[] = data.reduce<string[]>((acc, item) => {
+    const localAuthority = item.properties.localAuthority;
+
+    if (localAuthority && typeof localAuthority === 'string') {
+      acc.push(localAuthority.trim());
+    }
+    return acc;
+  }, []);
+
+  return [...new Set(allLocalAuthorities)].filter(Boolean);
+};
