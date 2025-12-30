@@ -11,10 +11,7 @@ const Footer: React.FC = () => {
       </p>
       <p>
         Service isn&apos;t listed?{' '}
-        <a
-          className="underline"
-          href="https://airtable.com/appksbQlVr07Kxadu/pagEkSrTVCs0yk2OS/form"
-        >
+        <a className="underline" href="https://tally.so/r/NplpjN">
           Submit here
         </a>
       </p>

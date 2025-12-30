@@ -21,10 +21,7 @@ const About: React.FC = () => {
           <p>
             If your service isn&apos;t listed please submit the details using
             this{' '}
-            <a
-              className="underline"
-              href="https://airtable.com/appksbQlVr07Kxadu/pagEkSrTVCs0yk2OS/form"
-            >
+            <a className="underline" href="https://tally.so/r/NplpjN">
               form
             </a>{' '}
           </p>
