@@ -55,6 +55,27 @@ export const fetchCoordinates = async (
   }
 };
 
+export const fetchLocalAuthority = async (
+  postcode: string
+): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      `https://api.postcodes.io/postcodes/${postcode}`
+    );
+    const data = await response.json();
+    if (data.status === 200) {
+      const local_authority: string = data.result.admin_district;
+      return local_authority;
+    } else {
+      console.error('Invalid postcode');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching local authority:', error);
+    return null;
+  }
+};
+
 export function isPostcode(input: string): boolean {
   const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
   return postcodeRegex.test(input.trim());
