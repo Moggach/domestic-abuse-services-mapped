@@ -36,6 +36,22 @@ export const useSearchFilters = (
   >([]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const urlServiceType = params.get('serviceType') || '';
+    const urlLocalAuthority = params.get('localAuthority') || '';
+    const urlSpecialisms = params.get('specialisms')
+      ? params.get('specialisms')!.split(',')
+      : [];
+
+    setSelectedServiceType((prev) => prev || urlServiceType);
+    setSelectedLocalAuthority((prev) => prev || urlLocalAuthority);
+    setSelectedSpecialisms((prev) =>
+      prev.length === 0 ? urlSpecialisms : prev
+    );
+  }, []);
+
+  useEffect(() => {
     let result = serverAirtableData.features;
     result = filterByLocalAuthority(result, selectedLocalAuthority);
 
