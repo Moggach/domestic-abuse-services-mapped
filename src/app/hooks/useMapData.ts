@@ -28,7 +28,7 @@ export const useMapData = (
   >([]);
 
   useEffect(() => {
-    const updateAirtableDataWithDistance = () => {
+    const updateServerDataWithDistance = () => {
       if (!searchLat || !searchLng || isSearchCleared) {
         setFilteredMapBoxData({
           type: 'FeatureCollection',
@@ -79,7 +79,7 @@ export const useMapData = (
       });
     };
 
-    updateAirtableDataWithDistance();
+    updateServerDataWithDistance();
   }, [
     searchLat,
     searchLng,

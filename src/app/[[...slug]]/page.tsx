@@ -37,7 +37,7 @@ const Page: React.FC = async () => {
 
   return (
     <App
-      serverAirtableData={featureCollection}
+      serverData={featureCollection}
       initialServiceTypes={initialServiceTypes}
       initialSpecialisms={initialSpecialisms}
       localAuthorities={localAuthorities}
