@@ -10,7 +10,6 @@
     "@testing-library/user-event": "^13.5.0",
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.3",
-    "airtable": "^0.12.2",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "geolib": "^3.3.4",
