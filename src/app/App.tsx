@@ -52,14 +52,14 @@ export interface FeatureCollection {
 }
 
 export interface HomePageProps {
-  serverAirtableData: FeatureCollection;
+  serverData: FeatureCollection;
   initialServiceTypes: string[];
   initialSpecialisms: string[];
   localAuthorities: string[];
 }
 
 const App: React.FC<HomePageProps> = ({
-  serverAirtableData,
+  serverData,
   initialServiceTypes,
   initialSpecialisms,
   localAuthorities,
@@ -94,7 +94,7 @@ const App: React.FC<HomePageProps> = ({
     setSelectedSpecialisms,
     filteredData,
   } = useSearchFilters(
-    serverAirtableData,
+    serverData,
     isPostcode,
     submittedSearchQuery,
     searchSubmitted

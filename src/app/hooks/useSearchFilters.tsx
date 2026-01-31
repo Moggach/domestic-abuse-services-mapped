@@ -21,7 +21,7 @@ interface UseSearchFiltersReturn {
 }
 
 export const useSearchFilters = (
-  serverAirtableData: FeatureCollection,
+  serverData: FeatureCollection,
   isPostcode: (query: string) => boolean,
   submittedSearchQuery: string,
   searchSubmitted: boolean
@@ -52,7 +52,7 @@ export const useSearchFilters = (
   }, []);
 
   useEffect(() => {
-    let result = serverAirtableData.features;
+    let result = serverData.features;
     result = filterByLocalAuthority(result, selectedLocalAuthority);
 
     result = filterByServiceType(result, selectedServiceType);
@@ -74,7 +74,7 @@ export const useSearchFilters = (
     selectedSpecialisms,
     searchSubmitted,
     submittedSearchQuery,
-    serverAirtableData,
+    serverData,
     isPostcode,
   ]);
 
