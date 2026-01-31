@@ -153,7 +153,7 @@ export async function GET(req: Request) {
  *       401:
  *         description: Unauthorized (invalid Bearer token)
  *       500:
- *         description: Airtable error
+ *         description: Server error
  */
 
 const redis = new Redis({
