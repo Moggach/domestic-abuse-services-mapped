@@ -1,7 +1,5 @@
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-
-import PopUp from './PopUp';
+import React, { useRef, useEffect, useState } from 'react';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? '';
 
@@ -17,16 +15,7 @@ interface MapBoxProps {
   selectedLocalAuthority?: string;
   setIsMapLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isMapLoading: boolean;
-}
-
-interface PopupInfo {
-  coordinates: [number, number];
-  name?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  donate?: string;
+  onActiveBoroughChange?: (borough: string | null) => void;
 }
 
 const MapBox: React.FC<MapBoxProps> = ({
@@ -41,10 +30,13 @@ const MapBox: React.FC<MapBoxProps> = ({
   selectedLocalAuthority,
   setIsMapLoading,
   isMapLoading,
+  onActiveBoroughChange,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [hoveredBorough, setHoveredBorough] = useState<string | null>(null);
+  const [pinnedBorough, setPinnedBorough] = useState<string | null>(null);
+  const activeBorough = hoveredBorough ?? pinnedBorough;
 
   useEffect(() => {
     if (map.current) return;
@@ -64,6 +56,30 @@ const MapBox: React.FC<MapBoxProps> = ({
 
     map.current.on('load', () => {
       setIsMapLoading(false);
+    });
+
+    map.current.on('load', () => {
+      const mapInstance = map.current!;
+
+      mapInstance.on('mouseenter', 'boroughs-fill', () => {
+        mapInstance.getCanvas().style.cursor = 'pointer';
+      });
+
+      mapInstance.on('mousemove', 'boroughs-fill', (e) => {
+        const name = e.features?.[0]?.properties?.LAD24NM as string | undefined;
+        setHoveredBorough(name ?? null);
+      });
+
+      mapInstance.on('mouseleave', 'boroughs-fill', () => {
+        mapInstance.getCanvas().style.cursor = '';
+        setHoveredBorough(null);
+      });
+
+      mapInstance.on('click', 'boroughs-fill', (e) => {
+        const name = e.features?.[0]?.properties?.LAD24NM as string | undefined;
+        if (!name) return;
+        setPinnedBorough((prev) => (prev === name ? null : name));
+      });
     });
 
     map.current.on('zoom', () => {
@@ -89,157 +105,20 @@ const MapBox: React.FC<MapBoxProps> = ({
     map.current.on('move', () => {
       setLng(parseFloat(map.current!.getCenter().lng.toFixed(4)));
       setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
-      setPopupInfo(null);
-    });
-
-    map.current.on('zoomend', () => {
-      setPopupInfo(null);
     });
   }, [lng, lat, zoom, setLng, setLat, setIsMapLoading]);
 
   useEffect(() => {
     if (map.current && searchLat && searchLng) {
-      setPopupInfo(null);
       map.current.flyTo({
         center: [searchLng, searchLat],
         zoom: zoom,
       });
     }
   }, [searchLat, searchLng, zoom]);
-  useEffect(() => {
-    if (!map.current) return;
-
-    const handleZoomEnd = () => {
-      setPopupInfo(null);
-      const source = map.current!.getSource('points') as mapboxgl.GeoJSONSource;
-      if (source) {
-        source.setData({
-          type: 'FeatureCollection',
-          features: [],
-        });
-
-        setTimeout(() => source.setData(data), 0);
-      }
-    };
-
-    const handleMove = () => setPopupInfo(null);
-
-    map.current.on('zoomend', handleZoomEnd);
-    map.current.on('move', handleMove);
-
-    return () => {
-      if (map.current) {
-        map.current.off('zoomend', handleZoomEnd);
-        map.current.off('move', handleMove);
-      }
-    };
-  }, [data]);
-
-  const handlePointSelect = useCallback(
-    (
-      e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) &
-        mapboxgl.EventData & { features?: mapboxgl.MapboxGeoJSONFeature[] }
-    ) => {
-      if (!e.features || !e.features[0]) return;
-
-      const geometry = e.features[0].geometry;
-      if (geometry.type === 'Point') {
-        const coordinates = geometry.coordinates as [number, number];
-        const properties = e.features[0].properties as Record<string, any>;
-
-        setPopupInfo({
-          coordinates,
-          name: properties.name || '',
-          address: properties.address || '',
-          phone: properties.phone || '',
-          email: properties.email || '',
-          website: properties.website || '',
-          donate: properties.donate || '',
-        });
-      }
-    },
-    []
-  );
 
   useEffect(() => {
     if (!map.current) return;
-
-    const loadPoints = () => {
-      if (data) {
-        const source = map.current!.getSource(
-          'points'
-        ) as mapboxgl.GeoJSONSource;
-
-        if (source) {
-          source.setData(data);
-        } else {
-          map.current!.addSource('points', {
-            type: 'geojson',
-            data: data,
-            cluster: true,
-            clusterMaxZoom: 14,
-            clusterRadius: 20,
-          });
-
-          map.current!.addLayer({
-            id: 'clusters',
-            type: 'circle',
-            source: 'points',
-            filter: ['has', 'point_count'],
-            paint: {
-              'circle-color': [
-                'step',
-                ['get', 'point_count'],
-                '#51bbd6',
-                100,
-                '#f1f075',
-                750,
-                '#f28cb1',
-              ],
-              'circle-radius': [
-                'step',
-                ['get', 'point_count'],
-                20,
-                100,
-                30,
-                750,
-                40,
-              ],
-            },
-          });
-
-          map.current!.addLayer({
-            id: 'cluster-count',
-            type: 'symbol',
-            source: 'points',
-            filter: ['has', 'point_count'],
-            layout: {
-              'text-field': '{point_count_abbreviated}',
-              'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-              'text-size': 12,
-            },
-            paint: {
-              'text-color': '#ffffff',
-            },
-          });
-
-          map.current!.addLayer({
-            id: 'unclustered-point',
-            type: 'circle',
-            source: 'points',
-            filter: ['!', ['has', 'point_count']],
-            paint: {
-              'circle-color': '#11b4da',
-              'circle-radius': 5,
-              'circle-stroke-width': 1,
-              'circle-stroke-color': '#fff',
-            },
-          });
-        }
-      }
-
-      map.current!.on('click', 'unclustered-point', handlePointSelect);
-    };
 
     const addBoundariesLayer = () => {
       if (!map.current) return;
@@ -252,18 +131,15 @@ const MapBox: React.FC<MapBoxProps> = ({
       }
 
       if (!map.current.getLayer('local-authorities-fill')) {
-        map.current.addLayer(
-          {
-            id: 'local-authorities-fill',
-            type: 'fill',
-            source: 'local-authorities',
-            paint: {
-              'fill-color': '#C0C0C0',
-              'fill-opacity': 0.3,
-            },
+        map.current.addLayer({
+          id: 'local-authorities-fill',
+          type: 'fill',
+          source: 'local-authorities',
+          paint: {
+            'fill-color': '#C0C0C0',
+            'fill-opacity': 0.3,
           },
-          'clusters'
-        );
+        });
       }
 
       if (selectedLocalAuthority) {
@@ -275,16 +151,56 @@ const MapBox: React.FC<MapBoxProps> = ({
       } else {
         map.current.setFilter('local-authorities-fill', false);
       }
+
+      const boroughsWithServices = Array.from(
+        new Set(
+          data.features
+            .filter((feature) => feature.properties?.localAuthority)
+            .map((feature) => feature.properties!.localAuthority as string)
+        )
+      );
+
+      const boroughFilter: mapboxgl.Expression = [
+        'in',
+        ['get', 'LAD24NM'],
+        ['literal', boroughsWithServices],
+      ];
+
+      if (!map.current.getLayer('boroughs-fill')) {
+        map.current.addLayer({
+          id: 'boroughs-fill',
+          type: 'fill',
+          source: 'local-authorities',
+          filter: boroughFilter,
+          paint: {
+            'fill-color': '#8b5cf6',
+            'fill-opacity': 0.18,
+          },
+        });
+      } else {
+        map.current.setFilter('boroughs-fill', boroughFilter);
+      }
+
+      if (!map.current.getLayer('boroughs-outline')) {
+        map.current.addLayer({
+          id: 'boroughs-outline',
+          type: 'line',
+          source: 'local-authorities',
+          filter: boroughFilter,
+          paint: {
+            'line-color': '#8b5cf6',
+            'line-width': 1.5,
+          },
+        });
+      } else {
+        map.current.setFilter('boroughs-outline', boroughFilter);
+      }
     };
 
     if (map.current.isStyleLoaded()) {
-      loadPoints();
       addBoundariesLayer();
     } else {
-      map.current.on('load', () => {
-        loadPoints();
-        addBoundariesLayer();
-      });
+      map.current.on('load', addBoundariesLayer);
     }
   }, [data, selectedLocalAuthority]);
 
@@ -292,7 +208,6 @@ const MapBox: React.FC<MapBoxProps> = ({
     if (!map.current) return;
 
     if (!selectedLocalAuthority) {
-      setPopupInfo(null);
       map.current.flyTo({
         center: [lng, lat],
         zoom: zoom,
@@ -309,7 +224,6 @@ const MapBox: React.FC<MapBoxProps> = ({
         );
 
         if (authority) {
-          setPopupInfo(null);
           const [lng, lat] = authority.geometry.coordinates;
           map.current!.flyTo({
             center: [lng, lat],
@@ -319,6 +233,21 @@ const MapBox: React.FC<MapBoxProps> = ({
       })
       .catch((err) => console.error('Error fetching authority data:', err));
   }, [selectedLocalAuthority]);
+
+  useEffect(() => {
+    onActiveBoroughChange?.(activeBorough);
+  }, [activeBorough, onActiveBoroughChange]);
+
+  useEffect(() => {
+    if (!map.current || !map.current.getLayer('boroughs-fill')) return;
+
+    map.current.setPaintProperty('boroughs-fill', 'fill-opacity', [
+      'case',
+      ['==', ['get', 'LAD24NM'], activeBorough ?? ''],
+      0.45,
+      0.18,
+    ]);
+  }, [activeBorough]);
 
   return (
     <>
@@ -330,9 +259,7 @@ const MapBox: React.FC<MapBoxProps> = ({
       <div
         className="h-[400px] w-full lg:h-[800px] rounded-2xl"
         ref={mapContainer}
-      >
-        {popupInfo && <PopUp map={map} {...popupInfo} />}
-      </div>
+      />
     </>
   );
 };
