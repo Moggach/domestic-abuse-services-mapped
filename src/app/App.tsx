@@ -37,6 +37,7 @@ export interface Properties {
   serviceSpecialism: string[] | string;
   localAuthority: string;
   approved: boolean;
+  preciseLocationHidden?: boolean;
 }
 
 export interface Feature {

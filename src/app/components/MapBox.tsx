@@ -45,6 +45,51 @@ const MapBox: React.FC<MapBoxProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [boroughCentroids, setBoroughCentroids] = useState<Record<
+    string,
+    [number, number]
+  > | null>(null);
+
+  useEffect(() => {
+    fetch('/data/local-authority-centroids.geojson')
+      .then((res) => res.json())
+      .then((geojson) => {
+        const centroids: Record<string, [number, number]> = {};
+        geojson.features.forEach((feature: any) => {
+          if (feature.properties?.LAD24NM) {
+            centroids[feature.properties.LAD24NM] = feature.geometry
+              .coordinates as [number, number];
+          }
+        });
+        setBoroughCentroids(centroids);
+      })
+      .catch((err) => console.error('Error fetching borough centroids:', err));
+  }, []);
+
+  const preciseData: GeoJSON.FeatureCollection = {
+    type: 'FeatureCollection',
+    features: data.features.filter(
+      (feature) => !feature.properties?.preciseLocationHidden
+    ),
+  };
+
+  const fuzzyData: GeoJSON.FeatureCollection = {
+    type: 'FeatureCollection',
+    features: boroughCentroids
+      ? data.features
+          .filter((feature) => feature.properties?.preciseLocationHidden)
+          .reduce<GeoJSON.Feature[]>((acc, feature) => {
+            const centroid =
+              boroughCentroids[feature.properties?.localAuthority];
+            if (!centroid) return acc;
+            acc.push({
+              ...feature,
+              geometry: { type: 'Point', coordinates: centroid },
+            });
+            return acc;
+          }, [])
+      : [],
+  };
 
   useEffect(() => {
     if (map.current) return;
@@ -118,7 +163,7 @@ const MapBox: React.FC<MapBoxProps> = ({
           features: [],
         });
 
-        setTimeout(() => source.setData(data), 0);
+        setTimeout(() => source.setData(preciseData), 0);
       }
     };
 
@@ -133,7 +178,7 @@ const MapBox: React.FC<MapBoxProps> = ({
         map.current.off('move', handleMove);
       }
     };
-  }, [data]);
+  }, [preciseData]);
 
   const handlePointSelect = useCallback(
     (
@@ -161,21 +206,49 @@ const MapBox: React.FC<MapBoxProps> = ({
     []
   );
 
+  const handleFuzzyPointSelect = useCallback(
+    (
+      e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) &
+        mapboxgl.EventData & { features?: mapboxgl.MapboxGeoJSONFeature[] }
+    ) => {
+      if (!e.features || !e.features[0]) return;
+
+      const geometry = e.features[0].geometry;
+      if (geometry.type === 'Point') {
+        const coordinates = geometry.coordinates as [number, number];
+        const properties = e.features[0].properties as Record<string, any>;
+
+        setPopupInfo({
+          coordinates,
+          name: properties.name || '',
+          address: properties.localAuthority
+            ? `Based in ${properties.localAuthority} — contact for address`
+            : '',
+          phone: properties.phone || '',
+          email: properties.email || '',
+          website: properties.website || '',
+          donate: properties.donate || '',
+        });
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     if (!map.current) return;
 
     const loadPoints = () => {
-      if (data) {
+      if (preciseData) {
         const source = map.current!.getSource(
           'points'
         ) as mapboxgl.GeoJSONSource;
 
         if (source) {
-          source.setData(data);
+          source.setData(preciseData);
         } else {
           map.current!.addSource('points', {
             type: 'geojson',
-            data: data,
+            data: preciseData,
             cluster: true,
             clusterMaxZoom: 14,
             clusterRadius: 20,
@@ -238,7 +311,33 @@ const MapBox: React.FC<MapBoxProps> = ({
         }
       }
 
+      const fuzzySource = map.current!.getSource(
+        'fuzzy-points'
+      ) as mapboxgl.GeoJSONSource;
+
+      if (fuzzySource) {
+        fuzzySource.setData(fuzzyData);
+      } else {
+        map.current!.addSource('fuzzy-points', {
+          type: 'geojson',
+          data: fuzzyData,
+        });
+
+        map.current!.addLayer({
+          id: 'fuzzy-points',
+          type: 'circle',
+          source: 'fuzzy-points',
+          paint: {
+            'circle-color': '#8b5cf6',
+            'circle-radius': 18,
+            'circle-blur': 1,
+            'circle-opacity': 0.35,
+          },
+        });
+      }
+
       map.current!.on('click', 'unclustered-point', handlePointSelect);
+      map.current!.on('click', 'fuzzy-points', handleFuzzyPointSelect);
     };
 
     const addBoundariesLayer = () => {
@@ -286,7 +385,7 @@ const MapBox: React.FC<MapBoxProps> = ({
         addBoundariesLayer();
       });
     }
-  }, [data, selectedLocalAuthority]);
+  }, [preciseData, fuzzyData, selectedLocalAuthority]);
 
   useEffect(() => {
     if (!map.current) return;
