@@ -24,7 +24,6 @@ export async function getServicesFromDb() {
         serviceSpecialism: row.service_specialism || [],
         approved: row.approved,
         localAuthority: row.local_authority || '',
-        preciseLocationHidden: row.location_level === 'borough_only',
       },
       geometry: {
         type: 'Point' as const,

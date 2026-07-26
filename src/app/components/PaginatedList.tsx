@@ -13,8 +13,6 @@ interface Properties {
   email: string;
   serviceType: string | string[];
   serviceSpecialism?: string | string[];
-  localAuthority?: string;
-  preciseLocationHidden?: boolean;
 }
 
 interface Item {
@@ -190,11 +188,7 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
                       </a>
                     </div>
                     <p>{properties.description}</p>
-                    <p>
-                      {properties.preciseLocationHidden
-                        ? `Based in ${properties.localAuthority || 'this area'} — contact for address`
-                        : properties.address}
-                    </p>
+                    <p>{properties.address}</p>
                     <div className="flex flex-col text-sm gap-2">
                       <div className="flex flex-col gap-3 mt-2">
                         {properties.phone && (

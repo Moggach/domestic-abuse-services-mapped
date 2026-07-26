@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 
-import BoroughServicesPanel from './components/BoroughServicesPanel';
 import ClearFiltersButton from './components/ClearFiltersButton';
 import Footer from './components/Footer';
 import LocalAuthorityFilter from './components/LocalAuthorityFilter';
@@ -38,7 +37,6 @@ export interface Properties {
   serviceSpecialism: string[] | string;
   localAuthority: string;
   approved: boolean;
-  preciseLocationHidden?: boolean;
 }
 
 export interface Feature {
@@ -106,7 +104,6 @@ const App: React.FC<HomePageProps> = ({
   const [specialisms] = useState<string[]>(initialSpecialisms);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isMapLoading, setIsMapLoading] = useState(true);
-  const [activeBorough, setActiveBorough] = useState<string | null>(null);
 
   const { filteredMapBoxData, filteredDataWithDistance } = useMapData(
     filteredData,
@@ -124,12 +121,6 @@ const App: React.FC<HomePageProps> = ({
     submittedSearchQuery,
     currentPage
   );
-
-  const activeBoroughServices = activeBorough
-    ? filteredData.filter(
-        (item) => item.properties.localAuthority === activeBorough
-      )
-    : [];
 
   const hasFiltersApplied =
     selectedServiceType !== '' ||
@@ -149,7 +140,7 @@ const App: React.FC<HomePageProps> = ({
       <NavBar onClearFilters={clearFilters} />
       <main className="px-4 pt-8 pb-8 lg:flex lg:gap-6">
         <Modal />
-        <div className="relative lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit mb-8 lg:mb-0">
+        <div className="lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit mb-8 lg:mb-0">
           <MapBox
             lng={lng}
             lat={lat}
@@ -164,14 +155,7 @@ const App: React.FC<HomePageProps> = ({
             selectedLocalAuthority={selectedLocalAuthority}
             setIsMapLoading={setIsMapLoading}
             isMapLoading={isMapLoading}
-            onActiveBoroughChange={setActiveBorough}
           />
-          <div className="absolute top-4 right-4 bottom-4 z-40 w-[85%] max-w-sm">
-            <BoroughServicesPanel
-              borough={activeBorough}
-              services={activeBoroughServices}
-            />
-          </div>
         </div>
 
         <div className="flex flex-col gap-7 basis-1/2">
