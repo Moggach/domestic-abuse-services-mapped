@@ -21,7 +21,7 @@ const About: React.FC = () => {
           <p>
             If your service isn&apos;t listed please submit the details using
             this{' '}
-            <a className="underline" href="https://tally.so/r/NplpjN">
+            <a className="underline" href="https://tally.so/r/vG9ADg">
               form
             </a>{' '}
           </p>
