@@ -38,6 +38,7 @@
     "prepare": "husky install",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:ratelimit": "jest --config jest.live.config.js",
     "test:e2e": "playwright test"
   },
   "eslintConfig": {

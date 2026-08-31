@@ -4,15 +4,9 @@ const nextJest = require('next/jest');
 const createJestConfig = nextJest({ dir: './' });
 
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jest-environment-jsdom',
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/',
-    '<rootDir>/.next/',
-    '<rootDir>/dist/',
-    '<rootDir>/e2e/',
-    '\\.live\\.test\\.ts$',
-  ],
+  testEnvironment: 'node',
+  testMatch: ['<rootDir>/src/**/*.live.test.ts'],
+  testTimeout: 30000,
   moduleDirectories: ['node_modules', '<rootDir>'],
 };
 
