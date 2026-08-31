@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import type { Properties, Geometry, Feature, FeatureCollection } from '../App';
+import type { Feature, FeatureCollection } from '../App';
 
-interface FilteredDataItem {
-  geometry: Geometry;
-  properties: Properties;
-}
+type FilteredDataItem = Pick<Feature, 'geometry' | 'properties'>;
 
 export const useMapData = (
   filteredData: FilteredDataItem[],

@@ -15,9 +15,6 @@ interface UseSearchFiltersReturn {
   selectedSpecialisms: string[];
   setSelectedSpecialisms: (specialisms: string[]) => void;
   filteredData: Feature[];
-  setFilteredData: (data: Feature[]) => void;
-  filteredDataWithDistance: Feature[];
-  setFilteredDataWithDistance: (data: Feature[]) => void;
 }
 
 export const useSearchFilters = (
@@ -31,9 +28,6 @@ export const useSearchFilters = (
     useState<string>('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<Feature[]>([]);
-  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<
-    Feature[]
-  >([]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -86,8 +80,5 @@ export const useSearchFilters = (
     selectedSpecialisms,
     setSelectedSpecialisms,
     filteredData,
-    setFilteredData,
-    filteredDataWithDistance,
-    setFilteredDataWithDistance,
   };
 };

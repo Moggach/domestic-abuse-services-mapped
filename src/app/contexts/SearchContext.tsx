@@ -2,7 +2,6 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useState, useContext } from 'react';
 
-import type { Feature } from '../App';
 import {
   calculateDistance,
   fetchCoordinates,
@@ -23,10 +22,6 @@ interface SearchContextType {
   setSearchLng: React.Dispatch<React.SetStateAction<number>>;
   searchLat: number;
   setSearchLat: React.Dispatch<React.SetStateAction<number>>;
-  filteredData: Feature[];
-  setFilteredData: React.Dispatch<React.SetStateAction<Feature[]>>;
-  filteredDataWithDistance: Feature[];
-  setFilteredDataWithDistance: React.Dispatch<React.SetStateAction<Feature[]>>;
   handleSearchSubmit: (searchQuery: string) => Promise<void>;
   handleSearchClear: () => void;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
@@ -62,10 +57,6 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const [isSearchCleared, setIsSearchCleared] = useState<boolean>(false);
   const [searchLng, setSearchLng] = useState<number>(0);
   const [searchLat, setSearchLat] = useState<number>(0);
-  const [filteredData, setFilteredData] = useState<Feature[]>([]);
-  const [filteredDataWithDistance, setFilteredDataWithDistance] = useState<
-    Feature[]
-  >([]);
   const [zoom, setZoom] = useState<number>(determineZoomLevel());
   const [lng, setLng] = useState<number>(-3.5);
   const [lat, setLat] = useState<number>(54.5);
@@ -99,7 +90,6 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     setSearchInput('');
     setSubmittedSearchQuery('');
     setSearchSubmitted(false);
-    setFilteredDataWithDistance([]);
     setIsSearchCleared(true);
     setRadius(10);
   };
@@ -117,10 +107,6 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     setSearchLng,
     searchLat,
     setSearchLat,
-    filteredData,
-    setFilteredData,
-    filteredDataWithDistance,
-    setFilteredDataWithDistance,
     handleSearchSubmit,
     handleSearchClear,
     setZoom,

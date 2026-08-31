@@ -1,5 +1,11 @@
 import mapboxgl, { NavigationControl } from 'mapbox-gl';
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+} from 'react';
 
 import PopUp from './PopUp';
 
@@ -55,8 +61,11 @@ const MapBox: React.FC<MapBoxProps> = ({
       .then((res) => res.json())
       .then((geojson) => {
         const centroids: Record<string, [number, number]> = {};
-        geojson.features.forEach((feature: any) => {
-          if (feature.properties?.LAD24NM) {
+        geojson.features.forEach((feature: GeoJSON.Feature) => {
+          if (
+            feature.properties?.LAD24NM &&
+            feature.geometry.type === 'Point'
+          ) {
             centroids[feature.properties.LAD24NM] = feature.geometry
               .coordinates as [number, number];
           }
@@ -66,24 +75,27 @@ const MapBox: React.FC<MapBoxProps> = ({
       .catch((err) => console.error('Error fetching borough centroids:', err));
   }, []);
 
-  const combinedData: GeoJSON.FeatureCollection = {
-    type: 'FeatureCollection',
-    features: data.features.reduce<GeoJSON.Feature[]>((acc, feature) => {
-      if (!feature.properties?.preciseLocationHidden) {
-        acc.push(feature);
+  const combinedData: GeoJSON.FeatureCollection = useMemo(
+    () => ({
+      type: 'FeatureCollection',
+      features: data.features.reduce<GeoJSON.Feature[]>((acc, feature) => {
+        if (!feature.properties?.preciseLocationHidden) {
+          acc.push(feature);
+          return acc;
+        }
+
+        const centroid = boroughCentroids?.[feature.properties?.localAuthority];
+        if (!centroid) return acc;
+
+        acc.push({
+          ...feature,
+          geometry: { type: 'Point', coordinates: centroid },
+        });
         return acc;
-      }
-
-      const centroid = boroughCentroids?.[feature.properties?.localAuthority];
-      if (!centroid) return acc;
-
-      acc.push({
-        ...feature,
-        geometry: { type: 'Point', coordinates: centroid },
-      });
-      return acc;
-    }, []),
-  };
+      }, []),
+    }),
+    [data, boroughCentroids]
+  );
 
   useEffect(() => {
     if (map.current) return;
@@ -184,7 +196,16 @@ const MapBox: React.FC<MapBoxProps> = ({
       const geometry = e.features[0].geometry;
       if (geometry.type === 'Point') {
         const coordinates = geometry.coordinates as [number, number];
-        const properties = e.features[0].properties as Record<string, any>;
+        const properties = e.features[0].properties as {
+          name?: string;
+          address?: string;
+          phone?: string;
+          email?: string;
+          website?: string;
+          donate?: string;
+          localAuthority?: string;
+          preciseLocationHidden?: boolean;
+        };
 
         setPopupInfo({
           coordinates,
@@ -327,7 +348,7 @@ const MapBox: React.FC<MapBoxProps> = ({
         addBoundariesLayer();
       });
     }
-  }, [combinedData, selectedLocalAuthority]);
+  }, [combinedData, selectedLocalAuthority, handlePointSelect]);
 
   useEffect(() => {
     if (!map.current) return;
@@ -345,11 +366,11 @@ const MapBox: React.FC<MapBoxProps> = ({
       .then((res) => res.json())
       .then((geojson) => {
         const authority = geojson.features.find(
-          (feature: any) =>
-            feature.properties.LAD24NM === selectedLocalAuthority
+          (feature: GeoJSON.Feature) =>
+            feature.properties?.LAD24NM === selectedLocalAuthority
         );
 
-        if (authority) {
+        if (authority && authority.geometry.type === 'Point') {
           setPopupInfo(null);
           const [lng, lat] = authority.geometry.coordinates;
           map.current!.flyTo({
@@ -359,6 +380,9 @@ const MapBox: React.FC<MapBoxProps> = ({
         }
       })
       .catch((err) => console.error('Error fetching authority data:', err));
+    // lat/lng/zoom intentionally omitted: they update on every pan/zoom and
+    // should only be used as the fly-back target when the authority clears.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLocalAuthority]);
 
   return (

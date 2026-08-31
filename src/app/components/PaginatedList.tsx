@@ -2,25 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import type { IconType } from 'react-icons';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 
+import type { Feature } from '../App';
 import { iconMapping } from '../utils';
 
-interface Properties {
-  name: string;
-  website: string;
-  description: string;
-  address: string;
-  phone: string;
-  email: string;
-  serviceType: string | string[];
-  serviceSpecialism?: string | string[];
-  localAuthority?: string;
-  preciseLocationHidden?: boolean;
-}
-
-interface Item {
-  properties: Properties;
-  distance?: number;
-}
+type Item = Pick<Feature, 'properties' | 'distance'>;
 
 interface PaginationProps {
   data: Item[];

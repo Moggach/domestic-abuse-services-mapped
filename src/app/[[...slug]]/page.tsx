@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getServicesFromDb } from '../../services/serviceData';
-import type { Feature, FeatureCollection } from '../App';
+import type { FeatureCollection } from '../App';
 import App from '../App';
 import {
   flattenAndUnique,

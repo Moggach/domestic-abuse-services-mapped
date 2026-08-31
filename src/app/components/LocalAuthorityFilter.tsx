@@ -30,7 +30,7 @@ export default function LocalAuthorityFilter({
       } else {
         setError('No local authority found for this postcode.');
       }
-    } catch (e) {
+    } catch {
       setError('Error looking up local authority.');
     } finally {
       setLoading(false);

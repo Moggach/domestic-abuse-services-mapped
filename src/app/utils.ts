@@ -142,13 +142,7 @@ export const filterBySpecialisms = (
   });
 };
 
-interface FlattenAndUniqueResult {
-  (data: Feature[]): string[];
-}
-
-export const flattenAndUnique: FlattenAndUniqueResult = function (
-  data: Feature[]
-): string[] {
+export const flattenAndUnique = (data: Feature[]): string[] => {
   const allServiceTypes: string[] = data.reduce<string[]>(
     (acc: string[], item: Feature) => {
       const serviceTypes: string | string[] | undefined =
