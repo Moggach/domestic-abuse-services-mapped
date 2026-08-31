@@ -32,12 +32,6 @@ const Privacy: React.FC = () => {
             share, or pass on any data to third parties. Visitor data remains
             confidential and is never used for advertising purposes.
           </p>
-          <p>
-            If you have questions about this policy, please contact{' '}
-            <a className="underline" href="mailto:anna_cunnane@proton.me">
-              anna_cunnane@proton.me
-            </a>
-          </p>
         </div>
       </main>
       <QuickExit />
