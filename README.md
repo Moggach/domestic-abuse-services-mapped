@@ -94,8 +94,10 @@ New submissions from `POST /api` are inserted with `approved = false` and must b
 
 The public API is documented interactively at `/api-docs` (Swagger UI), backed by the OpenAPI spec at `/api/swagger`.
 
-- `GET /api` — returns approved services as a GeoJSON `FeatureCollection`. Accepts optional `postcode` and `radius` (miles, default 10) query params to filter and sort by distance.
+- `GET /api` — returns approved services as a GeoJSON `FeatureCollection`. Accepts optional `postcode` and `radius` (miles, default 10) query params to filter and sort by distance. Rate-limited to 30 requests per 10 seconds per IP.
 - `POST /api` — creates a new (unapproved) service. Requires an `Authorization: Bearer <ADMIN_API_TOKEN>` header and is rate-limited to 5 requests per 10 seconds per IP.
+
+Both endpoints are backed by Upstash Redis for rate limiting (see [Environment variables](#environment-variables)), with separate limits so heavy read traffic can't block writes or vice versa.
 
 ## Project structure
 

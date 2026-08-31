@@ -7,6 +7,45 @@ import { createService, getServicesFromDb } from '../../services/serviceData';
 import { calculateDistance, isPostcode } from '../lib/geo';
 import { fetchCoordinates } from '../lib/postcodes';
 
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+const readRatelimit = new Ratelimit({
+  redis,
+  prefix: 'ratelimit:get',
+  limiter: Ratelimit.slidingWindow(30, '10 s'),
+  analytics: true,
+});
+
+const writeRatelimit = new Ratelimit({
+  redis,
+  prefix: 'ratelimit:post',
+  limiter: Ratelimit.slidingWindow(5, '10 s'),
+  analytics: true,
+});
+
+function getClientIp(req: Request): string {
+  return (
+    req.headers.get('cf-connecting-ip') ||
+    req.headers.get('x-forwarded-for')?.split(',')[0] ||
+    'anonymous'
+  );
+}
+
+function rateLimitHeaders(result: {
+  limit: number;
+  remaining: number;
+  reset: number;
+}): Record<string, string> {
+  return {
+    'X-RateLimit-Limit': result.limit.toString(),
+    'X-RateLimit-Remaining': result.remaining.toString(),
+    'X-RateLimit-Reset': result.reset.toString(),
+  };
+}
+
 /**
  * @openapi
  * /api:
@@ -37,9 +76,27 @@ import { fetchCoordinates } from '../lib/postcodes';
  *                 $ref: '#/components/schemas/GeoJSONFeature'
  *       400:
  *         description: Invalid postcode format
+ *       429:
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 
 export async function GET(req: Request) {
+  const { success, limit, remaining, reset } = await readRatelimit.limit(
+    getClientIp(req)
+  );
+  const headers = rateLimitHeaders({ limit, remaining, reset });
+
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please slow down.' },
+      { status: 429, headers }
+    );
+  }
+
   const url = new URL(req.url);
   const postcode = url.searchParams.get('postcode');
   const radius = parseFloat(url.searchParams.get('radius') || '10');
@@ -47,7 +104,7 @@ export async function GET(req: Request) {
   if (postcode && !isPostcode(postcode)) {
     return NextResponse.json(
       { error: 'Invalid postcode format' },
-      { status: 400 }
+      { status: 400, headers }
     );
   }
 
@@ -58,7 +115,7 @@ export async function GET(req: Request) {
     if (!coordinates) {
       return NextResponse.json(
         { error: 'Postcode not found' },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
     data = data
@@ -81,7 +138,10 @@ export async function GET(req: Request) {
       .sort((a, b) => a.properties.distance! - b.properties.distance!);
   }
 
-  return NextResponse.json({ type: 'FeatureCollection', features: data });
+  return NextResponse.json(
+    { type: 'FeatureCollection', features: data },
+    { headers }
+  );
 }
 
 /**
@@ -153,34 +213,22 @@ export async function GET(req: Request) {
  *         description: Missing required fields
  *       401:
  *         description: Unauthorized (invalid Bearer token)
+ *       429:
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Server error
  */
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
-
-const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(5, '10 s'),
-  analytics: true,
-});
-
 export async function POST(req: Request) {
-  const ip =
-    req.headers.get('cf-connecting-ip') ||
-    req.headers.get('x-forwarded-for')?.split(',')[0] ||
-    'anonymous';
+  const { success, limit, remaining, reset } = await writeRatelimit.limit(
+    getClientIp(req)
+  );
 
-  const { success, limit, remaining, reset } = await ratelimit.limit(ip);
-
-  const headers = {
-    'X-RateLimit-Limit': limit.toString(),
-    'X-RateLimit-Remaining': remaining.toString(),
-    'X-RateLimit-Reset': reset.toString(),
-  };
+  const headers = rateLimitHeaders({ limit, remaining, reset });
 
   if (!success) {
     return NextResponse.json(
@@ -191,7 +239,7 @@ export async function POST(req: Request) {
 
   const adminToken = process.env.ADMIN_API_TOKEN;
   const authHeader = req.headers.get('authorization');
-  if (!authHeader || authHeader !== `Bearer ${adminToken}`) {
+  if (!adminToken || !authHeader || authHeader !== `Bearer ${adminToken}`) {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401, headers }
