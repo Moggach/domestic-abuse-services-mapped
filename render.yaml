@@ -5,8 +5,10 @@ services:
     image:
       url: docker.io/sosedoff/pgweb:latest
     plan: starter
-    dockerCommand: sh -c 'pgweb --bind=0.0.0.0 --listen=$PORT'
+    dockerCommand: pgweb --bind=0.0.0.0 --listen=8081
     envVars:
+      - key: PORT
+        value: "8081"
       - key: PGWEB_DATABASE_URL
         sync: false
       - key: PGWEB_AUTH_USER
