@@ -3,7 +3,10 @@ import { Client } from 'pg';
 import type { Feature } from '../app/types';
 
 export async function getServicesFromDb(): Promise<Feature[]> {
-  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
   await client.connect();
 
   try {
@@ -55,7 +58,10 @@ export interface NewServiceInput {
 export async function createService(
   input: NewServiceInput
 ): Promise<{ id: string }> {
-  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
   await client.connect();
 
   try {
