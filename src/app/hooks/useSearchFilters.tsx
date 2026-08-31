@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 
-import type { FeatureCollection, Feature } from '../App';
 import {
   filterByServiceType,
   filterBySpecialisms,
   filterByLocalAuthority,
-} from '../utils';
+} from '../lib/filters';
+import type { FeatureCollection, Feature } from '../types';
 
 interface UseSearchFiltersReturn {
   selectedServiceType: string;

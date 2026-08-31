@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import type { IconType } from 'react-icons';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 
-import type { Feature } from '../App';
-import { iconMapping } from '../utils';
+import { iconMapping } from '../constants/serviceIcons';
+import type { Feature } from '../types';
 
 type Item = Pick<Feature, 'properties' | 'distance'>;
 

@@ -1,13 +1,13 @@
 import '../styles/globals.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getServicesFromDb } from '../../services/serviceData';
-import type { FeatureCollection } from '../App';
 import App from '../App';
 import {
   flattenAndUnique,
   flattenAndUniqueSpecialisms,
   extractUniqueLocalAuthorities,
-} from '../utils';
+} from '../lib/filters';
+import type { FeatureCollection } from '../types';
 
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   return [{ slug: [] }];

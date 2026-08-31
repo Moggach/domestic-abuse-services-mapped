@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { fetchLocalAuthority } from '../utils';
+import { fetchLocalAuthority } from '../lib/postcodes';
 
 interface LocalAuthorityFilterProps {
   selectedLocalAuthority: string;

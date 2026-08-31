@@ -1,10 +1,11 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { NextResponse } from 'next/server';
-import { Client } from 'pg';
 
-import { getServicesFromDb } from '../../services/serviceData';
-import { calculateDistance, fetchCoordinates, isPostcode } from '../utils';
+import type { NewServiceInput } from '../../services/serviceData';
+import { createService, getServicesFromDb } from '../../services/serviceData';
+import { calculateDistance, isPostcode } from '../lib/geo';
+import { fetchCoordinates } from '../lib/postcodes';
 
 /**
  * @openapi
@@ -197,9 +198,9 @@ export async function POST(req: Request) {
     );
   }
 
-  const body = await req.json();
+  const body: NewServiceInput = await req.json();
 
-  const requiredFields = [
+  const requiredFields: (keyof NewServiceInput)[] = [
     'Service name',
     'Service address',
     'Service postcode',
@@ -214,40 +215,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const client = new Client({ connectionString: process.env.DATABASE_URL });
-    await client.connect();
-
-    const insertQuery = `
-      INSERT INTO services (
-        name, description, address, postcode, email, website, phone, donate,
-        service_type, service_specialism, local_authority, approved
-      ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
-      ) RETURNING id
-    `;
-
-    const values = [
-      body['Service name'],
-      body['Service description'] || '',
-      body['Service address'],
-      body['Service postcode'],
-      body['Service email address'] || '',
-      body['Service website'] || '',
-      body['Service phone number'] || '',
-      body['Service donation link'] || '',
-      body['Service type'] || [],
-      body['Specialist services for'] || [],
-      body['Local authority'] || '',
-      false, // approved
-    ];
-
-    const result = await client.query(insertQuery, values);
-    await client.end();
-
-    return NextResponse.json(
-      { success: true, id: result.rows[0].id },
-      { headers }
-    );
+    const { id } = await createService(body);
+    return NextResponse.json({ success: true, id }, { headers });
   } catch (error) {
     console.error('Server error:', error);
     return NextResponse.json(

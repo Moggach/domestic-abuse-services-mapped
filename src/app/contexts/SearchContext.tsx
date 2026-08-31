@@ -2,12 +2,8 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useState, useContext } from 'react';
 
-import {
-  calculateDistance,
-  fetchCoordinates,
-  determineZoomLevel,
-  isPostcode,
-} from '../utils';
+import { calculateDistance, determineZoomLevel, isPostcode } from '../lib/geo';
+import { fetchCoordinates } from '../lib/postcodes';
 
 interface SearchContextType {
   searchInput: string;
