@@ -26,12 +26,6 @@ const About: React.FC = () => {
             </a>{' '}
           </p>
           <p>
-            Have a question or a comment about the site? Please email{' '}
-            <a className="underline" href="mailto:anna_cunnane@proton.me">
-              anna_cunnane@proton.me
-            </a>
-          </p>
-          <p>
             Please note that addresses of services may be approximate. Please
             contact any service before visiting them.
           </p>

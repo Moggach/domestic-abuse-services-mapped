@@ -148,7 +148,7 @@ export async function GET(req: Request) {
  * @openapi
  * /api:
  *   post:
- *     summary: Add a new domestic abuse service (contact anna_cunnane@proton.me for an authorization token)
+ *     summary: Add a new domestic abuse service with an authorization token
  *     tags:
  *       - Services
  *     security:
