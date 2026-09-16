@@ -56,6 +56,8 @@ export default function SearchInput({
           value={searchQuery}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          aria-invalid={!!error}
+          aria-describedby={error ? 'searchInput-error' : undefined}
         />
         <button onClick={handleSubmit} aria-label="Search">
           <svg
@@ -63,6 +65,7 @@ export default function SearchInput({
             viewBox="0 0 16 16"
             fill="currentColor"
             className="h-4 w-4 opacity-70"
+            aria-hidden="true"
           >
             <path
               fillRule="evenodd"
@@ -78,6 +81,7 @@ export default function SearchInput({
               viewBox="0 0 16 16"
               fill="currentColor"
               className="h-4 w-4 opacity-70"
+              aria-hidden="true"
             >
               <path
                 fillRule="evenodd"
@@ -88,7 +92,11 @@ export default function SearchInput({
           </button>
         )}
       </label>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {error && (
+        <p id="searchInput-error" role="alert" className="text-red-500 mt-2">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

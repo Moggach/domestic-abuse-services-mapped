@@ -388,13 +388,20 @@ const MapBox: React.FC<MapBoxProps> = ({
   return (
     <>
       {isMapLoading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+        <div
+          className="absolute inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl"
+          role="status"
+          aria-live="polite"
+        >
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <span className="sr-only">Loading map…</span>
         </div>
       )}
       <div
         className="h-[400px] w-full lg:h-[800px] rounded-2xl"
         ref={mapContainer}
+        role="region"
+        aria-label="Map showing service locations"
       >
         {popupInfo && <PopUp map={map} {...popupInfo} />}
       </div>

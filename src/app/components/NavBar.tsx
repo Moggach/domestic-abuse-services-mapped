@@ -8,14 +8,21 @@ type NavBarProps = {
   onClearFilters?: () => void;
 };
 
-const ClearBrowserHistoryLink: React.FC = () => (
+const ClearBrowserHistoryLink: React.FC<{ tabIndex?: number }> = ({
+  tabIndex,
+}) => (
   <div className="tooltip tooltip-left" data-tip="Delete from browser history">
-    <Link href="/clear-browser">
+    <Link
+      href="/clear-browser"
+      aria-label="Delete from browser history"
+      tabIndex={tabIndex}
+    >
       <svg
         fill="currentColor"
         version="1.1"
         className="h-8 w-8 text-mutedAccent"
         viewBox="0 0 408.483 408.483"
+        aria-hidden="true"
       >
         <g>
           <g>
@@ -36,7 +43,8 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
       toggleDrawer();
     }
   };
@@ -76,12 +84,18 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
           </div>
 
           <div className="md:hidden text-mutedAccent">
-            <button onClick={toggleDrawer} aria-label="Toggle menu">
+            <button
+              onClick={toggleDrawer}
+              aria-label="Toggle menu"
+              aria-expanded={drawerOpen}
+              aria-controls="mobile-drawer"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 className="inline-block h-6 w-6 stroke-current"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -96,8 +110,9 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
       </nav>
       <div
         role="button"
-        tabIndex={0}
+        tabIndex={drawerOpen ? 0 : -1}
         aria-label="Close drawer overlay"
+        aria-hidden={!drawerOpen}
         className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${
           drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
@@ -107,18 +122,25 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
 
       {/* Drawer */}
       <div
+        id="mobile-drawer"
+        aria-hidden={!drawerOpen}
         className={`fixed inset-y-0 right-0 bg-base-200 w-64 z-50 transform ${
           drawerOpen ? 'translate-x-0' : 'translate-x-full'
         } transition-transform`}
       >
         <div className="p-4 flex flex-col gap-4 text-mutedAccent">
           <div className="self-end">
-            <button onClick={toggleDrawer} aria-label="Close menu">
+            <button
+              onClick={toggleDrawer}
+              aria-label="Close menu"
+              tabIndex={drawerOpen ? 0 : -1}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 className="inline-block h-6 w-6 stroke-current"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -135,11 +157,12 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
               key={item}
               className="block text-2xl font-headings font-bold text-mutedAccent"
               onClick={toggleDrawer}
+              tabIndex={drawerOpen ? 0 : -1}
             >
               {item}
             </Link>
           ))}
-          <ClearBrowserHistoryLink />
+          <ClearBrowserHistoryLink tabIndex={drawerOpen ? 0 : -1} />
         </div>
       </div>
     </>

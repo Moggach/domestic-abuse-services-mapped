@@ -99,8 +99,14 @@ const App: React.FC<HomePageProps> = ({
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <NavBar onClearFilters={clearFilters} />
-      <main className="px-4 pt-8 pb-8 lg:flex lg:gap-6">
+      <main id="main-content" className="px-4 pt-8 pb-8 lg:flex lg:gap-6">
         <Modal />
         <div className="lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit mb-8 lg:mb-0">
           <MapBox

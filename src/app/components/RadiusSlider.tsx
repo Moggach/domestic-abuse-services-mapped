@@ -24,6 +24,7 @@ const RadiusSlider: React.FC<RadiusSliderProps> = ({
       max={max}
       value={radius}
       onChange={(e) => setRadius(Number(e.target.value))}
+      aria-valuetext={`${radius} miles`}
     />
   </div>
 );

@@ -21,14 +21,20 @@ const Modal: React.FC = () => {
 
   return (
     <>
-      <dialog id="my_modal_3" className="modal">
+      <dialog id="my_modal_3" className="modal" aria-labelledby="modal-3-title">
         <div className="modal-box">
           <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              aria-label="Close"
+            >
               ✕
             </button>
           </form>
           <div className="flex flex-col gap-2">
+            <h2 id="modal-3-title" className="sr-only">
+              Safety information
+            </h2>
             <p>If you are in an emergency, please call 999</p>
             <p>
               If you need a refuge space please contact the{' '}

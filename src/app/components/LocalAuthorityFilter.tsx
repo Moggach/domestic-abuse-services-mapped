@@ -50,6 +50,8 @@ export default function LocalAuthorityFilter({
           type="button"
           className="underline focus:outline-none mb-3 flex items-center gap-2 group"
           onClick={() => setShowPostcodeLookup((prev) => !prev)}
+          aria-expanded={showPostcodeLookup}
+          aria-controls="postcode-lookup-panel"
         >
           <span>What is my local authority?</span>
           <span className="inline-block">
@@ -58,6 +60,7 @@ export default function LocalAuthorityFilter({
               viewBox="0 0 200 200"
               fill="currentColor"
               className="h-5 w-5 transition-transform duration-200 ease-in-out group-hover:scale-125"
+              aria-hidden="true"
             >
               <path
                 d="m165.33 113.44a103.61 103.61 0 1 1 -207.22 0 103.61 103.61 0 1 1 207.22 0z"
@@ -72,8 +75,14 @@ export default function LocalAuthorityFilter({
       </div>
       <div>
         {showPostcodeLookup && (
-          <div className="mb-6 flex flex-col gap-4 w-full max-w-md border select-bordered p-3 rounded-xl">
-            <div className="text-sm font-medium mb-1">
+          <div
+            id="postcode-lookup-panel"
+            className="mb-6 flex flex-col gap-4 w-full max-w-md border select-bordered p-3 rounded-xl"
+          >
+            <div
+              className="text-sm font-medium mb-1"
+              id="postcode-lookup-label"
+            >
               Find your local authority by entering your postcode:
             </div>
             <label className="input input-bordered flex items-center gap-2">
@@ -81,6 +90,7 @@ export default function LocalAuthorityFilter({
                 type="text"
                 className="grow bg-transparent focus:outline-none"
                 placeholder="Enter postcode"
+                aria-labelledby="postcode-lookup-label"
                 value={postcode}
                 onChange={(e) => {
                   setPostcode(e.target.value);
@@ -104,6 +114,7 @@ export default function LocalAuthorityFilter({
                   viewBox="0 0 16 16"
                   fill="currentColor"
                   className="h-4 w-4 opacity-70"
+                  aria-hidden="true"
                 >
                   <path
                     fillRule="evenodd"
@@ -127,6 +138,7 @@ export default function LocalAuthorityFilter({
                     viewBox="0 0 16 16"
                     fill="currentColor"
                     className="h-4 w-4 opacity-70"
+                    aria-hidden="true"
                   >
                     <path
                       fillRule="evenodd"
@@ -137,12 +149,18 @@ export default function LocalAuthorityFilter({
                 </button>
               )}
             </label>
-            {laResult && (
-              <div className="text-sm mb-2 font-semibold">
-                Your local authority is {laResult}
-              </div>
-            )}
-            {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
+            <div aria-live="polite">
+              {laResult && (
+                <div className="text-sm mb-2 font-semibold">
+                  Your local authority is {laResult}
+                </div>
+              )}
+              {error && (
+                <div role="alert" className="text-red-600 text-sm mb-2">
+                  {error}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
