@@ -42,7 +42,7 @@ export default function SpecialismCheckboxes({
       >
         <h3 className="text-md font-headings">Select a specialism</h3>
         {selectedSpecialisms.length > 0 && (
-          <span className="badge badge-secondary">
+          <span className="badge badge-accent">
             {selectedSpecialisms.length} selected
           </span>
         )}
