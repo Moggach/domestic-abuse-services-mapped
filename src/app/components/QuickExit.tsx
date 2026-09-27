@@ -22,9 +22,16 @@ const QuickExit: React.FC = () => {
   }, []);
 
   return (
-    <button
+    // A real link so it still works before the page's JavaScript has
+    // loaded; once it has, onClick uses replace() to avoid a history entry.
+    <a
+      href={EXIT_URL}
+      rel="noreferrer"
       className="btn fixed bottom-0 left-0 w-full z-50 md:top-4 md:bottom-auto md:right-4 md:left-auto md:w-fit bg-red-700 hover:bg-red-800 border-0 text-white rounded-md shadow-md flex items-center justify-center p-2"
-      onClick={exitSite}
+      onClick={(e) => {
+        e.preventDefault();
+        exitSite();
+      }}
       aria-keyshortcuts="Escape"
     >
       <span>
@@ -45,7 +52,7 @@ const QuickExit: React.FC = () => {
           fill="white"
         />
       </svg>
-    </button>
+    </a>
   );
 };
 

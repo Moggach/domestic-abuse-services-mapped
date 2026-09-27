@@ -1,10 +1,10 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 
 import Footer from './components/Footer';
 import LocalAuthorityFilter from './components/LocalAuthorityFilter';
-import MapBox from './components/MapBox';
 import Modal from './components/Modal';
 import NavBar from './components/NavBar';
 import PaginatedList from './components/PaginatedList';
@@ -18,6 +18,21 @@ import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
 import { useURLParams } from './hooks/useUrlParams';
 import type { HomePageProps } from './types';
+
+// Mapbox is ~1.2 MB of JavaScript. Loading it separately means the rest of
+// the page (search, filters, pagination, Safe exit) works without waiting
+// for it on slow phones.
+const MapBox = dynamic(() => import('./components/MapBox'), {
+  ssr: false,
+  loading: () => (
+    <div
+      className="h-[400px] w-full lg:h-[800px] rounded-2xl bg-base-200"
+      role="status"
+    >
+      <span className="sr-only">Loading map…</span>
+    </div>
+  ),
+});
 
 const App: React.FC<HomePageProps> = ({
   serverData,

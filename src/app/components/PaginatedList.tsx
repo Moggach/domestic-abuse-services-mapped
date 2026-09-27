@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { IconType } from 'react-icons';
 import {
   AiOutlineGlobal,
@@ -27,6 +27,11 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   onPageChange,
 }) => {
+  // The buttons do nothing until the page's JavaScript has loaded, so show
+  // them as disabled until then rather than ignoring taps silently.
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => setIsHydrated(true), []);
+
   if (totalPages <= 1) return null;
 
   return (
@@ -36,7 +41,7 @@ const Pagination: React.FC<PaginationProps> = ({
     >
       <button
         onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-        disabled={currentPage === 1}
+        disabled={!isHydrated || currentPage === 1}
         className="px-4 py-2 mr-2 btn btn-accent text-white font-semibold"
       >
         Previous
@@ -46,7 +51,7 @@ const Pagination: React.FC<PaginationProps> = ({
       </span>
       <button
         onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
-        disabled={currentPage === totalPages}
+        disabled={!isHydrated || currentPage === totalPages}
         className="px-4 py-2 ml-2 btn btn-accent font-semibold text-white"
       >
         Next

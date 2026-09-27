@@ -31,7 +31,7 @@ test.describe('Homepage', () => {
     await expect(page.locator('#searchInput')).toBeVisible();
     await expect(page.locator('#serviceFilter')).toBeVisible();
     await expect(page.locator('#localAuthorityFilter')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Safe exit' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Safe exit' })).toBeVisible();
   });
 
   test('shows a result count before any search or filter', async ({ page }) => {
@@ -230,14 +230,14 @@ test.describe('Quick exit', () => {
   test('the safe exit button navigates away from the site', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Safe exit' }).click();
+    await page.getByRole('link', { name: 'Safe exit' }).click();
     await page.waitForURL(/bbc\.com/);
   });
 
   test('the site is not left in back-button history after exiting', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Safe exit' }).click();
+    await page.getByRole('link', { name: 'Safe exit' }).click();
     await page.waitForURL(/bbc\.com/);
     await page.goBack();
     expect(page.url()).not.toContain('localhost:3000');
