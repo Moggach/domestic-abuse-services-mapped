@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import type { IconType } from 'react-icons';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 
@@ -59,7 +59,6 @@ interface PaginatedListProps {
   itemsPerPage: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  isMapLoading: boolean;
   searchSubmitted: boolean;
   submittedSearchQuery: string;
   isPostcode: (input: string) => boolean;
@@ -102,7 +101,6 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   itemsPerPage,
   currentPage,
   setCurrentPage,
-  isMapLoading,
   searchSubmitted,
   submittedSearchQuery,
   isPostcode,
@@ -110,13 +108,12 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   hasFiltersApplied,
   onClearFilters,
 }) => {
-  const [paginatedData, setPaginatedData] = useState<Item[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const paginatedData = useMemo(() => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    setPaginatedData(data.slice(indexOfFirstItem, indexOfLastItem));
+    return data.slice(indexOfFirstItem, indexOfLastItem);
   }, [currentPage, data, itemsPerPage]);
 
   const handlePageChange = (newPage: number) => {
@@ -139,29 +136,21 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
 
   return (
     <div>
-      {isMapLoading ? (
-        <p className="text-center text-gray-500 mt-4">Loading services...</p>
-      ) : (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2
-            className="font-headings text-lg"
-            role="status"
-            aria-live="polite"
-          >
-            {getResultsSummary(
-              data.length,
-              searchSubmitted,
-              submittedSearchQuery,
-              isPostcode,
-              radius,
-              hasFiltersApplied
-            )}
-          </h2>
-          {hasFiltersApplied && <ClearFiltersButton onClear={onClearFilters} />}
-        </div>
-      )}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-headings text-lg" role="status" aria-live="polite">
+          {getResultsSummary(
+            data.length,
+            searchSubmitted,
+            submittedSearchQuery,
+            isPostcode,
+            radius,
+            hasFiltersApplied
+          )}
+        </h2>
+        {hasFiltersApplied && <ClearFiltersButton onClear={onClearFilters} />}
+      </div>
 
-      {paginatedData.length > 0 && !isMapLoading && (
+      {paginatedData.length > 0 && (
         <div ref={listRef}>
           <ul className="flex flex-col gap-4 mt-6">
             {paginatedData.map((item, index) => {

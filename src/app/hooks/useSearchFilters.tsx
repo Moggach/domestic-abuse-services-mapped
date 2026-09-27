@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import {
   filterByServiceType,
@@ -27,7 +27,6 @@ export const useSearchFilters = (
   const [selectedLocalAuthority, setSelectedLocalAuthority] =
     useState<string>('');
   const [selectedSpecialisms, setSelectedSpecialisms] = useState<string[]>([]);
-  const [filteredData, setFilteredData] = useState<Feature[]>([]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -45,7 +44,9 @@ export const useSearchFilters = (
     );
   }, []);
 
-  useEffect(() => {
+  // Computed during render (not in an effect) so the server-rendered page
+  // already contains the list of services.
+  const filteredData = useMemo(() => {
     let result = serverData.features;
     result = filterByLocalAuthority(result, selectedLocalAuthority);
 
@@ -61,7 +62,7 @@ export const useSearchFilters = (
       });
     }
 
-    setFilteredData(result);
+    return result;
   }, [
     selectedServiceType,
     selectedLocalAuthority,

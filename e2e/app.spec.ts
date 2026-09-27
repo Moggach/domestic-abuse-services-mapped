@@ -35,9 +35,10 @@ test.describe('Homepage', () => {
   });
 
   test('shows a result count before any search or filter', async ({ page }) => {
-    await expect(page.getByRole('status')).toHaveText(
-      /^(\d+ services?|No services match these filters\..*)$/
-    );
+    // The map's loading overlay is also a status region, so match on text.
+    await expect(
+      page.getByRole('status').filter({ hasText: /services?/ })
+    ).toHaveText(/^(\d+ services?|No services match these filters\..*)$/);
   });
 });
 

@@ -107,7 +107,7 @@ const App: React.FC<HomePageProps> = ({
       <NavBar onClearFilters={clearFilters} />
       <main id="main-content" className="px-4 pt-8 pb-8 lg:flex lg:gap-6">
         <Modal />
-        <div className="lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit mb-8 lg:mb-0">
+        <div className="relative lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit mb-8 lg:mb-0">
           <MapBox
             lng={lng}
             lat={lat}
@@ -164,7 +164,6 @@ const App: React.FC<HomePageProps> = ({
             itemsPerPage={10}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            isMapLoading={isMapLoading}
             searchSubmitted={searchSubmitted}
             submittedSearchQuery={submittedSearchQuery}
             isPostcode={isPostcode}
