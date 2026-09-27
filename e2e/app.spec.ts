@@ -134,6 +134,19 @@ test.describe('Filters', () => {
   });
 });
 
+test.describe('Pagination', () => {
+  test('changing page moves focus to the results heading', async ({ page }) => {
+    const next = page.getByRole('button', { name: 'Next' });
+    test.skip(!(await next.isVisible()), 'Only one page of results');
+
+    await next.click();
+    await expect(page.getByText(/^Page 2 of \d+$/)).toBeVisible();
+    await expect(
+      page.getByRole('status').filter({ hasText: /services?/ })
+    ).toBeFocused();
+  });
+});
+
 test.describe('Quick exit', () => {
   test('the safe exit button navigates away from the site', async ({
     page,

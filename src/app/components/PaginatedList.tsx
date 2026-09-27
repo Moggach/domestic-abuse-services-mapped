@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import type { IconType } from 'react-icons';
-import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
+import {
+  AiOutlineGlobal,
+  AiOutlineHeart,
+  AiOutlineMail,
+  AiOutlinePhone,
+} from 'react-icons/ai';
 
 import { iconMapping } from '../constants/serviceIcons';
 import { safeExternalUrl } from '../lib/urls';
@@ -11,30 +16,25 @@ import ClearFiltersButton from './ClearFiltersButton';
 type Item = Pick<Feature, 'properties' | 'distance'>;
 
 interface PaginationProps {
-  data: Item[];
-  itemsPerPage: number;
+  totalPages: number;
   currentPage: number;
-  setCurrentPage: (page: number) => void;
+  onPageChange: (page: number) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
-  data,
-  itemsPerPage,
+  totalPages,
   currentPage,
-  setCurrentPage,
+  onPageChange,
 }) => {
-  const totalPages = Math.max(1, Math.ceil(data.length / itemsPerPage));
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(1);
-    }
-  }, [totalPages, currentPage, setCurrentPage]);
+  if (totalPages <= 1) return null;
 
   return (
-    <div className="flex justify-center items-center mt-8">
+    <nav
+      aria-label="Results pages"
+      className="flex justify-center items-center mt-8"
+    >
       <button
-        onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+        onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
         className="px-4 py-2 mr-2 btn btn-accent text-white font-semibold"
       >
@@ -44,13 +44,13 @@ const Pagination: React.FC<PaginationProps> = ({
         Page {currentPage} of {totalPages}
       </span>
       <button
-        onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+        onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
         className="px-4 py-2 ml-2 btn btn-accent font-semibold text-white"
       >
         Next
       </button>
-    </div>
+    </nav>
   );
 };
 
@@ -108,7 +108,9 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   hasFiltersApplied,
   onClearFilters,
 }) => {
-  const listRef = useRef<HTMLDivElement>(null);
+  const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
+  const movedPageRef = useRef(false);
+  const totalPages = Math.max(1, Math.ceil(data.length / itemsPerPage));
 
   const paginatedData = useMemo(() => {
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -116,18 +118,34 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
     return data.slice(indexOfFirstItem, indexOfLastItem);
   }, [currentPage, data, itemsPerPage]);
 
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-
-    const isMobile = window.innerWidth < 768;
-    if (isMobile && listRef.current) {
-      setTimeout(() => {
-        listRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }, 100);
+  // Filters can leave the current page out of range; this reset shouldn't
+  // scroll or move focus, so it bypasses handlePageChange.
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
     }
+  }, [totalPages, currentPage, setCurrentPage]);
+
+  // After Previous/Next, bring the top of the new page into view and move
+  // focus there so keyboard and screen reader users start at the new results.
+  useEffect(() => {
+    if (!movedPageRef.current) return;
+    movedPageRef.current = false;
+    const heading = resultsHeadingRef.current;
+    if (!heading) return;
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    heading.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+    heading.focus({ preventScroll: true });
+  }, [currentPage]);
+
+  const handlePageChange = (newPage: number): void => {
+    movedPageRef.current = true;
+    setCurrentPage(newPage);
   };
 
   const getIconforBadge = (text: string): IconType | null => {
@@ -137,7 +155,13 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-headings text-lg" role="status" aria-live="polite">
+        <h2
+          ref={resultsHeadingRef}
+          tabIndex={-1}
+          className="font-headings text-lg scroll-mt-4"
+          role="status"
+          aria-live="polite"
+        >
           {getResultsSummary(
             data.length,
             searchSubmitted,
@@ -151,111 +175,115 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
       </div>
 
       {paginatedData.length > 0 && (
-        <div ref={listRef}>
-          <ul className="flex flex-col gap-4 mt-6">
-            {paginatedData.map((item, index) => {
-              const properties = item.properties;
-              const website = safeExternalUrl(properties.website);
-              return (
-                <li
-                  className="card bg-cardBg text-cardText w-full shadow-xl"
-                  key={index}
-                >
-                  <div className="card-body">
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-headings text-xl max-w-[80%]">
-                        {properties.name}
-                      </h3>
-                      {website && (
+        <ul className="flex flex-col gap-4 mt-6">
+          {paginatedData.map((item, index) => {
+            const properties = item.properties;
+            const website = safeExternalUrl(properties.website);
+            const donate = safeExternalUrl(properties.donate);
+            return (
+              <li
+                className="card bg-cardBg text-cardText w-full shadow-xl"
+                key={index}
+              >
+                <div className="card-body">
+                  <h3 className="font-headings text-xl">{properties.name}</h3>
+                  {typeof item.distance === 'number' && (
+                    <p className="text-sm font-semibold -mt-1">
+                      {item.distance.toFixed(1)} miles from{' '}
+                      {submittedSearchQuery}
+                    </p>
+                  )}
+                  <p>{properties.description}</p>
+                  <p>
+                    {properties.preciseLocationHidden
+                      ? `Based in ${properties.localAuthority || 'this area'} — contact for address`
+                      : properties.address}
+                  </p>
+                  <ul
+                    className="flex flex-wrap gap-x-5 gap-y-2 mt-2"
+                    aria-label={`Contact ${properties.name}`}
+                  >
+                    {properties.phone && (
+                      <li className="flex items-center gap-2">
+                        <AiOutlinePhone aria-hidden="true" />
                         <a
+                          className="underline"
+                          href={`tel:${properties.phone}`}
+                        >
+                          {properties.phone}
+                        </a>
+                      </li>
+                    )}
+                    {properties.email && (
+                      <li className="flex items-center gap-2">
+                        <AiOutlineMail aria-hidden="true" />
+                        <a
+                          className="underline"
+                          href={`mailto:${properties.email}`}
+                        >
+                          Email
+                        </a>
+                      </li>
+                    )}
+                    {website && (
+                      <li className="flex items-center gap-2">
+                        <AiOutlineGlobal aria-hidden="true" />
+                        <a
+                          className="underline"
                           href={website}
-                          aria-label={`Visit ${properties.name} website`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <svg
-                            stroke="currentColor"
-                            fill="currentColor"
-                            strokeWidth="0"
-                            viewBox="0 0 512 512"
-                            height="20px"
-                            width="20px"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                          >
-                            <path d="M432,320H400a16,16,0,0,0-16,16V448H64V128H208a16,16,0,0,0,16-16V80a16,16,0,0,0-16-16H48A48,48,0,0,0,0,112V464a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V336A16,16,0,0,0,432,320ZM488,0h-128c-21.37,0-32.05,25.91-17,41l35.73,35.73L135,320.37a24,24,0,0,0,0,34L157.67,377a24,24,0,0,0,34,0L435.28,133.32,471,169c15,15,41,4.5,41-17V24A24,24,0,0,0,488,0Z"></path>
-                          </svg>
+                          Website
+                          <span className="sr-only"> (opens in a new tab)</span>
                         </a>
-                      )}
-                    </div>
-                    <p>{properties.description}</p>
-                    <p>
-                      {properties.preciseLocationHidden
-                        ? `Based in ${properties.localAuthority || 'this area'} — contact for address`
-                        : properties.address}
-                    </p>
-                    <div className="flex flex-col text-sm gap-2">
-                      <div className="flex flex-col gap-3 mt-2">
-                        {properties.phone && (
-                          <div className="flex items-center gap-2">
-                            <AiOutlinePhone className="text-base" />
-                            <a
-                              href={`tel:${properties.phone}`}
-                              className="no-underline text-inherit"
-                            >
-                              {properties.phone}
-                            </a>
-                          </div>
-                        )}
-                        {properties.email && (
-                          <div className="flex items-center gap-2">
-                            <AiOutlineMail className="text-base" />
-                            <a
-                              href={`mailto:${properties.email}`}
-                              className="no-underline text-inherit"
-                            >
-                              Email
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-3 mt-3">
-                      {(Array.isArray(properties.serviceType)
-                        ? properties.serviceType
-                        : [properties.serviceType]
-                      ).map((type, i) => {
-                        const Icon = getIconforBadge(type);
-                        return (
-                          <div
-                            key={i}
-                            className="flex items-center gap-2 text-base"
-                          >
-                            {Icon && <Icon className="text-lg" />}
-                            {type}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {typeof item.distance === 'number' && (
-                      <span className="text-sm mt-1">
-                        {item.distance.toFixed(2)} miles from{' '}
-                        {submittedSearchQuery}
-                      </span>
+                      </li>
                     )}
+                    {donate && (
+                      <li className="flex items-center gap-2">
+                        <AiOutlineHeart aria-hidden="true" />
+                        <a
+                          className="underline"
+                          href={donate}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Donate
+                          <span className="sr-only"> (opens in a new tab)</span>
+                        </a>
+                      </li>
+                    )}
+                  </ul>
+                  <div className="flex flex-wrap gap-3 mt-3">
+                    {(Array.isArray(properties.serviceType)
+                      ? properties.serviceType
+                      : [properties.serviceType]
+                    ).map((type, i) => {
+                      const Icon = getIconforBadge(type);
+                      return (
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 text-base"
+                        >
+                          {Icon && (
+                            <Icon className="text-lg" aria-hidden="true" />
+                          )}
+                          {type}
+                        </div>
+                      );
+                    })}
                   </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       )}
 
       <Pagination
-        data={data}
-        itemsPerPage={itemsPerPage}
+        totalPages={totalPages}
         currentPage={currentPage}
-        setCurrentPage={handlePageChange}
+        onPageChange={handlePageChange}
       />
     </div>
   );
