@@ -133,6 +133,19 @@ describe('flattenAndUniqueSpecialisms', () => {
       ['Men', 'Women'].sort()
     );
   });
+
+  it('returns specialisms in alphabetical order', () => {
+    const data = [
+      makeFeature({ serviceSpecialism: ['LGBTQ survivors', 'BAME women'] }),
+      makeFeature({ serviceSpecialism: 'Older women, Asian women' }),
+    ];
+    expect(flattenAndUniqueSpecialisms(data)).toEqual([
+      'Asian women',
+      'BAME women',
+      'LGBTQ survivors',
+      'Older women',
+    ]);
+  });
 });
 
 describe('extractUniqueLocalAuthorities', () => {

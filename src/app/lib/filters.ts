@@ -71,7 +71,9 @@ export const flattenAndUniqueSpecialisms = (data: Feature[]): string[] => {
     }
     return acc;
   }, []);
-  return [...new Set(allSpecialisms)].filter(Boolean);
+  return [...new Set(allSpecialisms)]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
 };
 
 export const extractUniqueLocalAuthorities = (data: Feature[]): string[] => {
