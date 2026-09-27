@@ -12,7 +12,7 @@ import QuickExit from './components/QuickExit';
 import RadiusSlider from './components/RadiusSlider';
 import SearchInput from './components/SearchInput';
 import ServiceTypeFilter from './components/ServiceTypeFilter';
-import SpecialismCheckboxes from './components/SpecialismCheckboxes';
+import SpecialismMultiSelect from './components/SpecialismMultiSelect';
 import { useSearch } from './contexts/SearchContext';
 import { useMapData } from './hooks/useMapData';
 import { useSearchFilters } from './hooks/useSearchFilters';
@@ -173,7 +173,7 @@ const App: React.FC<HomePageProps> = ({
             setSelectedLocalAuthority={setSelectedLocalAuthority}
             localAuthorities={localAuthorities}
           />
-          <SpecialismCheckboxes
+          <SpecialismMultiSelect
             specialisms={specialisms}
             selectedSpecialisms={selectedSpecialisms}
             setSelectedSpecialisms={setSelectedSpecialisms}

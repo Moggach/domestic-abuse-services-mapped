@@ -14,11 +14,15 @@ const QuickExit: React.FC = () => {
       if (e.key !== 'Escape') return;
       // Let Esc close an open dialog (e.g. the safety notice) first.
       if (document.querySelector('dialog[open]')) return;
+      // Components that use Esc themselves (e.g. dropdowns) mark it handled.
+      if (e.defaultPrevented) return;
       exitSite();
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    // On window rather than document so this runs after React's handlers,
+    // which are attached to document, and can see preventDefault().
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   return (

@@ -211,6 +211,43 @@ test.describe('Filters', () => {
       .not.toBeNull();
     await expect(serviceFilter).toBeFocused();
   });
+
+  test('selecting specialisms from the dropdown filters results and shows chips', async ({
+    page,
+  }) => {
+    const toggle = page.getByRole('button', { name: /Filter by specialism/ });
+    await toggle.click();
+    const options = page
+      .getByRole('group', { name: 'Specialisms' })
+      .getByRole('checkbox');
+    test.skip((await options.count()) === 0, 'No specialisms to filter on');
+
+    await options.first().check();
+    await expect(
+      page.getByRole('status').filter({ hasText: /match your filters/ })
+    ).toBeVisible();
+
+    await page.getByRole('button', { name: 'Done' }).click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+    const chips = page.getByRole('list', { name: 'Selected specialisms' });
+    await expect(chips.getByRole('button')).toHaveCount(1);
+    await chips.getByRole('button').click();
+    await expect(chips).toHaveCount(0);
+  });
+
+  test('Esc closes the specialism dropdown without exiting the site', async ({
+    page,
+  }) => {
+    const toggle = page.getByRole('button', { name: /Filter by specialism/ });
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+    await page.keyboard.press('Escape');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(toggle).toBeFocused();
+    expect(page.url()).toContain('localhost:3000');
+  });
 });
 
 test.describe('Pagination', () => {
