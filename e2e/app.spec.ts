@@ -122,4 +122,39 @@ test.describe('Quick exit', () => {
     await page.getByRole('button', { name: 'Safe exit' }).click();
     await page.waitForURL(/bbc\.com/);
   });
+
+  test('the site is not left in back-button history after exiting', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Safe exit' }).click();
+    await page.waitForURL(/bbc\.com/);
+    await page.goBack();
+    expect(page.url()).not.toContain('localhost:3000');
+  });
+
+  test('pressing Esc exits the site', async ({ page }) => {
+    await page.keyboard.press('Escape');
+    await page.waitForURL(/bbc\.com/);
+  });
+
+  test('Esc closes the safety notice without exiting', async ({ page }) => {
+    await page.evaluate(() => sessionStorage.clear());
+    await page.reload();
+    const dialog = page.locator('#my_modal_3');
+    await expect(dialog).toHaveAttribute('open');
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toHaveAttribute('open');
+    expect(page.url()).toContain('localhost:3000');
+  });
+
+  test('the safety notice has its own safe exit button', async ({ page }) => {
+    await page.evaluate(() => sessionStorage.clear());
+    await page.reload();
+    await page
+      .locator('#my_modal_3')
+      .getByRole('button', { name: 'Safe exit' })
+      .click();
+    await page.waitForURL(/bbc\.com/);
+  });
 });

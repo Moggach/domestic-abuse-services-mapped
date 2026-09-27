@@ -1,8 +1,21 @@
 import React, { useEffect } from 'react';
 
+import { exitSite } from './QuickExit';
+
+// Stored per session only: a persistent flag would leave a trace on the
+// device that someone has visited this site.
+const DISMISSED_KEY = 'showModal';
+
 const Modal: React.FC = () => {
   useEffect(() => {
-    const shouldShowModal = localStorage.getItem('showModal') !== 'false';
+    let shouldShowModal = true;
+    try {
+      // Remove the flag earlier versions persisted in localStorage.
+      localStorage.removeItem(DISMISSED_KEY);
+      shouldShowModal = sessionStorage.getItem(DISMISSED_KEY) !== 'false';
+    } catch {
+      // Storage can be unavailable (e.g. private browsing); show the modal.
+    }
     const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
 
     if (shouldShowModal && modal) {
@@ -11,7 +24,11 @@ const Modal: React.FC = () => {
   }, []);
 
   const handleDontShowAgain = () => {
-    localStorage.setItem('showModal', 'false');
+    try {
+      sessionStorage.setItem(DISMISSED_KEY, 'false');
+    } catch {
+      // Ignore: the modal will just show again next time.
+    }
     const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
 
     if (modal) {
@@ -31,11 +48,16 @@ const Modal: React.FC = () => {
               ✕
             </button>
           </form>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 pr-6">
             <h2 id="modal-3-title" className="sr-only">
               Safety information
             </h2>
-            <p>If you are in an emergency, please call 999</p>
+            <p>
+              If you are in an emergency, please call{' '}
+              <a className="underline font-semibold" href="tel:999">
+                999
+              </a>
+            </p>
             <p>
               If you need a refuge space please contact the{' '}
               <a
@@ -44,7 +66,14 @@ const Modal: React.FC = () => {
               >
                 National Domestic Abuse Helpline
               </a>{' '}
-              on 0808 2000 247
+              on{' '}
+              <a className="underline font-semibold" href="tel:08082000247">
+                0808 2000 247
+              </a>
+            </p>
+            <p>
+              To leave this site quickly at any time, press the{' '}
+              <strong>Safe exit</strong> button or the <kbd>Esc</kbd> key.
             </p>
             <p>
               If you&rsquo;re worried someone might be monitoring your devices,
@@ -57,12 +86,22 @@ const Modal: React.FC = () => {
               </a>
             </p>
           </div>
-          <button
-            className="btn btn-accent mt-4 text-white"
-            onClick={handleDontShowAgain}
-          >
-            Don&apos;t show again
-          </button>
+          <div className="flex flex-wrap gap-2 mt-4">
+            <button
+              className="btn btn-accent text-white"
+              onClick={handleDontShowAgain}
+            >
+              Don&apos;t show again this session
+            </button>
+            {/* The page behind a modal dialog is inert, so the fixed
+                Safe exit button can't be reached while this is open. */}
+            <button
+              className="btn bg-red-700 hover:bg-red-800 border-0 text-white"
+              onClick={exitSite}
+            >
+              Safe exit
+            </button>
+          </div>
         </div>
       </dialog>
     </>

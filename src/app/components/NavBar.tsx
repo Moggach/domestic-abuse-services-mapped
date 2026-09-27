@@ -53,7 +53,8 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
   const router = useRouter();
   return (
     <>
-      <nav className="p-4">
+      {/* md:pr-44 keeps the nav links clear of the fixed Safe exit button */}
+      <nav className="p-4 md:pr-44">
         <div className="container min-w-full flex justify-between items-start">
           <div className="flex flex-col gap-2 text-mutedAccent font-bold">
             <h1 className="font-headings text-3xl ">
@@ -108,6 +109,16 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
           </div>
         </div>
       </nav>
+      <p className="mx-4 px-3 py-2 rounded-md bg-base-200 text-sm">
+        In an emergency call{' '}
+        <a className="underline font-semibold" href="tel:999">
+          999
+        </a>
+        . National Domestic Abuse Helpline (24 hours, free):{' '}
+        <a className="underline font-semibold" href="tel:08082000247">
+          0808 2000 247
+        </a>
+      </p>
       <div
         role="button"
         tabIndex={drawerOpen ? 0 : -1}
