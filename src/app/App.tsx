@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 
-import ClearFiltersButton from './components/ClearFiltersButton';
 import Footer from './components/Footer';
 import LocalAuthorityFilter from './components/LocalAuthorityFilter';
 import MapBox from './components/MapBox';
@@ -127,6 +126,20 @@ const App: React.FC<HomePageProps> = ({
         </div>
 
         <div className="flex flex-col gap-7 basis-1/2">
+          <SearchInput
+            searchQuery={searchInput}
+            setSearchQuery={setSearchInput}
+            onSubmit={() => handleSearchSubmit(searchInput)}
+            onClear={handleSearchClear}
+          />
+          {isPostcode(submittedSearchQuery) && (
+            <RadiusSlider
+              radius={radius}
+              setRadius={setRadius}
+              min={1}
+              max={10}
+            />
+          )}
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
@@ -142,29 +155,12 @@ const App: React.FC<HomePageProps> = ({
             selectedSpecialisms={selectedSpecialisms}
             setSelectedSpecialisms={setSelectedSpecialisms}
           />
-          <SearchInput
-            searchQuery={searchInput}
-            setSearchQuery={setSearchInput}
-            onSubmit={() => handleSearchSubmit(searchInput)}
-            onClear={handleSearchClear}
-          />
-          {isPostcode(submittedSearchQuery) && (
-            <RadiusSlider
-              radius={radius}
-              setRadius={setRadius}
-              min={1}
-              max={10}
-            />
-          )}
-          {hasFiltersApplied && <ClearFiltersButton onClear={clearFilters} />}
           <PaginatedList
             data={
               isPostcode(submittedSearchQuery)
                 ? filteredDataWithDistance
                 : filteredData
             }
-            filteredData={filteredData}
-            filteredDataWithDistance={filteredDataWithDistance}
             itemsPerPage={10}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
@@ -173,6 +169,8 @@ const App: React.FC<HomePageProps> = ({
             submittedSearchQuery={submittedSearchQuery}
             isPostcode={isPostcode}
             radius={radius}
+            hasFiltersApplied={hasFiltersApplied}
+            onClearFilters={clearFilters}
           />
         </div>
       </main>

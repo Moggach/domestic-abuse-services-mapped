@@ -5,6 +5,8 @@ import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 import { iconMapping } from '../constants/serviceIcons';
 import type { Feature } from '../types';
 
+import ClearFiltersButton from './ClearFiltersButton';
+
 type Item = Pick<Feature, 'properties' | 'distance'>;
 
 interface PaginationProps {
@@ -53,8 +55,6 @@ const Pagination: React.FC<PaginationProps> = ({
 
 interface PaginatedListProps {
   data: Item[];
-  filteredData: Item[];
-  filteredDataWithDistance: Item[];
   itemsPerPage: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
@@ -63,12 +63,41 @@ interface PaginatedListProps {
   submittedSearchQuery: string;
   isPostcode: (input: string) => boolean;
   radius: number;
+  hasFiltersApplied: boolean;
+  onClearFilters: () => void;
 }
+
+const getResultsSummary = (
+  count: number,
+  searchSubmitted: boolean,
+  submittedSearchQuery: string,
+  isPostcode: (input: string) => boolean,
+  radius: number,
+  hasFiltersApplied: boolean
+): string => {
+  const services = count === 1 ? 'service' : 'services';
+
+  if (searchSubmitted && submittedSearchQuery) {
+    if (isPostcode(submittedSearchQuery)) {
+      return count > 0
+        ? `${count} ${services} within ${radius} miles of ${submittedSearchQuery}`
+        : `No services found within ${radius} miles of ${submittedSearchQuery}. Try a larger radius, another search or removing filters.`;
+    }
+    return count > 0
+      ? `${count} ${services} matching "${submittedSearchQuery}"`
+      : `No services found matching "${submittedSearchQuery}". Try another search or remove any filters.`;
+  }
+
+  if (count === 0) {
+    return 'No services match these filters. Try removing some filters.';
+  }
+  return hasFiltersApplied
+    ? `${count} ${services} match your filters`
+    : `${count} ${services}`;
+};
 
 const PaginatedList: React.FC<PaginatedListProps> = ({
   data,
-  filteredData,
-  filteredDataWithDistance,
   itemsPerPage,
   currentPage,
   setCurrentPage,
@@ -77,6 +106,8 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
   submittedSearchQuery,
   isPostcode,
   radius,
+  hasFiltersApplied,
+  onClearFilters,
 }) => {
   const [paginatedData, setPaginatedData] = useState<Item[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
@@ -109,41 +140,25 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
     <div>
       {isMapLoading ? (
         <p className="text-center text-gray-500 mt-4">Loading services...</p>
-      ) : searchSubmitted ? (
-        <div className="mt-2" role="status" aria-live="polite">
-          {submittedSearchQuery ? (
-            isPostcode(submittedSearchQuery) ? (
-              filteredDataWithDistance.length > 0 ? (
-                <h2>
-                  Showing {filteredDataWithDistance.length}{' '}
-                  {filteredDataWithDistance.length === 1
-                    ? 'service'
-                    : 'services'}{' '}
-                  within {radius} miles of postcode &quot;
-                  {submittedSearchQuery}&quot;:
-                </h2>
-              ) : (
-                <h2>
-                  No search results within {radius} miles of postcode &quot;
-                  {submittedSearchQuery}&quot;. Try another search or remove any
-                  filters?
-                </h2>
-              )
-            ) : filteredData.length > 0 ? (
-              <h2>
-                Showing services matching &quot;{submittedSearchQuery}&quot;:
-              </h2>
-            ) : (
-              <h2>
-                No services found matching &quot;{submittedSearchQuery}&quot;.
-                Try another search or remove any filters?
-              </h2>
-            )
-          ) : (
-            <h2>Please enter a search query.</h2>
-          )}
+      ) : (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2
+            className="font-headings text-lg"
+            role="status"
+            aria-live="polite"
+          >
+            {getResultsSummary(
+              data.length,
+              searchSubmitted,
+              submittedSearchQuery,
+              isPostcode,
+              radius,
+              hasFiltersApplied
+            )}
+          </h2>
+          {hasFiltersApplied && <ClearFiltersButton onClear={onClearFilters} />}
         </div>
-      ) : null}
+      )}
 
       {paginatedData.length > 0 && !isMapLoading && (
         <div ref={listRef}>

@@ -9,7 +9,7 @@ export default function ClearFiltersButton({
 }: ClearFiltersButtonProps): JSX.Element {
   return (
     <button
-      className="btn mt-2 w-fit btn btn-accent text-white font-semibold"
+      className="btn btn-sm w-fit btn-accent text-white font-semibold"
       onClick={onClear}
     >
       Clear Filters

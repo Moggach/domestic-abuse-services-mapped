@@ -33,6 +33,12 @@ test.describe('Homepage', () => {
     await expect(page.locator('#localAuthorityFilter')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Safe exit' })).toBeVisible();
   });
+
+  test('shows a result count before any search or filter', async ({ page }) => {
+    await expect(page.getByRole('status')).toHaveText(
+      /^(\d+ services?|No services match these filters\..*)$/
+    );
+  });
 });
 
 test.describe('Search by service name', () => {
