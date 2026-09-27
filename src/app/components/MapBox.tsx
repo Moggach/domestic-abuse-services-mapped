@@ -249,14 +249,16 @@ const MapBox: React.FC<MapBoxProps> = ({
             source: 'points',
             filter: ['has', 'point_count'],
             paint: {
+              // Brand purple, darker for bigger clusters; white count text
+              // is at least 6:1 on each shade.
               'circle-color': [
                 'step',
                 ['get', 'point_count'],
-                '#51bbd6',
+                '#535aa6',
                 100,
-                '#f1f075',
+                '#3e438d',
                 750,
-                '#f28cb1',
+                '#2f336d',
               ],
               'circle-radius': [
                 'step',
@@ -267,6 +269,8 @@ const MapBox: React.FC<MapBoxProps> = ({
                 750,
                 40,
               ],
+              'circle-stroke-width': 2,
+              'circle-stroke-color': '#ffffff',
             },
           });
 
@@ -291,16 +295,43 @@ const MapBox: React.FC<MapBoxProps> = ({
             source: 'points',
             filter: ['!', ['has', 'point_count']],
             paint: {
-              'circle-color': '#11b4da',
-              'circle-radius': 5,
-              'circle-stroke-width': 1,
+              'circle-color': '#cb40a0',
+              'circle-radius': 7,
+              'circle-stroke-width': 2,
               'circle-stroke-color': '#fff',
             },
           });
+
+          // Registered once, when the layers are created, so handlers don't
+          // pile up each time the data changes.
+          map.current!.on('click', 'unclustered-point', handlePointSelect);
+
+          map.current!.on('click', 'clusters', (e) => {
+            const feature = e.features?.[0];
+            if (!feature || feature.geometry.type !== 'Point') return;
+            const center = feature.geometry.coordinates as [number, number];
+            const source = map.current!.getSource(
+              'points'
+            ) as mapboxgl.GeoJSONSource;
+            source.getClusterExpansionZoom(
+              feature.properties?.cluster_id,
+              (err, expansionZoom) => {
+                if (err || !map.current) return;
+                map.current.easeTo({ center, zoom: expansionZoom });
+              }
+            );
+          });
+
+          for (const layer of ['clusters', 'unclustered-point']) {
+            map.current!.on('mouseenter', layer, () => {
+              map.current!.getCanvas().style.cursor = 'pointer';
+            });
+            map.current!.on('mouseleave', layer, () => {
+              map.current!.getCanvas().style.cursor = '';
+            });
+          }
         }
       }
-
-      map.current!.on('click', 'unclustered-point', handlePointSelect);
     };
 
     const addBoundariesLayer = () => {
