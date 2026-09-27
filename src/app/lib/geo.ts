@@ -23,6 +23,11 @@ export function isPostcode(input: string): boolean {
   return postcodeRegex.test(input.trim());
 }
 
+/** Matches the first half of a postcode on its own, e.g. "BD1" or "SW1A". */
+export function isPartialPostcode(input: string): boolean {
+  return /^[A-Z]{1,2}\d[A-Z\d]?$/i.test(input.trim());
+}
+
 export const determineZoomLevel = (): number => {
   const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 768;
   if (screenWidth >= 768) {

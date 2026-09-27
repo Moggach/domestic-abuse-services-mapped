@@ -78,6 +78,85 @@ test.describe('Search by service name', () => {
   });
 });
 
+test.describe('Search by postcode', () => {
+  // postcodes.io is mocked so these tests don't depend on a third party.
+  const POSTCODES_API = /api\.postcodes\.io\/postcodes\//;
+
+  async function search(page: Page, query: string): Promise<void> {
+    await page.locator('#searchInput').fill(query);
+    await page.locator('#searchInput').press('Enter');
+  }
+
+  test('asks for a full postcode when only the first half is entered', async ({
+    page,
+  }) => {
+    await search(page, 'BD1');
+    await expect(page.locator('#searchInput-error')).toHaveText(
+      'Please enter a full postcode, for example BD1 4PS.'
+    );
+  });
+
+  test('explains when a postcode does not exist', async ({ page }) => {
+    await page.route(POSTCODES_API, (route) =>
+      route.fulfill({
+        status: 404,
+        json: { status: 404, error: 'Postcode not found' },
+      })
+    );
+    await search(page, 'ZZ99 9ZZ');
+    await expect(page.locator('#searchInput-error')).toContainText(
+      'We couldn\'t find the postcode "ZZ99 9ZZ"'
+    );
+  });
+
+  test('explains when the postcode lookup fails', async ({ page }) => {
+    await page.route(POSTCODES_API, (route) => route.abort());
+    await search(page, 'BD1 4PS');
+    await expect(page.locator('#searchInput-error')).toContainText(
+      "We couldn't look up that postcode just now"
+    );
+  });
+
+  test('shows progress while looking up, then results for the formatted postcode', async ({
+    page,
+  }) => {
+    let release: (() => void) | undefined;
+    const lookupStarted = new Promise<void>((resolve) => {
+      page.route(POSTCODES_API, async (route) => {
+        resolve();
+        await new Promise<void>((r) => (release = r));
+        await route.fulfill({
+          json: {
+            status: 200,
+            result: {
+              postcode: 'BD1 4PS',
+              latitude: 53.797,
+              longitude: -1.755,
+            },
+          },
+        });
+      });
+    });
+
+    await search(page, 'bd14ps');
+    await lookupStarted;
+    await expect(
+      page.getByRole('button', { name: 'Search', exact: true })
+    ).toBeDisabled();
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Searching' })
+    ).toHaveCount(1);
+
+    release?.();
+    await expect(
+      page.getByRole('button', { name: 'Search', exact: true })
+    ).toBeEnabled();
+    await expect(
+      page.getByRole('status').filter({ hasText: /miles of BD1 4PS/ })
+    ).toBeVisible();
+  });
+});
+
 test.describe('Filters', () => {
   test('selecting a service type reveals the Clear Filters button, and clearing resets it', async ({
     page,

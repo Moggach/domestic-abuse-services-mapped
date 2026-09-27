@@ -2,8 +2,13 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useState, useContext } from 'react';
 
-import { calculateDistance, determineZoomLevel, isPostcode } from '../lib/geo';
-import { fetchCoordinates } from '../lib/postcodes';
+import {
+  calculateDistance,
+  determineZoomLevel,
+  isPartialPostcode,
+  isPostcode,
+} from '../lib/geo';
+import { lookupPostcode } from '../lib/postcodes';
 
 interface SearchContextType {
   searchInput: string;
@@ -18,7 +23,8 @@ interface SearchContextType {
   setSearchLng: React.Dispatch<React.SetStateAction<number>>;
   searchLat: number;
   setSearchLat: React.Dispatch<React.SetStateAction<number>>;
-  handleSearchSubmit: (searchQuery: string) => Promise<void>;
+  /** Resolves to an error message to show, or null on success. */
+  handleSearchSubmit: (searchQuery: string) => Promise<string | null>;
   handleSearchClear: () => void;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
   zoom: number;
@@ -58,25 +64,36 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const [lat, setLat] = useState<number>(54.5);
   const [radius, setRadius] = useState<number>(10);
 
-  const handleSearchSubmit = async (searchQuery: string): Promise<void> => {
-    if (!searchQuery) return;
-
+  const handleSearchSubmit = async (
+    searchQuery: string
+  ): Promise<string | null> => {
     const trimmedQuery = searchQuery.trim();
+    if (!trimmedQuery) return 'Please enter a search query.';
+
+    if (isPartialPostcode(trimmedQuery)) {
+      return 'Please enter a full postcode, for example BD1 4PS.';
+    }
 
     if (isPostcode(trimmedQuery)) {
-      const coordinates = await fetchCoordinates(trimmedQuery);
-      if (coordinates) {
-        setSearchLng(coordinates.longitude);
-        setSearchLat(coordinates.latitude);
-        setZoom(10);
-        setSubmittedSearchQuery(trimmedQuery);
-        setSearchSubmitted(true);
-        setIsSearchCleared(false);
+      const result = await lookupPostcode(trimmedQuery);
+      if (result.status === 'not_found') {
+        return `We couldn't find the postcode "${trimmedQuery}". Check it and try again.`;
       }
-    } else {
-      setSubmittedSearchQuery(trimmedQuery);
+      if (result.status === 'error') {
+        return "We couldn't look up that postcode just now. Check your connection and try again.";
+      }
+      setSearchLng(result.longitude);
+      setSearchLat(result.latitude);
+      setZoom(10);
+      setSubmittedSearchQuery(result.postcode);
       setSearchSubmitted(true);
+      setIsSearchCleared(false);
+      return null;
     }
+
+    setSubmittedSearchQuery(trimmedQuery);
+    setSearchSubmitted(true);
+    return null;
   };
 
   const handleSearchClear = (): void => {

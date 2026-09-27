@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 interface SearchInputProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  onSubmit: (query: string) => void;
+  /** Resolves to an error message to show, or null on success. */
+  onSubmit: (query: string) => Promise<string | null>;
   onClear: () => void;
 }
 
@@ -15,6 +16,7 @@ export default function SearchInput({
   onClear,
 }: SearchInputProps): JSX.Element {
   const [error, setError] = useState<string>('');
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const handleClear = (): void => {
     setSearchQuery('');
@@ -22,14 +24,20 @@ export default function SearchInput({
     setError('');
   };
 
-  const handleSubmit = (e: FormEvent): void => {
+  const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
+    if (isSearching) return;
     if (searchQuery.trim() === '') {
       setError('Please enter a search query.');
       return;
     }
     setError('');
-    onSubmit(searchQuery);
+    setIsSearching(true);
+    try {
+      setError((await onSubmit(searchQuery)) ?? '');
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>): void => {
@@ -59,20 +67,31 @@ export default function SearchInput({
           aria-invalid={!!error}
           aria-describedby={error ? 'searchInput-error' : undefined}
         />
-        <button onClick={handleSubmit} aria-label="Search">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="h-4 w-4 opacity-70"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-              clipRule="evenodd"
+        <button
+          onClick={handleSubmit}
+          aria-label="Search"
+          disabled={isSearching}
+        >
+          {isSearching ? (
+            <span
+              className="loading loading-spinner loading-xs"
+              aria-hidden="true"
             />
-          </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="h-4 w-4 opacity-70"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
         </button>
         {searchQuery && (
           <button onClick={handleClear} aria-label="Clear search">
@@ -92,8 +111,15 @@ export default function SearchInput({
           </button>
         )}
       </label>
+      <span role="status" className="sr-only">
+        {isSearching ? 'Searching…' : ''}
+      </span>
       {error && (
-        <p id="searchInput-error" role="alert" className="text-red-500 mt-2">
+        <p
+          id="searchInput-error"
+          role="alert"
+          className="text-red-700 dark:text-red-400 mt-2"
+        >
           {error}
         </p>
       )}

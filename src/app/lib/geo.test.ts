@@ -1,4 +1,9 @@
-import { calculateDistance, determineZoomLevel, isPostcode } from './geo';
+import {
+  calculateDistance,
+  determineZoomLevel,
+  isPartialPostcode,
+  isPostcode,
+} from './geo';
 
 describe('calculateDistance', () => {
   it('returns 0 for identical coordinates', () => {
@@ -69,4 +74,20 @@ describe('determineZoomLevel', () => {
     });
     expect(determineZoomLevel()).toBe(4);
   });
+});
+
+describe('isPartialPostcode', () => {
+  it.each(['BD1', 'sw1a', 'M1', 'EC1A', ' B33 '])(
+    'recognises %p as the first half of a postcode',
+    (input) => {
+      expect(isPartialPostcode(input)).toBe(true);
+    }
+  );
+
+  it.each(['BD1 4PS', 'Refuge', 'Leeds', '', '123'])(
+    'does not treat %p as a partial postcode',
+    (input) => {
+      expect(isPartialPostcode(input)).toBe(false);
+    }
+  );
 });
