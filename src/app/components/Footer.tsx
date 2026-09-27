@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { SUBMIT_SERVICE_URL } from '../constants/links';
+
 const Footer: React.FC = () => {
   return (
     <footer className="p-4 pb-[55px] md:pb-4">
@@ -11,7 +13,7 @@ const Footer: React.FC = () => {
       </p>
       <p>
         Service isn&apos;t listed?{' '}
-        <a className="underline" href="https://tally.so/r/vG9ADg">
+        <a className="underline" href={SUBMIT_SERVICE_URL}>
           Submit here
         </a>
       </p>

@@ -105,9 +105,31 @@ const App: React.FC<HomePageProps> = ({
         Skip to main content
       </a>
       <NavBar onClearFilters={clearFilters} />
-      <main id="main-content" className="px-4 pt-8 pb-8 lg:flex lg:gap-6">
+      {/* Grid so the search sits above the map on mobile, while on desktop
+          the map fills the left column beside the search and results. */}
+      <main
+        id="main-content"
+        className="px-4 pt-8 pb-8 grid gap-7 lg:grid-cols-2 lg:gap-x-6"
+      >
         <Modal />
-        <div className="relative lg:basis-1/2 lg:sticky lg:top-8 self-start h-fit mb-8 lg:mb-0">
+        <div className="flex flex-col gap-7 lg:col-start-2 lg:row-start-1">
+          <SearchInput
+            searchQuery={searchInput}
+            setSearchQuery={setSearchInput}
+            onSubmit={() => handleSearchSubmit(searchInput)}
+            onClear={handleSearchClear}
+          />
+          {isPostcode(submittedSearchQuery) && (
+            <RadiusSlider
+              radius={radius}
+              setRadius={setRadius}
+              min={1}
+              max={10}
+            />
+          )}
+        </div>
+
+        <div className="relative self-start lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-8">
           <MapBox
             lng={lng}
             lat={lat}
@@ -125,21 +147,7 @@ const App: React.FC<HomePageProps> = ({
           />
         </div>
 
-        <div className="flex flex-col gap-7 basis-1/2">
-          <SearchInput
-            searchQuery={searchInput}
-            setSearchQuery={setSearchInput}
-            onSubmit={() => handleSearchSubmit(searchInput)}
-            onClear={handleSearchClear}
-          />
-          {isPostcode(submittedSearchQuery) && (
-            <RadiusSlider
-              radius={radius}
-              setRadius={setRadius}
-              min={1}
-              max={10}
-            />
-          )}
+        <div className="flex flex-col gap-7 lg:col-start-2 lg:row-start-2">
           <ServiceTypeFilter
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}

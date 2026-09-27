@@ -7,6 +7,7 @@ import {
   AiOutlinePhone,
 } from 'react-icons/ai';
 
+import { SUBMIT_SERVICE_URL } from '../constants/links';
 import { iconMapping } from '../constants/serviceIcons';
 import { safeExternalUrl } from '../lib/urls';
 import type { Feature } from '../types';
@@ -171,8 +172,30 @@ const PaginatedList: React.FC<PaginatedListProps> = ({
             hasFiltersApplied
           )}
         </h2>
-        {hasFiltersApplied && <ClearFiltersButton onClear={onClearFilters} />}
+        {hasFiltersApplied && data.length > 0 && (
+          <ClearFiltersButton onClear={onClearFilters} />
+        )}
       </div>
+
+      {data.length === 0 && (
+        <div className="mt-6 rounded-2xl bg-base-200 p-6 flex flex-col gap-3">
+          {hasFiltersApplied && <ClearFiltersButton onClear={onClearFilters} />}
+          <p>
+            For help finding support, call the National Domestic Abuse Helpline,
+            free and 24 hours a day, on{' '}
+            <a className="underline font-semibold" href="tel:08082000247">
+              0808 2000 247
+            </a>
+            .
+          </p>
+          <p>
+            Know a service that should be listed?{' '}
+            <a className="underline" href={SUBMIT_SERVICE_URL}>
+              Submit a service
+            </a>
+          </p>
+        </div>
+      )}
 
       {paginatedData.length > 0 && (
         <ul className="flex flex-col gap-4 mt-6">
