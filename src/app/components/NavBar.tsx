@@ -8,32 +8,37 @@ type NavBarProps = {
   onClearFilters?: () => void;
 };
 
-const ClearBrowserHistoryLink: React.FC<{ tabIndex?: number }> = ({
-  tabIndex,
-}) => (
-  <div className="tooltip tooltip-left" data-tip="Delete from browser history">
-    <Link
-      href="/clear-browser"
-      aria-label="Delete from browser history"
-      tabIndex={tabIndex}
+// A visible label rather than an icon with a tooltip, which touch screens
+// can't show.
+const ClearBrowserHistoryLink: React.FC<{
+  className: string;
+  tabIndex?: number;
+}> = ({ className, tabIndex }) => (
+  <Link
+    href="/clear-browser"
+    className={`flex items-center gap-2 ${className}`}
+    tabIndex={tabIndex}
+  >
+    <svg
+      fill="currentColor"
+      version="1.1"
+      className="h-5 w-5 shrink-0"
+      viewBox="0 0 408.483 408.483"
+      aria-hidden="true"
     >
-      <svg
-        fill="currentColor"
-        version="1.1"
-        className="h-8 w-8 text-mutedAccent"
-        viewBox="0 0 408.483 408.483"
-        aria-hidden="true"
-      >
+      <g>
         <g>
-          <g>
-            <path d="M87.748,388.784c0.461,11.01,9.521,19.699,20.539,19.699h191.911c11.018,0,20.078-8.689,20.539-19.699l13.705-289.316    H74.043L87.748,388.784z M247.655,171.329c0-4.61,3.738-8.349,8.35-8.349h13.355c4.609,0,8.35,3.738,8.35,8.349v165.293    c0,4.611-3.738,8.349-8.35,8.349h-13.355c-4.61,0-8.35-3.736-8.35-8.349V171.329z M189.216,171.329    c0-4.61,3.738-8.349,8.349-8.349h13.355c4.609,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.737,8.349-8.349,8.349h-13.355    c-4.61,0-8.349-3.736-8.349-8.349V171.329L189.216,171.329z M130.775,171.329c0-4.61,3.738-8.349,8.349-8.349h13.356    c4.61,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.738,8.349-8.349,8.349h-13.356c-4.61,0-8.349-3.736-8.349-8.349V171.329z" />
-            <path d="M343.567,21.043h-88.535V4.305c0-2.377-1.927-4.305-4.305-4.305h-92.971c-2.377,0-4.304,1.928-4.304,4.305v16.737H64.916    c-7.125,0-12.9,5.776-12.9,12.901V74.47h304.451V33.944C356.467,26.819,350.692,21.043,343.567,21.043z" />
-          </g>
+          <path d="M87.748,388.784c0.461,11.01,9.521,19.699,20.539,19.699h191.911c11.018,0,20.078-8.689,20.539-19.699l13.705-289.316    H74.043L87.748,388.784z M247.655,171.329c0-4.61,3.738-8.349,8.35-8.349h13.355c4.609,0,8.35,3.738,8.35,8.349v165.293    c0,4.611-3.738,8.349-8.35,8.349h-13.355c-4.61,0-8.35-3.736-8.35-8.349V171.329z M189.216,171.329    c0-4.61,3.738-8.349,8.349-8.349h13.355c4.609,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.737,8.349-8.349,8.349h-13.355    c-4.61,0-8.349-3.736-8.349-8.349V171.329L189.216,171.329z M130.775,171.329c0-4.61,3.738-8.349,8.349-8.349h13.356    c4.61,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.738,8.349-8.349,8.349h-13.356c-4.61,0-8.349-3.736-8.349-8.349V171.329z" />
+          <path d="M343.567,21.043h-88.535V4.305c0-2.377-1.927-4.305-4.305-4.305h-92.971c-2.377,0-4.304,1.928-4.304,4.305v16.737H64.916    c-7.125,0-12.9,5.776-12.9,12.901V74.47h304.451V33.944C356.467,26.819,350.692,21.043,343.567,21.043z" />
         </g>
-      </svg>
-    </Link>
-  </div>
+      </g>
+    </svg>
+    Clear history
+  </Link>
 );
+
+const desktopLinkClass = 'font-headings text-lg font-bold text-mutedAccent';
+const drawerLinkClass = 'font-headings text-xl font-bold text-mutedAccent';
 
 const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -71,17 +76,17 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
             </h1>
             <p>Find the support you need. Local to you.</p>
           </div>
-          <div className="hidden md:flex space-x-4 items-center">
+          <div className="hidden md:flex gap-6 items-center">
             {menuItems.map((item) => (
               <Link
                 href={`/${item.toLowerCase()}`}
                 key={item}
-                className="font-headings text-2xl font-bold text-mutedAccent"
+                className={desktopLinkClass}
               >
                 {item}
               </Link>
             ))}
-            <ClearBrowserHistoryLink />
+            <ClearBrowserHistoryLink className={desktopLinkClass} />
           </div>
 
           <div className="md:hidden text-mutedAccent">
@@ -166,14 +171,17 @@ const NavBar: React.FC<NavBarProps> = ({ onClearFilters }) => {
             <Link
               href={`/${item.toLowerCase()}`}
               key={item}
-              className="block text-2xl font-headings font-bold text-mutedAccent"
+              className={`block ${drawerLinkClass}`}
               onClick={toggleDrawer}
               tabIndex={drawerOpen ? 0 : -1}
             >
               {item}
             </Link>
           ))}
-          <ClearBrowserHistoryLink tabIndex={drawerOpen ? 0 : -1} />
+          <ClearBrowserHistoryLink
+            className={drawerLinkClass}
+            tabIndex={drawerOpen ? 0 : -1}
+          />
         </div>
       </div>
     </>
