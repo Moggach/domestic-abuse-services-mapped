@@ -119,6 +119,18 @@ test.describe('Filters', () => {
       })
       .toBe(realOption!);
   });
+
+  test('changing a filter keeps keyboard focus on that filter', async ({
+    page,
+  }) => {
+    const serviceFilter = page.locator('#serviceFilter');
+    await serviceFilter.focus();
+    await serviceFilter.selectOption({ index: 1 });
+    await expect
+      .poll(() => new URL(page.url()).searchParams.get('serviceType'))
+      .not.toBeNull();
+    await expect(serviceFilter).toBeFocused();
+  });
 });
 
 test.describe('Quick exit', () => {

@@ -1,4 +1,3 @@
-import { useRouter } from 'next/navigation';
 import { useEffect, useCallback } from 'react';
 
 export const useURLParams = (
@@ -8,8 +7,6 @@ export const useURLParams = (
   submittedSearchQuery: string,
   currentPage: number
 ): void => {
-  const router = useRouter();
-
   const updateURLParams = useCallback(() => {
     const params = new URLSearchParams();
 
@@ -33,9 +30,11 @@ export const useURLParams = (
       params.set('page', currentPage.toString());
     }
 
-    router.replace(`/?${params.toString()}`);
+    // Update the URL without a Next.js navigation: router.replace() would
+    // re-request the page and reset keyboard focus to the top of the
+    // document on every filter change.
+    window.history.replaceState(null, '', `/?${params.toString()}`);
   }, [
-    router,
     selectedServiceType,
     selectedLocalAuthority,
     selectedSpecialisms,
