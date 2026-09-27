@@ -20,57 +20,48 @@ export default function SpecialismCheckboxes({
     setSelectedSpecialisms(updatedSpecialisms);
   };
 
-  const toggleCollapse = (): void => {
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <div className="">
-      <div
-        className="select  select-bordered flex justify-between items-center cursor-pointer"
-        onClick={toggleCollapse}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggleCollapse();
-          }
-        }}
-        role="button"
-        tabIndex={0}
+    <div className="flex flex-col gap-2">
+      <span id="specialism-label" className="font-headings text-lg">
+        Filter by specialism
+      </span>
+      <button
+        type="button"
+        id="specialism-toggle"
+        className="select select-bordered w-full max-w-xs mt-2 items-center"
+        onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         aria-controls="specialism-options"
+        aria-labelledby="specialism-label specialism-toggle"
       >
-        <h3 className="text-md font-headings">Select a specialism</h3>
-        {selectedSpecialisms.length > 0 && (
+        {selectedSpecialisms.length > 0 ? (
           <span className="badge badge-accent">
             {selectedSpecialisms.length} selected
           </span>
+        ) : (
+          'All specialisms'
         )}
-      </div>
+      </button>
 
       {isOpen && (
-        <ul
-          id="specialism-options"
-          className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 p-2"
-        >
-          {specialisms.map((specialism, index) => (
-            <li key={index} className="flex items-center space-x-2 text-sm">
-              <input
-                type="checkbox"
-                className="checkbox"
-                id={`specialism-${specialism}`}
-                checked={selectedSpecialisms.includes(specialism)}
-                onChange={() => handleCheckboxChange(specialism)}
-              />
-              <label
-                className="cursor-pointer"
-                htmlFor={`specialism-${specialism}`}
-              >
-                {specialism}
-              </label>
-            </li>
-          ))}
-        </ul>
+        <fieldset id="specialism-options" className="mt-2 p-2">
+          <legend className="sr-only">Specialisms</legend>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {specialisms.map((specialism) => (
+              <li key={specialism}>
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    checked={selectedSpecialisms.includes(specialism)}
+                    onChange={() => handleCheckboxChange(specialism)}
+                  />
+                  {specialism}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </fieldset>
       )}
     </div>
   );
