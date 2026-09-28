@@ -2,9 +2,11 @@ import localFont from '@next/font/local';
 import type { ReactNode } from 'react';
 import React from 'react';
 
+import { SITE_DOMAIN } from './constants/links';
 import { SearchProvider } from './contexts/SearchContext';
 
 interface Metadata {
+  metadataBase: URL;
   title: string;
   description: string;
   icons: {
@@ -24,6 +26,8 @@ interface Metadata {
 }
 
 export const metadata: Metadata = {
+  // Makes og:image an absolute URL; link previews need the full address.
+  metadataBase: new URL(`https://${SITE_DOMAIN}`),
   title: 'Domestic abuse services mapping',
   description: 'A tool for mapping domestic abuse services across the UK.',
   icons: {
@@ -76,25 +80,6 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <html lang="en">
       <head>
-        <meta property="og:title" content={metadata.openGraph.title} />
-        <meta
-          property="og:description"
-          content={metadata.openGraph.description}
-        />
-        <meta property="og:image" content={metadata.openGraph.images[0].url} />
-        <meta
-          property="og:image:width"
-          content={metadata.openGraph.images[0].width.toString()}
-        />
-        <meta
-          property="og:image:height"
-          content={metadata.openGraph.images[0].height.toString()}
-        />
-        <meta
-          property="og:image:alt"
-          content={metadata.openGraph.images[0].alt}
-        />
-        <meta property="og:type" content={metadata.openGraph.type} />
         <script
           async
           defer
